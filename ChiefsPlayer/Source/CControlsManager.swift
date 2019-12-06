@@ -12,11 +12,11 @@ import AVFoundation
 import MediaPlayer
 import GoogleCast
 
-typealias SeekActionBlock = (_ player:AVQueuePlayer)->(SeekAction)
-enum SeekAction {
+public typealias SeekActionBlock = (_ player:AVQueuePlayer)->(SeekAction)
+public enum SeekAction {
     case none, open(URL), seek(Int)
 }
-enum CastingService {
+public enum CastingService {
     case chromecast, airplay
 }
 
@@ -25,7 +25,7 @@ enum CastingService {
 
 
 
-class CControlsManager:NSObject {
+public class CControlsManager:NSObject {
     //static var shared = CControlsManager()
     
     private struct Static
@@ -33,7 +33,7 @@ class CControlsManager:NSObject {
         static var instance: CControlsManager?
     }
     
-    class var shared: CControlsManager
+    class public var shared: CControlsManager
     {
         if Static.instance == nil
         {
@@ -44,7 +44,7 @@ class CControlsManager:NSObject {
     }
     
     
-    var player : AVQueuePlayer {return ChiefsPlayer.shared.player}
+    private var player : AVQueuePlayer {return ChiefsPlayer.shared.player}
     var delegates : [CControlsManagerDelegate?] = []
     
     override init() {
@@ -93,12 +93,12 @@ class CControlsManager:NSObject {
     ////////////////////////////////////////////////////////////////
 
     
-    var forwardAction : SeekActionBlock? {
+    public var forwardAction : SeekActionBlock? {
         didSet {
             delegates.forEach({$0?.controlsForwardActionDidChange(to: forwardAction?(player))})
         }
     }
-    var backwardAction : SeekActionBlock? {
+    public var backwardAction : SeekActionBlock? {
         didSet {
             delegates.forEach({$0?.controlsBackwardActionDidChange(to: backwardAction?(player))})
         }

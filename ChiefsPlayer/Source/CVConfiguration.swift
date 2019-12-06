@@ -11,13 +11,13 @@ import AVKit
 import AVFoundation
 
 
-enum VideoRatio {
-    case widescreen, //16:9  -> 1080p,720p ...
-    classicTV, //4:3
-    custom(CGFloat)
-}
-struct CVConfiguration {
-    enum ControlsStyle {
+public struct CVConfiguration {
+    public enum VideoRatio {
+        case widescreen, //16:9  -> 1080p,720p ...
+        classicTV, //4:3
+        custom(CGFloat)
+    }
+    public enum ControlsStyle {
         case youtube, barStyle
     }
     
@@ -26,10 +26,10 @@ struct CVConfiguration {
     //static var shared = CVConfiguration()
     
     // MARK: - Variables
-    var controlsStyle : ControlsStyle = .youtube
+    public var controlsStyle : ControlsStyle = .youtube
     
-    var videoRatio : VideoRatio = .widescreen
-    var videoRatioValue : CGFloat {
+    public var videoRatio : VideoRatio = .widescreen
+    public var videoRatioValue : CGFloat {
         switch videoRatio {
         case .widescreen:
             return 16/9

@@ -9,24 +9,41 @@
 import UIKit
 
 ////////////////////////////////////////////////////////////
-struct CPlayerSource {
-    var defaultSource:CPlayerResolutionSource {
+public struct CPlayerSource {
+    
+    public var defaultSource:CPlayerResolutionSource {
         get {
             return resolutions.first!
         }
     }
-    var resolutions:[CPlayerResolutionSource]
-    var subtitles:[CPlayerSubtitleSource]? = nil
+    public var resolutions:[CPlayerResolutionSource]
+    public var subtitles:[CPlayerSubtitleSource]? = nil
+    
+    
+    public init(resolutions: [CPlayerResolutionSource], subtitles:[CPlayerSubtitleSource]? = nil) {
+        self.resolutions = resolutions
+        self.subtitles = subtitles
+    }
 }
-struct CPlayerResolutionSource : Codable {
-    var title:String
-    var source:URL
+public struct CPlayerResolutionSource : Codable {
+    public var title:String
+    public var source:URL
+    
+    public init(title: String, source: URL) {
+        self.title = title
+        self.source = source
+    }
 }
-struct CPlayerSubtitleSource : Codable {
-    var title:String
-    var source:URL
+public struct CPlayerSubtitleSource : Codable {
+    public var title:String
+    public var source:URL
+    
+    public init(title: String, source: URL) {
+        self.title = title
+        self.source = source
+    }
 }
-protocol CControlsManagerDelegate : NSObjectProtocol {
+public protocol CControlsManagerDelegate : NSObjectProtocol {
     func controlsForwardActionDidChange (to newAction:SeekAction?)
     func controlsBackwardActionDidChange (to newAction:SeekAction?)
     func controlsSubtitles(are available:Bool)

@@ -9,7 +9,7 @@
 import UIKit
 import GoogleCast
 import AVFoundation
-class CChromecastRemoteControlFunctions: NSObject {
+internal class CChromecastRemoteControlFunctions: NSObject {
     static var castedMediaInformation:GCKMediaInformation? { return  GCKCastContext.sharedInstance()
         .sessionManager
         .currentCastSession?

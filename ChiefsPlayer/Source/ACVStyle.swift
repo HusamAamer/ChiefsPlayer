@@ -7,13 +7,12 @@
 //
 
 import UIKit
-import AVKit
 import AVFoundation
 
-enum ACVStyle:Comparable {
+public enum ACVStyle:Comparable {
     case minimized, maximized,moving(CGFloat),dismissing(CGFloat)
     
-    static func < (lhs: ACVStyle, rhs: ACVStyle) -> Bool {
+    public static func < (lhs: ACVStyle, rhs: ACVStyle) -> Bool {
         switch lhs {
         case .maximized:
             if rhs == .maximized {

@@ -10,7 +10,7 @@ import UIKit
 import MediaPlayer
 import GoogleCast
 
-class CBaseControlsView:UIView {
+public class CBaseControlsView:UIView {
     
     //If chromecast manager is not initialized this causes an internal crash in chromecast sdk
     lazy var castButton:GCKUICastButton? = GCKUICastButton(frame: CGRect(x: 0, y: 0, width: 24, height: 24))

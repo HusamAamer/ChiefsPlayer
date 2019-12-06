@@ -10,7 +10,7 @@ import UIKit
 import AVKit
 import AVFoundation
 
-class CVideoView: UIView {
+public class CVideoView: UIView {
     var videoURL : URL!
     
     //UI
@@ -82,12 +82,12 @@ class CVideoView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func didMoveToSuperview() {
+    override public func didMoveToSuperview() {
         if let _ = superview {
             player.play()
         }
     }
-    override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         switch ChiefsPlayer.shared.acvStyle {
         case .moving(_):
@@ -236,7 +236,7 @@ class CVideoView: UIView {
     
     /// Delegate should declare `chiefsplayerWillStart` before `chiefsplayer(isPlaying item:, at second:, of totalSeconds:)`
     var chiefsplayerWillStartTriggered: Bool = false
-    override func observeValue(
+    override public func observeValue(
         forKeyPath keyPath: String?,
         of object: Any?,
         change: [NSKeyValueChangeKey : Any]?,

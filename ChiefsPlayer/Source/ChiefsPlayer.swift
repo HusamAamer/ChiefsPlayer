@@ -10,7 +10,7 @@ import UIKit
 import AVKit
 import AVFoundation
 
-protocol ChiefsPlayerDelegate {
+public protocol ChiefsPlayerDelegate {
     //Called whene player get maximized or fullscreen
     func chiefsplayerStatusBarShouldBe (hidden:Bool)
     //Called only once, when player state is ReadyToPlay for the first time
@@ -36,7 +36,7 @@ protocol ChiefsPlayerDelegate {
 }
 
 //Make functions optional
-extension ChiefsPlayerDelegate {
+public extension ChiefsPlayerDelegate {
     func chiefsplayerStatusBarShouldBe (hidden:Bool) {}
     func chiefsplayerWillStart (playing item:AVPlayerItem) {}
     func chiefsplayerWillStop (playing item:AVPlayerItem) {}
@@ -49,13 +49,13 @@ extension ChiefsPlayerDelegate {
     func chiefsplayer(isCastingTo castingService:CastingService?){}
     func chiefsplayerWillStartCasting(from source:CPlayerSource) -> CPlayerSource? { return nil}
 }
-class ChiefsPlayer {
+public class ChiefsPlayer {
     private struct Static
     {
         static var instance: ChiefsPlayer?
     }
     
-    class var shared: ChiefsPlayer
+    class public var shared: ChiefsPlayer
     {
         if Static.instance == nil
         {
@@ -69,26 +69,26 @@ class ChiefsPlayer {
         print("ChiefsPlayer deinit")
     }
     var mediaQueue      = [CMediaInfo]()
-    var delegate        :ChiefsPlayerDelegate?
-    var acvStyle        :ACVStyle        = .maximized
-    var configs         :CVConfiguration = CVConfiguration()
-    var player          :AVQueuePlayer!
-    var sources         :[CPlayerSource] = []
+    public var delegate        :ChiefsPlayerDelegate?
+    public var acvStyle        :ACVStyle        = .maximized
+    public var configs         :CVConfiguration = CVConfiguration()
+    public var player          :AVQueuePlayer!
+    public var sources         :[CPlayerSource] = []
     var _selectedSourceIndex:Int     = 0
     var _selectedResolutionIndex:Int = 0
     var _selectedSubtitleIndex:Int?  = nil
     
-    var selectedSource:CPlayerSource {
+    public var selectedSource:CPlayerSource {
         return sources[_selectedSourceIndex]
     }
     
-    var videoView       :CVideoView!
+    public var videoView       :CVideoView!
     var parentVC        :UIViewController!
-    var userView        :UIView?
+    public var userView        :UIView?
     
-    var controls        :CBaseControlsView!
-    lazy var videoContainer       :UIView! = UIView()
-    lazy var detailsContainer:UIView! = UIView()
+    public var controls        :CBaseControlsView!
+    lazy var videoContainer    :UIView! = UIView()
+    lazy var detailsContainer  :UIView! = UIView()
     lazy var detailsStack     = UIStackView()
     
     var notchBackground:UIView?
@@ -151,7 +151,7 @@ class ChiefsPlayer {
     private init() {}
     /// Call for fresh play or play another url
     ///
-    func play(from sources:[CPlayerSource],
+    public func play(from sources:[CPlayerSource],
               with detailsView:UIView?,
               startWithSourceAt sourceIndex:Int = 0,
               startWithResoultionAt resolutionIndex:Int = 0,
@@ -329,7 +329,7 @@ class ChiefsPlayer {
     var dH:NSLayoutConstraint!
     var vHPortrait:NSLayoutConstraint!
     var vHLandscape:NSLayoutConstraint!
-    func present(on viewController:UIViewController) {
+    public func present(on viewController:UIViewController) {
         if parentVC != nil {
             print("Player is already presented")
             return
@@ -607,7 +607,7 @@ class ChiefsPlayer {
         }
         return value ?? 0
     }
-    var bottomSafeArea:CGFloat = 0 {
+    public var bottomSafeArea:CGFloat = 0 {
         didSet {
             var newValue = bottomSafeArea
             if #available(iOS 11.0, *) {
