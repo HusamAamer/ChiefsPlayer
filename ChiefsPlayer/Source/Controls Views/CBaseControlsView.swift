@@ -17,8 +17,22 @@ public class CBaseControlsView:UIView {
     //lazy var airView?     = MPVolumeView()
     var airView:MPVolumeView?
     
-    class func instanceFromNib() -> CBaseControlsView {
-        fatalError("No Sir!")
+    class func instanceFromNib<T>(with name:String) -> T {
+        let podBundle = Bundle(for:self.classForCoder())
+        if let bundleURL = podBundle.url(forResource: "ChiefsPlayer", withExtension: "bundle") {
+            if let bundle = Bundle(url: bundleURL) {
+                return UINib(nibName: name, bundle: bundle).instantiate(withOwner: nil, options: nil)[0] as! T
+            } else {
+                assertionFailure("Could not load the bundle")
+            }
+        } else {
+            if let v = UINib(nibName: name, bundle: nil).instantiate(withOwner: nil, options: nil)[0] as? T {
+                return v
+            } else {
+                assertionFailure("Could not create a path to the bundle")
+            }
+        }
+        fatalError("Could not load nib from bundle, Check podspec")
     }
     
     func presentResolutionsAction (from buttonView:UIView) {

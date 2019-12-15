@@ -62,7 +62,7 @@ class CLoadingView: UIView {
         removeErrorLabels()
         
         reloadBtn = UIButton(type: .system)
-        reloadBtn.setImage(#imageLiteral(resourceName: "retry"), for: .normal)
+        reloadBtn.setImage(UIImage.make(name: "retry"), for: .normal)
         reloadBtn.tintColor = .white
         reloadBtn.addTarget(self, action: #selector(reloadPlayerAction), for: .touchUpInside)
         reloadBtn.translatesAutoresizingMaskIntoConstraints = false

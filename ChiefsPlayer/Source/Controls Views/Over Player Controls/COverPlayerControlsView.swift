@@ -25,9 +25,8 @@ class COverPlayerControlsView: CBaseControlsView {
     @IBOutlet weak var resolutionBtn: UIButton!
     @IBOutlet weak var airViewContainer: UIView!
     
-    override class func instanceFromNib() -> COverPlayerControlsView {
-        let v = UINib(nibName: "COverPlayerControlsView", bundle: nil).instantiate(withOwner: nil, options: nil)[0] as! COverPlayerControlsView
-        return v
+    class func instanceFromNib() -> COverPlayerControlsView {
+        return super.instanceFromNib(with: "COverPlayerControlsView")
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -142,10 +141,10 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
         if let action = newAction {
             switch action {
             case .open(_):
-                nextButton.setImage(#imageLiteral(resourceName: "NextTrack").imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                nextButton.setImage(UIImage.make(name: "NextTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
             case .seek(_):
-                nextButton.setImage(#imageLiteral(resourceName: "NextTrack2").imageFlippedForRightToLeftLayoutDirection(), for: .normal)                
+                nextButton.setImage(UIImage.make(name: "NextTrack2")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
             default:
                 return
@@ -159,11 +158,11 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
         if let action = newAction {
             switch action {
             case .open(_):
-                let icon = #imageLiteral(resourceName: "BackTrack").imageFlippedForRightToLeftLayoutDirection()
+                let icon = UIImage.make(name: "BackTrack")?.imageFlippedForRightToLeftLayoutDirection()
                 prevButton.setImage(icon, for: .normal)
                 break
             case .seek(_):
-                let icon =  #imageLiteral(resourceName: "BackTrack2").imageFlippedForRightToLeftLayoutDirection()
+                let icon =  UIImage.make(name: "BackTrack2")?.imageFlippedForRightToLeftLayoutDirection()
                 prevButton.setImage(icon, for: .normal)
                 break
             default:

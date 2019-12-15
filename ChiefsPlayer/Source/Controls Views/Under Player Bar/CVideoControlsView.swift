@@ -24,12 +24,9 @@ class CVideoControlsView: CBaseControlsView {
     var play: UIRoundedButton!
     var separator:UIView!
     
-    
-    override class func instanceFromNib() -> CVideoControlsView {
-        let v = UINib(nibName: "CVideoControlsView", bundle: nil).instantiate(withOwner: nil, options: nil)[0] as! CVideoControlsView
-        return v
+    class func instanceFromNib() -> CVideoControlsView {
+        return super.instanceFromNib(with: "CVideoControlsView")
     }
-    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         backgroundColor = UIColor(red:0.13, green:0.16, blue:0.24, alpha:1.00)
@@ -54,8 +51,8 @@ class CVideoControlsView: CBaseControlsView {
             UIColor(red: 134/255, green: 65/255, blue: 163/255, alpha: 1)
         ]
         play = UIRoundedButton(gradientColors: gradients)
-        play.setImage(#imageLiteral(resourceName: "pause-1"), for: .normal)
-        play.setImage(#imageLiteral(resourceName: "play-1"), for: .selected)
+        play.setImage(UIImage.make(name: "pause-1"), for: .normal)
+        play.setImage(UIImage.make(name: "play-1"), for: .selected)
         play.addTarget(self, action: #selector(playBtn(_:)), for: .touchUpInside)
         play.frame = CGRect(x: 0, y: 0, width: 47, height: 47)
         play.center = playButton.center
@@ -161,10 +158,11 @@ extension CVideoControlsView : CControlsManagerDelegate {
         if let action = newAction {
             switch action {
             case .open(_):
-                nextButton.setImage(#imageLiteral(resourceName: "NextTrack-1").imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                
+                nextButton.setImage(UIImage.make(name: "NextTrack-1")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
             case .seek(_):
-                nextButton.setImage(#imageLiteral(resourceName: "NextTrack2-1").imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                nextButton.setImage(UIImage.make(name: "NextTrack2-1")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
             default:
                 return
@@ -178,10 +176,10 @@ extension CVideoControlsView : CControlsManagerDelegate {
         if let action = newAction {
             switch action {
             case .open(_):
-                prevButton.setImage(#imageLiteral(resourceName: "BackTrack-1").imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                prevButton.setImage(UIImage.make(name: "BackTrack-1")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
             case .seek(_):
-                prevButton.setImage(#imageLiteral(resourceName: "BackTrack2-1").imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                prevButton.setImage(UIImage.make(name: "BackTrack2-1")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
             default:
                 return

@@ -56,6 +56,12 @@ extension CMTime {
     }
 }
 class AVCGlobalFuncs: NSObject {
+    static var bundle:Bundle {
+        let podBundle = Bundle(for: ChiefsPlayer.self)
+
+        let bundleURL = podBundle.url(forResource: "ChiefsPlayer", withExtension: "bundle")
+        return Bundle(url: bundleURL!)!
+    }
     static func playerItemDuration() -> TimeInterval? {
         let thePlayerItem = ChiefsPlayer.shared.player.currentItem
         if thePlayerItem?.status == .readyToPlay,
@@ -245,4 +251,11 @@ func in_main (_ block:@escaping () -> ()){
     DispatchQueue.main.async { () -> Void in
         block()
     }
+}
+public extension UIImage {
+  static func make(name: String) -> UIImage? {
+    let bundle = Bundle(for: CBaseControlsView.self)
+    return UIImage(named: "ChiefsPlayer.bundle/\(name)", in: bundle, compatibleWith: nil)
+        ?? UIImage(named: name, in: bundle, compatibleWith: nil)
+  }
 }

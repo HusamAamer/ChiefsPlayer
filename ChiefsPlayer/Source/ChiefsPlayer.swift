@@ -87,8 +87,8 @@ public class ChiefsPlayer {
     public var userView        :UIView?
     
     public var controls        :CBaseControlsView!
-    lazy var videoContainer    :UIView! = UIView()
-    lazy var detailsContainer  :UIView! = UIView()
+    public lazy var videoContainer    :UIView! = UIView()
+    public lazy var detailsContainer  :UIView! = UIView()
     lazy var detailsStack     = UIStackView()
     
     var notchBackground:UIView?
@@ -767,7 +767,7 @@ public class ChiefsPlayer {
         
         delegate?.chiefsplayerMaximized()
     }
-    func minimize () {
+    public func minimize () {
         acvStyle = .minimized
         videoView.progressView.isUserInteractionEnabled = false
         let y = parentVC.view.bounds.height - bottomSafeArea - onMaxFrame.height * minimumScale

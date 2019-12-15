@@ -27,7 +27,8 @@ class ChromecastManager: NSObject {
             let discoveryCriteria = GCKDiscoveryCriteria(applicationID: appId)
             castOptions = GCKCastOptions(discoveryCriteria: discoveryCriteria)
         } else {
-            castOptions = GCKCastOptions()
+            let discoveryCriteria = GCKDiscoveryCriteria(applicationID: kGCKDefaultMediaReceiverApplicationID)
+            castOptions = GCKCastOptions(discoveryCriteria: discoveryCriteria)
         }
         GCKCastContext.setSharedInstanceWith(castOptions)
         GCKLogger.sharedInstance().delegate = self
@@ -48,7 +49,7 @@ class ChromecastManager: NSObject {
 }
 extension ChromecastManager: GCKLoggerDelegate {
     func logMessage(_ message: String, at level: GCKLoggerLevel, fromFunction function: String, location: String) {
-        print("Message from Chromecast = \(message)")
+        print("Message from Chromecast = Function:\(function) Message:\(message) Location: \(location)")
     }
 }
 

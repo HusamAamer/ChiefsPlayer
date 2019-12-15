@@ -91,7 +91,7 @@ Pod::Spec.new do |spec|
   #  Not including the public_header_files will make all headers public.
   #
 
-  spec.source_files  = "ChiefsPlayer/Source/**/*.swift"
+  spec.source_files  = "ChiefsPlayer/Source/**/*.{swift}"
   # spec.exclude_files = "Classes/Exclude"
 
   # spec.public_header_files = "Classes/**/*.h"
@@ -107,7 +107,10 @@ Pod::Spec.new do |spec|
 
   # spec.resource  = "icon.png"
   # spec.resources = "Resources/*.png"
-
+  spec.resources = "ChiefsPlayer/Source/**/*.xib"
+  spec.resource_bundles = {
+    'ChiefsPlayer' => ['ChiefsPlayer/Source/**/*.{storyboard,xib,xcassets,json,imageset,png}']
+  }
   # spec.preserve_paths = "FilesToSave", "MoreFilesToSave"
 
 

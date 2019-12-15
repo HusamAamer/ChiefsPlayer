@@ -38,7 +38,8 @@ class CVideoProgressBarView: UIView {
         addSubview(bar)
         
         bar.backgroundColor = UIColor(red:0.85, green:0.13, blue:0.33, alpha:1.00)
-        backgroundColor = #colorLiteral(red: 0.2147547934, green: 0.2642100249, blue: 0.364286835, alpha: 1).withAlphaComponent(0.9)
+        
+        backgroundColor = UIColor(red: 0.2147547934, green: 0.2642100249, blue: 0.364286835, alpha: 0.9)
         bar.translatesAutoresizingMaskIntoConstraints = false
         
         let le = bar.leadingAnchor.constraint(equalTo: leadingAnchor)
