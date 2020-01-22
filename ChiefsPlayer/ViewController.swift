@@ -19,10 +19,10 @@ class ViewController: UIViewController {
         let testV = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight))
         
         let url = URL(string: "https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8")!
-        let resoultion = CPlayerResolutionSource(title: "Title", source: url)
+        let resoultion = CPlayerResolutionSource(title: "Title", url)
         
         let url2 = URL(string: "http://stream.shabakaty.com:6001/sport/ch2/adaptive.m3u8")!
-        let resoultion2 = CPlayerResolutionSource(title: "Title", source: url2)
+        let resoultion2 = CPlayerResolutionSource(title: "Title", url2)
         
         //Remote subtitle
         let subtitleURL = URL(string: "https://raw.githubusercontent.com/andreyvit/subtitle-tools/master/sample.srt")!

@@ -163,7 +163,7 @@ public class ChiefsPlayer {
         
         self.sources = sources
         let selectedResolution = selectedSource.resolutions[_selectedResolutionIndex]
-        let sourceUrl = selectedResolution.source
+        let sourceUrl = selectedResolution.source_m3u8 ?? selectedResolution.source_file!
         ChiefsPlayer.Log(event: "\(#file) -> \(#function) - \(sourceUrl.path)")
         
         //Add to media queue array

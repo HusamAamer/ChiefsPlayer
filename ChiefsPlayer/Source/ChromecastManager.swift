@@ -87,7 +87,8 @@ extension ChromecastManager: GCKSessionManagerListener {
             }
         }
         
-        let media = mediaInfo(with: selectedResolution.source, and:subtitleTracks)
+        let media = mediaInfo(with: selectedResolution.source_m3u8 ?? selectedResolution.source_file!,
+                              and:subtitleTracks)
         load(media: media, byAppending: false)
         
         //Listen to controls
