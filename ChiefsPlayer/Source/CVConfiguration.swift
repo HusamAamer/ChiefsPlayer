@@ -23,6 +23,9 @@ public struct CVConfiguration {
     public enum Appearance {
         case automatic,dark, light
     }
+    public enum Language:String {
+        case automatic = "automatic",arabic = "ar", english = "en"
+    }
     
     // MARK: - Properties
     
@@ -34,7 +37,7 @@ public struct CVConfiguration {
     /// Appearance of alerts and some views
     public var appearance : Appearance = .automatic
     
-    public var locale : Locale?
+    public var language : Language?
         
     public var videoRatio : VideoRatio = .widescreen
     public var videoRatioValue : CGFloat {

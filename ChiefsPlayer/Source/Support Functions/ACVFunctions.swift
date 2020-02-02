@@ -289,10 +289,15 @@ func localized (_ string:String) -> String {
     
     var localeAbbrev:String = "en"
     
-    if let abbr = ChiefsPlayer.shared.configs.locale?.languageCode ?? Locale.current.languageCode {
-        if ["ar","en"].contains(abbr) {
-            localeAbbrev = abbr
+    let language = ChiefsPlayer.shared.configs.language ?? .automatic
+    if language == .automatic {
+        if let abbr = Locale.current.languageCode {
+            if ["ar","en"].contains(abbr) {
+                localeAbbrev = abbr
+            }
         }
+    } else {
+        localeAbbrev = language.rawValue
     }
     
     if let value = dic[string]?[localeAbbrev] {
