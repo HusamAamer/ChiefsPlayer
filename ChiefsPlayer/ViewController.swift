@@ -18,23 +18,28 @@ class ViewController: UIViewController {
     @IBAction func playBtn(_ sender: Any) {
         let testV = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight))
         
+        
+        let localVideo = Bundle.main.path(forResource: "sample", ofType: "mp4")
+        let localVideoURL = URL(fileURLWithPath: localVideo!)
+        let resoultion = CPlayerResolutionSource(title: "Local file", localVideoURL)
+        
         let url = URL(string: "https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8")!
-        let resoultion = CPlayerResolutionSource(title: "Title", url)
+        let resoultion1 = CPlayerResolutionSource(title: "Remote m3u8", url)
         
         let url2 = URL(string: "http://stream.shabakaty.com:6001/sport/ch2/adaptive.m3u8")!
-        let resoultion2 = CPlayerResolutionSource(title: "Title", url2)
+        let resoultion2 = CPlayerResolutionSource(title: "BEIN", url2)
         
         //Remote subtitle
         let subtitleURL = URL(string: "https://raw.githubusercontent.com/andreyvit/subtitle-tools/master/sample.srt")!
         
         //Local subtitle
         let subtitleFile = Bundle.main.path(forResource: "sample", ofType: "srt")
-        let localSubtitleURL = URL(fileURLWithPath: subtitleFile!)
+        let localSubtitleURL = URL(fileURLWithPath: subtitleFile!)        
         
         let remoteSubtitle = CPlayerSubtitleSource(title: "Remote url", source: subtitleURL)
         let localSubtitle = CPlayerSubtitleSource(title: "Local url", source: localSubtitleURL)
-        let subtitleSources = [remoteSubtitle,localSubtitle]
-        let sources = [CPlayerSource(resolutions: [resoultion2,resoultion],
+        let subtitleSources = [localSubtitle,remoteSubtitle]
+        let sources = [CPlayerSource(resolutions: [resoultion,resoultion1,resoultion2],
                                      subtitles: subtitleSources)]
 
             

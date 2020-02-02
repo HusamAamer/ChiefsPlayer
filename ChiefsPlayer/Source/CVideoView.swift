@@ -161,7 +161,7 @@ public class CVideoView: UIView {
         NotificationCenter.default
             .addObserver(
                 self,
-                selector: #selector(failedToPlayToEndTime(_:)),
+                selector: #selector(playerItemDidPlayToEndTime(_:)),
                 name: NSNotification.Name.AVPlayerItemDidPlayToEndTime,
                 object: player.currentItem)
 
@@ -219,12 +219,18 @@ public class CVideoView: UIView {
         //let a = alert(title: "Error", body: errorMsg, cancel: "OK")
         //ChiefsPlayer.shared.parentVC.present(a, animated: true, completion: nil)
     }
-    @objc func failedToPlayToEndTime(_ notification: Notification) {
+    
+    /// Called if error happened or player ended
+    @objc func playerItemDidPlayToEndTime(_ notification: Notification) {
         ChiefsPlayer.Log(event: "\(#file) -> \(#function)")
+        
+        //Player has error
         if let userInfo = notification.userInfo,
             let error = userInfo["AVPlayerItemFailedToPlayToEndTimeErrorKey"] as? NSError
         {
             updateLoadingUI(with: error.localizedDescription)
+        } else {
+            updateLoadingUI(with: "")
         }
     }
     @objc func playerError (error:NSError) {

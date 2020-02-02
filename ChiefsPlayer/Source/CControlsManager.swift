@@ -269,7 +269,7 @@ extension CControlsManager {
             
             //Disable captions action
             let noCaptionsAction = UIAlertAction(
-                title: "No captions",
+                title: localized("no_caption"),
                 style: .default) { (_) in
                     ChiefsPlayer.shared._selectedSubtitleIndex = nil
                     ChiefsPlayer.shared.removeCurrentSubtitles()
@@ -296,7 +296,7 @@ extension CControlsManager {
             }
             
             //Present action sheet
-            let a = alert(title: "Subtitles", body: nil, cancel: "Dismiss", actions: actions, style: .actionSheet)
+            let a = alert(title: localized("pick_subtitle_title"), body: nil, cancel: localized("dismiss"), actions: actions, style: .actionSheet)
             if let presenter = a.popoverPresentationController {
                 presenter.sourceView = sender
                 presenter.sourceRect = sender.bounds
@@ -316,7 +316,7 @@ extension CControlsManager {
             
             //Disable captions action
             let noCaptionsAction = UIAlertAction(
-                title: "No captions",
+                title: localized("no_caption"),
                 style: .default) { (_) in
                     self.player.currentItem?.select(nil, in: subs)
             }
@@ -341,7 +341,7 @@ extension CControlsManager {
             }
             
             //Present action sheet
-            let a = alert(title: "Subtitles", body: nil, cancel: "Dismiss", actions: actions, style: .actionSheet)
+            let a = alert(title: localized("pick_subtitle_title"), body: nil, cancel: localized("dismiss"), actions: actions, style: .actionSheet)
             if let presenter = a.popoverPresentationController {
                 presenter.sourceView = sender
                 presenter.sourceRect = sender.bounds

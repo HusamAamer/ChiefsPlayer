@@ -57,12 +57,12 @@ public class CBaseControlsView:UIView {
         }
         
         if actions.count > 0 {
-            let sheet = UIAlertController(title: "تغيير الدقة", message: nil, preferredStyle: .actionSheet)
+            let sheet = alert(title: localized("pick_resolution_title"),
+                              body: nil, cancel: localized("dismiss"),
+                              actions: actions, style: .actionSheet)
             sheet.popoverPresentationController?.sourceView = buttonView
             sheet.popoverPresentationController?.sourceRect = CGRect(x: buttonView.frame.midX, y: buttonView.frame.maxY, width: 0, height: 0)
-            actions.append(.init(title: "رجوع", style: .cancel, handler: nil))
-            actions.forEach({sheet.addAction($0)})
-            UIApplication.shared.keyWindow?.rootViewController?.present(sheet, animated: true, completion: nil)
+            ChiefsPlayer.shared.parentVC.present(sheet, animated: true, completion: nil)
         }
     }
 

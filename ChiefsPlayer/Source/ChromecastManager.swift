@@ -148,7 +148,7 @@ extension ChromecastManager: GCKSessionManagerListener {
     }
     
     func showAlert(withTitle title: String, message: String) {
-        let a = alert(title: title, body: message, cancel: "OK")
+        let a = alert(title: title, body: message, cancel: localized("dismiss"))
         ChiefsPlayer.shared.parentVC.present(a, animated: true, completion: nil)
     }
     

@@ -20,6 +20,9 @@ public struct CVConfiguration {
     public enum ControlsStyle {
         case youtube, barStyle
     }
+    public enum Appearance {
+        case automatic,dark, light
+    }
     
     // MARK: - Properties
     
@@ -28,6 +31,11 @@ public struct CVConfiguration {
     // MARK: - Variables
     public var controlsStyle : ControlsStyle = .youtube
     
+    /// Appearance of alerts and some views
+    public var appearance : Appearance = .automatic
+    
+    public var locale : Locale?
+        
     public var videoRatio : VideoRatio = .widescreen
     public var videoRatioValue : CGFloat {
         switch videoRatio {

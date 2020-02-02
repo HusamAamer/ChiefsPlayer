@@ -230,6 +230,16 @@ extension ChiefsPlayer {
                 if let checkData = data as Data? {
                     if let contents = String(data: checkData, encoding: encoding) {
                         self.show(subtitles: contents)
+                    } else if let contents = String(data: checkData, encoding: .utf16) {
+                        self.show(subtitles: contents)
+                    } else if let contents = String(data: checkData, encoding: .utf32) {
+                        self.show(subtitles: contents)
+                    } else {
+                        self.show(subtitles: """
+1
+00:00:00,590 --> 00:00:04,386
+لا يمكن تشغيل الترجمة لوجود خطأ في التشفير من المصدر
+""")
                     }
                 }
                 
