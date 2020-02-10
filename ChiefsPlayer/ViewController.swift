@@ -22,8 +22,16 @@ class ViewController: UIViewController {
         let localVideoURL = URL(fileURLWithPath: localVideo!)
         let resoultion = CPlayerResolutionSource(title: "Local file", localVideoURL)
         
-        let url = URL(string: "https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8")!
-        let resoultion1 = CPlayerResolutionSource(title: "Remote m3u8", url)
+        
+        let url_1 = URL(string: "http://93.191.114.6:8081/vod/c92dc88f-0910-46e9-95c9-8cf6b8410ed6/aF0D88Q8sqh3bJ2/,aF0D88Q8sqh3bJ2_1080.mp4,.urlset/master.m3u8")!
+        let resoultion1_1 = CPlayerResolutionSource(title: "SC m3u8", url_1)
+        
+        let url_2 = URL(string: "http://93.191.114.6/c92dc88f-0910-46e9-95c9-8cf6b8410ed6/aF0D88Q8sqh3bJ2/aF0D88Q8sqh3bJ2_1080.mp4")!
+        let resoultion1_2 = CPlayerResolutionSource(title: "SC Mp4", url_2)
+        
+        
+        let url = URL(string: "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8")!
+        let resoultion1 = CPlayerResolutionSource(title: "Remote m3u8 + Subs", url)
         
         let url2 = URL(string: "http://stream.shabakaty.com:6001/sport/ch2/adaptive.m3u8")!
         let resoultion2 = CPlayerResolutionSource(title: "BEIN", url2)
@@ -45,7 +53,7 @@ class ViewController: UIViewController {
         let remoteSubtitle = CPlayerSubtitleSource(title: "Remote url", source: subtitleURL)
         let localSubtitle = CPlayerSubtitleSource(title: "Local url", source: localSubtitleURL)
         let subtitleSources = [localSubtitle,remoteSubtitle]
-        let sources = [CPlayerSource(resolutions: [resoultion4,resoultion,resoultion1,resoultion2,resoultion3],
+        let sources = [CPlayerSource(resolutions: [resoultion1_1,resoultion1_2,resoultion4,resoultion,resoultion1,resoultion2,resoultion3],
                                      subtitles: subtitleSources)]
         return sources
     }

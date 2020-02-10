@@ -354,10 +354,8 @@ extension ChromecastManager : GCKRequestDelegate {
     func request(_ request: GCKRequest, didFailWithError error: GCKError) {
         print("request \(Int(request.requestID)) failed with error \(error)")
         let errorMessage = """
-        "Message": \(error.localizedDescription)
-        "Reason": \(error.localizedFailureReason ?? "Unknown")
-        "Suggestion": \(error.localizedRecoverySuggestion ?? "No suggestion")
-        "Error Code": \(error.code)
+        Message: \(error.localizedDescription)
+        Error Code: #\(error.code)
         """
         showAlert(withTitle: "Casting failed", message: errorMessage)
         

@@ -200,7 +200,7 @@ extension ChiefsPlayer {
 
 extension ChiefsPlayer {
     static func Log(event name:String) {
-//        CLSLogv("%@", getVaList([name]))
+        ChiefsPlayer.shared.delegate?.chiefsplayerDebugLog(name)
     }
 }
 

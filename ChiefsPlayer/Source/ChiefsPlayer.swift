@@ -33,6 +33,9 @@ public protocol ChiefsPlayerDelegate:class {
     
     //Here you can apply any modification to source before casting starts
     func chiefsplayerWillStartCasting(from source:CPlayerSource) -> CPlayerSource?
+    
+    /// Optionaly write logs to firebase or other service for crash reporting
+    func chiefsplayerDebugLog(_ string:String)
 }
 
 //Make functions optional
@@ -48,6 +51,7 @@ public extension ChiefsPlayerDelegate {
     func chiefsplayerOrientationChanged (to newOrientation:UIInterfaceOrientation) {}
     func chiefsplayer(isCastingTo castingService:CastingService?){}
     func chiefsplayerWillStartCasting(from source:CPlayerSource) -> CPlayerSource? { return nil}
+    func chiefsplayerDebugLog(_ string:String) {}
 }
 public class ChiefsPlayer {
     private struct Static
@@ -110,6 +114,8 @@ public class ChiefsPlayer {
             
             switch newValue {
             case nil:
+                //videoView.removeStreamingViewIfExist()
+                
                 //App is not casting
                 controls.castButton?.isHidden = false
                 controls.airView?.isHidden    = false
@@ -131,6 +137,8 @@ public class ChiefsPlayer {
                 
                 break
             case .chromecast?:
+                //videoView.addStreamingView(with: "Chromecast connected")
+                
                 controls.castButton?.isHidden = false
                 controls.airView?.isHidden    = true
                 //controls.subtitlesBtn.isHidden = true
@@ -140,10 +148,15 @@ public class ChiefsPlayer {
                     player.pause()
                     videoView.endPlayerObserving()
                 }
+                
+                
                 break
             case .airplay?:
                 controls.castButton?.isHidden = true
                 controls.airView?.isHidden    = false
+                
+                //videoView.addStreamingView(with: "AirPlay connected")
+                
                 break
             }
             _currentCasting = newValue

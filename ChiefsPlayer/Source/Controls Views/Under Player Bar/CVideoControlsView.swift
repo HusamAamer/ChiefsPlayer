@@ -71,20 +71,18 @@ class CVideoControlsView: CBaseControlsView {
         //play.isSelected = !player.isPlaying
         
         //Setup AirPlay button
-        if let airView = airView {
-            airView.showsRouteButton  = true
-            airView.showsVolumeSlider = false
-            airView.sizeToFit()
-            airView.tintColor = UIColor.black
-            airView.alpha = 0.6
-            rightStack.insertArrangedSubview(airView, at: 0)
-        }
         if let castButton = castButton {
             castButton.tintColor = UIColor.white
             castButton.alpha = 0.6
             rightStack.insertArrangedSubview(castButton, at: 0)
         }
         
+        if let airView = airView {
+            airView.sizeToFit()
+            airView.tintColor = UIColor.white
+            airView.alpha = 0.6
+            rightStack.insertArrangedSubview(airView, at: 0)
+        }
         if Device.IS_IPAD {
             fullscreenBtn.isHidden = true
         }

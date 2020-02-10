@@ -69,6 +69,7 @@ public class CPlayerItem: AVPlayerItem {
     }
     
     deinit {
+        debugPrint(">>>>>> Will be deinited")
         stopObserving()
         ChiefsPlayer.Log(event: "Item deinited")
         debugPrint(">>>>>> Item deinited")
@@ -96,45 +97,52 @@ public class CPlayerItem: AVPlayerItem {
         context: UnsafeMutableRawPointer?) {
         
         debugPrint("\(#function) -> \(keyPath)")
-        if keyPath == #keyPath(error) {
-            ChiefsPlayer.Log(event: "\(#function) -> Line \(#line) (ItemError)")
-            if let error = error {
-                delegate?.cplayerItemError(error)
-            }
+        in_main { [weak self] in
             
-        } else
-        if keyPath == #keyPath(status) {
-            ChiefsPlayer.Log(event: "\(#function) -> Line \(#line) ItemStatus = \(status.rawValue)")
+            guard let `self` = self else {return}
             
-            // FAILED
-            if status == .failed {
-                delegate?.cplayerItemFailed()
-            }
+            let delegate = self.delegate
             
-            // READY TO PLAY
-            else if status == .readyToPlay {
-                delegate?.cplayerItemReadyToPlay()
-            }
-        }
-        
-        if keyPath == "playbackBufferEmpty" {
-            if isPlaybackBufferEmpty {
-                delegate?.cplayerItemPlayebackBufferEmpty()
+            if keyPath == #keyPath(error) {
+                ChiefsPlayer.Log(event: "\(#function) -> Line \(#line) (ItemError)")
+                if let error = self.error {
+                    delegate?.cplayerItemError(error)
+                }
                 
-                ChiefsPlayer.Log(event: "\(#function) -> Line \(#line) (playbackBufferEmpty)")
-            }
-        }
-        else if keyPath == "playbackBufferFull" {
-            if isPlaybackBufferFull {
-                delegate?.cplayerItemPlaybackBufferFull()
+            } else
+            if keyPath == #keyPath(status) {
+                ChiefsPlayer.Log(event: "\(#function) -> Line \(#line) ItemStatus = \(self.status.rawValue)")
                 
-                ChiefsPlayer.Log(event: "\(#function) -> Line \(#line) (playbackBufferFull)")
+                // FAILED
+                if self.status == .failed {
+                    delegate?.cplayerItemFailed()
+                }
+                
+                // READY TO PLAY
+                else if self.status == .readyToPlay {
+                    delegate?.cplayerItemReadyToPlay()
+                }
             }
-        }
-        else if keyPath == "playbackLikelyToKeepUp" {
-            if isPlaybackLikelyToKeepUp {
-                delegate?.cplayerItemPlaybackLikelyToKeepUp()
-                ChiefsPlayer.Log(event: "\(hash) \(#function) -> Line \(#line) (playbackLikelyToKeepUp)")
+            
+            if keyPath == "playbackBufferEmpty" {
+                if self.isPlaybackBufferEmpty {
+                    delegate?.cplayerItemPlayebackBufferEmpty()
+                    
+                    ChiefsPlayer.Log(event: "\(#function) -> Line \(#line) (playbackBufferEmpty)")
+                }
+            }
+            else if keyPath == "playbackBufferFull" {
+                if self.isPlaybackBufferFull {
+                    delegate?.cplayerItemPlaybackBufferFull()
+                    
+                    ChiefsPlayer.Log(event: "\(#function) -> Line \(#line) (playbackBufferFull)")
+                }
+            }
+            else if keyPath == "playbackLikelyToKeepUp" {
+                if self.isPlaybackLikelyToKeepUp {
+                    delegate?.cplayerItemPlaybackLikelyToKeepUp()
+                    ChiefsPlayer.Log(event: "\(#function) -> Line \(#line) (playbackLikelyToKeepUp)")
+                }
             }
         }
     }

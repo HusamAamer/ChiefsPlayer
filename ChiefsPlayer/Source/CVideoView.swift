@@ -16,7 +16,8 @@ public class CVideoView: UIView {
     //UI
     var progressView : CVideoProgressView!
     var loadingView  : CLoadingView!
-
+    var streamingView:CStreamingView?
+    
     var vLayer : AVPlayerLayer!
     @objc var player : AVQueuePlayer {return ChiefsPlayer.shared.player}
     private var timeObserver: Any?
@@ -111,8 +112,17 @@ public class CVideoView: UIView {
     
     
     
-    
-    
+    //MARK: Streaming View  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    public func addStreamingView(with text:String) {
+        if streamingView != nil {return}
+        streamingView = CStreamingView(with: bounds, and: text)
+        insertSubview(streamingView!, at: 1)
+    }
+    public func removeStreamingViewIfExist (){
+        if streamingView != nil {
+            streamingView?.removeFromSuperview()
+        }
+    }
     
     
     

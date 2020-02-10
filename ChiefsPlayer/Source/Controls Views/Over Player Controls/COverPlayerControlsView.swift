@@ -9,6 +9,7 @@
 import UIKit
 import MediaPlayer
 import GoogleCast
+import AVKit
 
 class COverPlayerControlsView: CBaseControlsView {
     
@@ -57,14 +58,21 @@ class COverPlayerControlsView: CBaseControlsView {
         
         //Setup AirPlay button
         if let airView = airView {
-            airView.showsRouteButton  = true
-            airView.showsVolumeSlider = false
             airView.sizeToFit()
-            airView.tintColor = UIColor.black
+            airView.tintColor = UIColor.white
             airView.alpha = 0.6
+            if #available(iOS 11.0, *) {
+                if let avRoute = airView as? AVRoutePickerView {
+                    avRoute.activeTintColor = UIColor.red
+                }
+            }
             airViewContainer.addSubview(airView)
-            airView.center = CGPoint(x: airViewContainer.frame.width/2, y: airViewContainer.frame.height/2)
-            rightStack.insertArrangedSubview(airViewContainer, at: 0)
+            //airView.center = CGPoint(x: airViewContainer.frame.width/2, y: airViewContainer.frame.height/2)
+            airView.translatesAutoresizingMaskIntoConstraints = false
+            airView.widthAnchor.constraint(equalTo: airViewContainer.widthAnchor).isActive = true
+            airView.heightAnchor.constraint(equalTo: airViewContainer.heightAnchor).isActive = true
+            airView.centerYAnchor.constraint(equalTo: airViewContainer.centerYAnchor).isActive = true
+            airView.centerXAnchor.constraint(equalTo: airViewContainer.centerXAnchor).isActive = true
         }
         if let castButton = castButton {
             castButton.tintColor = UIColor.white

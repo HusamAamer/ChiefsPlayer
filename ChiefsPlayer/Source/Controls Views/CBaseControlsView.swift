@@ -9,13 +9,27 @@
 import UIKit
 import MediaPlayer
 import GoogleCast
+import AVKit
 
 public class CBaseControlsView:UIView {
     
     //If chromecast manager is not initialized this causes an internal crash in chromecast sdk
     lazy var castButton:GCKUICastButton? = GCKUICastButton(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
-    //lazy var airView?     = MPVolumeView()
-    var airView:MPVolumeView?
+    
+    var airView:UIView? {
+        if #available(iOS 11.0, *) {
+            let av = AVRoutePickerView()
+            if #available(iOS 13.0, *) {
+                av.prioritizesVideoDevices = true
+            }
+            return av
+        } else {
+            let v = MPVolumeView()
+            v.showsRouteButton  = true
+            v.showsVolumeSlider = false
+            return v
+        }
+    }
     
     class func instanceFromNib<T>(with name:String) -> T {
         let podBundle = Bundle(for:self.classForCoder())
