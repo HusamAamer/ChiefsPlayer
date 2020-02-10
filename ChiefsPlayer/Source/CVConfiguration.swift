@@ -16,6 +16,17 @@ public struct CVConfiguration {
         case widescreen, //16:9  -> 1080p,720p ...
         classicTV, //4:3
         custom(CGFloat)
+        
+        var value:CGFloat {
+            switch self {
+            case .widescreen:
+                return 16/9
+            case .classicTV:
+                return 4/3
+            case .custom(let ratio):
+                return ratio
+            }
+        }
     }
     public enum ControlsStyle {
         case youtube, barStyle
@@ -40,16 +51,6 @@ public struct CVConfiguration {
     public var language : Language?
         
     public var videoRatio : VideoRatio = .widescreen
-    public var videoRatioValue : CGFloat {
-        switch videoRatio {
-        case .widescreen:
-            return 16/9
-        case .classicTV:
-            return 4/3
-        case .custom(let ratio):
-            return ratio
-        }
-    }
     
     // Initialization
     

@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import GoogleCast
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

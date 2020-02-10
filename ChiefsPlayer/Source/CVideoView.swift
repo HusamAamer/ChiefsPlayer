@@ -135,49 +135,22 @@ public class CVideoView: UIView {
     
     
     
+    /// Delegate should declare `chiefsplayerWillStart` before `chiefsplayer(isPlaying item:, at second:, of totalSeconds:)`
+    var chiefsplayerWillStartTriggered: Bool = false
     
-    var paths: [String] {
-        return [
-                "playbackLikelyToKeepUp",
-                "playbackBufferEmpty",
-                "playbackBufferFull",
-        #keyPath(player.status),
-        #keyPath(player.currentItem.status),
-        #keyPath(player.currentItem.error)
-        ]
-    }
     func startObservation() {
-        ChiefsPlayer.Log(event: "\(#file) -> \(#function)")
-        //Observe values
-        if let item = player.items().first {
-            paths.forEach({
-                item.addObserver(self,
-                                 forKeyPath: $0,
-                                 options: [.initial,.new],
-                                 context: nil)
-            })
+        ChiefsPlayer.Log(event: "\(NSStringFromClass(type(of: self))) -> \(#function)")
+        
+        if let item = player.currentItem as? CPlayerItem {
+            item.delegate = self
         }
-        // observe AVPlayerItemDidPlayToEndTime
-        NotificationCenter.default
-            .addObserver(
-                self,
-                selector: #selector(playerItemDidPlayToEndTime(_:)),
-                name: NSNotification.Name.AVPlayerItemDidPlayToEndTime,
-                object: player.currentItem)
-
-        NotificationCenter.default
-            .addObserver(
-                self,
-                selector: #selector(playerError),
-                name: NSNotification.Name.AVPlayerItemNewErrorLogEntry,
-                object: nil)
 
         let interval = CMTime(seconds: 0.5, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { [weak self] elapsedTime in
             guard let `self` = self else {return}
             self.progressView.updateSlider(elapsedTime: elapsedTime)
             
-            if let item = self.player.currentItem,
+            if let item = self.player.currentItem as? CPlayerItem,
                 !ChiefsPlayer.shared.isPlayerError,
                 self.chiefsplayerWillStartTriggered
             {
@@ -193,18 +166,8 @@ public class CVideoView: UIView {
         })
     }
     func endPlayerObserving () {
-        ChiefsPlayer.Log(event: "\(#file) -> \(#function)")
+        ChiefsPlayer.Log(event: "CVideoView \(#function)")
         if let timeObserver = timeObserver {
-            NotificationCenter.default.removeObserver(self)
-            
-            //print(player.items().first?.observationInfo as? [NSKeyValueObservation])
-            if let item = player.items().first {
-                for path in paths {
-                    item.removeObserver(self, forKeyPath: path)
-                }
-                
-            }
-            //print(player.items().first?.observationInfo as? [NSKeyValueObservation])
             player.removeTimeObserver(timeObserver)
             self.timeObserver = nil
             chiefsplayerWillStartTriggered = false
@@ -212,7 +175,6 @@ public class CVideoView: UIView {
     }
     func updateLoadingUI (with error:String)
     {
-        
         loadingView.state = .Error(msg: error)
         
         //Show error alert for debug
@@ -220,114 +182,10 @@ public class CVideoView: UIView {
         //ChiefsPlayer.shared.parentVC.present(a, animated: true, completion: nil)
     }
     
-    /// Called if error happened or player ended
-    @objc func playerItemDidPlayToEndTime(_ notification: Notification) {
-        ChiefsPlayer.Log(event: "\(#file) -> \(#function)")
-        
-        //Player has error
-        if let userInfo = notification.userInfo,
-            let error = userInfo["AVPlayerItemFailedToPlayToEndTimeErrorKey"] as? NSError
-        {
-            updateLoadingUI(with: error.localizedDescription)
-        } else {
-            updateLoadingUI(with: "")
-        }
-    }
-    @objc func playerError (error:NSError) {
-        ChiefsPlayer.Log(event: "\(#file) -> \(#function)")
-        if let error = player.currentItem!.error {
-            updateLoadingUI(with: error.localizedDescription + "\nSource: 3")
-        }
-    }
-    
-    /// Delegate should declare `chiefsplayerWillStart` before `chiefsplayer(isPlaying item:, at second:, of totalSeconds:)`
-    var chiefsplayerWillStartTriggered: Bool = false
-    override public func observeValue(
-        forKeyPath keyPath: String?,
-        of object: Any?,
-        change: [NSKeyValueChangeKey : Any]?,
-        context: UnsafeMutableRawPointer?) {
-        
-        guard let item = player.currentItem else {return}
-        
-        if keyPath == #keyPath(player.currentItem.error) {
-            ChiefsPlayer.Log(event: "\(#file) -> \(#function) -> Line \(#line) (PlayerError)")
-            if let error = item.error {
-                updateLoadingUI(with: error.localizedDescription + "\nSource: 3")
-                endPlayerObserving()
-            }
-        } else
-        if keyPath == #keyPath(player.currentItem.status) {
-            ChiefsPlayer.Log(event: "\(#file) -> \(#function) PlayerStatus = \(item.status)")
-            
-            // FAILED
-            if item.status == .failed {
-                if let error = item.error {
-                    updateLoadingUI(with: error.localizedDescription + "\nSource: 3")
-                }
-            }
-            
-            // READY TO PLAY
-            else if item.status == .readyToPlay {
-                ChiefsPlayer.shared.updateViewsAccordingTo(videoRect: vLayer.videoRect)
-                if !chiefsplayerWillStartTriggered {
-                    ChiefsPlayer.shared.delegate?.chiefsplayerWillStart(playing: ChiefsPlayer.shared.player.currentItem!)
-                    chiefsplayerWillStartTriggered = true
-                }
-            }
-        } else
-        if keyPath == #keyPath(player.status) {
-            
-            if player.status == .failed {
-                if let error = player.error {
-                    ChiefsPlayer.Log(event: "\(#file) -> \(#function) -> Line \(#line) (failed)")
-                    updateLoadingUI(with:error.localizedDescription + "\nSource: 3")
-                }
-            }
-        }
-        
-        if keyPath == "playbackBufferEmpty" {
-            
-            if item.isPlaybackBufferEmpty {
-                // Show loading progress
-                loadingView.state = .isLoading
-                ChiefsPlayer.Log(event: "\(#file) -> \(#function) -> Line \(#line) (playbackBufferEmpty)")
-                //print("isPlaybackBufferEmpty")
-            }
-        }
-        else if keyPath == "playbackBufferFull" {
-            
-            if item.isPlaybackBufferFull {
-                // Hide loading progress
-                loadingView.state = .isPlaying
-                ChiefsPlayer.Log(event: "\(#file) -> \(#function) -> Line \(#line) (playbackBufferFull)")
-                //print("player item playback buffer is full")
-            }
-        }
-        else if keyPath == "playbackLikelyToKeepUp" {
-            
-            if item.isPlaybackLikelyToKeepUp {
-                //print("isPlaybackLikelyToKeepUp")
-                ChiefsPlayer.Log(event: "\(#file) -> \(#function) -> Line \(#line) (playbackLikelyToKeepUp)")
-                loadingView.state = .isPlaying
-            }
-        }
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     deinit {
+        if timeObserver != nil {
+            endPlayerObserving()
+        }
         print("CVideoView deinit")
     }
     
@@ -339,25 +197,7 @@ public class CVideoView: UIView {
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    //xxxxxxxxxxxxxxxxxxxxxxxxxx FULLSCREEN Controls  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    //MARK: FULLSCREEN Controls  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     var onVideoControls:CBaseControlsView!
     var isFullscreen : Bool = false {
         didSet {
@@ -441,5 +281,49 @@ public class CVideoView: UIView {
             onVideoControls?.alpha = newAlpha
         }
         progressView.alpha = newAlpha
+    }
+}
+
+//MARK: Item Delegate xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+extension CVideoView: CPlayerItemDelegate {
+    public func cplayerItemReadyToPlay() {
+        ChiefsPlayer.shared.updateViewsAccordingTo(videoRect: vLayer.videoRect)
+        if !chiefsplayerWillStartTriggered {
+            ChiefsPlayer.shared.delegate?.chiefsplayerWillStart(playing: ChiefsPlayer.shared.player.currentItem  as! CPlayerItem)
+            chiefsplayerWillStartTriggered = true
+        }
+    }
+    
+    public func cplayerItemFailed() {
+        if let error = player.currentItem?.error {
+            updateLoadingUI(with: error.localizedDescription)
+        }
+    }
+    
+    public func cplayerItemPlaybackLikelyToKeepUp() {
+        loadingView.state = .isPlaying
+    }
+    
+    public func cplayerItemPlaybackBufferFull() {
+        // Hide loading progress
+        loadingView.state = .isPlaying
+    }
+    
+    public func cplayerItemPlayebackBufferEmpty() {
+        // Show loading progress
+        loadingView.state = .isLoading
+    }
+    
+    public func cplayerItemError(_ error:Error) {
+        updateLoadingUI(with: error.localizedDescription)
+        endPlayerObserving()
+    }
+    
+    public func cplayerItemDidPlayToEndTime() {
+        updateLoadingUI(with: "")
+    }
+    
+    public func cplayerItemWillStopObserving() {
+        updateLoadingUI(with: "")
     }
 }

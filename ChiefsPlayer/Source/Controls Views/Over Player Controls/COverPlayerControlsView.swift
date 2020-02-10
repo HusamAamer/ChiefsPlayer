@@ -96,7 +96,7 @@ class COverPlayerControlsView: CBaseControlsView {
     @IBAction func playBtn(_ sender: UIButton) {
         let state = CControlsManager.shared.play()
         if state != .Unknown {
-            sender.isSelected = state == .isPlaying
+            sender.isSelected = state == .isPaused
         }
     }
     @IBAction func nextBtn(_ sender: UIButton) {

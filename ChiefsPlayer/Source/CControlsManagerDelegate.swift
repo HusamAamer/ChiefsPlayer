@@ -18,11 +18,14 @@ public struct CPlayerSource {
     }
     public var resolutions:[CPlayerResolutionSource]
     public var subtitles:[CPlayerSubtitleSource]? = nil
+    public var metadata:CPlayerMetadata? = nil
     
-    
-    public init(resolutions: [CPlayerResolutionSource], subtitles:[CPlayerSubtitleSource]? = nil) {
+    public init(resolutions: [CPlayerResolutionSource],
+                subtitles:[CPlayerSubtitleSource]? = nil,
+                metadata:CPlayerMetadata? = nil) {
         self.resolutions = resolutions
         self.subtitles = subtitles
+        self.metadata = metadata
     }
 }
 public struct CPlayerResolutionSource : Codable {
@@ -44,6 +47,18 @@ public struct CPlayerSubtitleSource : Codable {
     public init(title: String, source: URL) {
         self.title = title
         self.source = source
+    }
+}
+/// Metadata to be used by player to show in chromcast for example
+public struct CPlayerMetadata : Codable {
+    public var title:String
+    public var description:String? = nil
+    public var image:URL? = nil
+    
+    public init(title: String, image: URL? = nil, description: String? = nil) {
+        self.title = title
+        self.image = image
+        self.description = description
     }
 }
 public protocol CControlsManagerDelegate : NSObjectProtocol {

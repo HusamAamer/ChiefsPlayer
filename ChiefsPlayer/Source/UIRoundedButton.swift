@@ -63,6 +63,11 @@ class UIRoundedButton: UIButton {
         layer.shadowRadius = 4.0
     }
     
+    override var isSelected: Bool {
+        didSet {
+            print("Play isSelected")
+        }
+    }
     override var isHighlighted: Bool {
         didSet {
             let newOpacity : Float = isHighlighted ? 0.6 : 0.85

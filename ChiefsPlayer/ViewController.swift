@@ -13,12 +13,11 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        ChiefsPlayer.initializeChromecastDiscovery()
     }
-    @IBAction func playBtn(_ sender: Any) {
-        let testV = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight))
-        
-        
+    
+    
+    var sources : [CPlayerSource] {
         let localVideo = Bundle.main.path(forResource: "sample", ofType: "mp4")
         let localVideoURL = URL(fileURLWithPath: localVideo!)
         let resoultion = CPlayerResolutionSource(title: "Local file", localVideoURL)
@@ -29,40 +28,62 @@ class ViewController: UIViewController {
         let url2 = URL(string: "http://stream.shabakaty.com:6001/sport/ch2/adaptive.m3u8")!
         let resoultion2 = CPlayerResolutionSource(title: "BEIN", url2)
         
+        //https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4
+        let url3 = URL(string: "https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/DesigningForGoogleCast.mp4")!
+        let resoultion3 = CPlayerResolutionSource(title: "Remote mp4", url3)
+        
+        let url4 = URL(string: "https://cndw2.shabakaty.com/m480/93F44BD4-6458-9302-3082-70A81BB5B472_video.mp4?response-content-disposition=attachment%3B%20filename%3D%22video.mp4%22&AWSAccessKeyId=RNA4592845GSJIHHTO9T&Expires=1581455750&Signature=lIi0iLXGqnVFsfcJlS%2B5Mxl%2BUig%3D")!
+        let resoultion4 = CPlayerResolutionSource(title: "1917 movie mp4", url4)
+        
         //Remote subtitle
         let subtitleURL = URL(string: "https://raw.githubusercontent.com/andreyvit/subtitle-tools/master/sample.srt")!
         
         //Local subtitle
         let subtitleFile = Bundle.main.path(forResource: "sample", ofType: "srt")
-        let localSubtitleURL = URL(fileURLWithPath: subtitleFile!)        
+        let localSubtitleURL = URL(fileURLWithPath: subtitleFile!)
         
         let remoteSubtitle = CPlayerSubtitleSource(title: "Remote url", source: subtitleURL)
         let localSubtitle = CPlayerSubtitleSource(title: "Local url", source: localSubtitleURL)
         let subtitleSources = [localSubtitle,remoteSubtitle]
-        let sources = [CPlayerSource(resolutions: [resoultion,resoultion1,resoultion2],
+        let sources = [CPlayerSource(resolutions: [resoultion4,resoultion,resoultion1,resoultion2,resoultion3],
                                      subtitles: subtitleSources)]
-
-            
-            playVideo(with: sources, and: testV)
-            CControlsManager.shared.backwardAction = { _ in
-                return SeekAction.seek(-5)
-                //                return SeekAction.open(URL(string:server + "/gen.php")!)
-            }
-            CControlsManager.shared.forwardAction = { _ in
-                return SeekAction.seek(5)
-                //                return SeekAction.open(URL(string:server + "/gen.php")!)
-            }
+        return sources
     }
-    override func viewDidAppear(_ animated: Bool) {
-            super.viewDidAppear(animated)
-            
+    @IBAction func youtubeStylePlayer(_ sender: Any) {
+        let testV = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight))
+        testV.backgroundColor = .darkGray
         
+        playVideo(with: sources, and: testV, with: .youtube)
+        CControlsManager.shared.backwardAction = { _ in
+            return SeekAction.seek(-5)
+            //                return SeekAction.open(URL(string:server + "/gen.php")!)
+        }
+        CControlsManager.shared.forwardAction = { _ in
+            return SeekAction.seek(5)
+            //                return SeekAction.open(URL(string:server + "/gen.php")!)
+        }
+    }
+    @IBAction func barStylePlayer(_ sender: Any) {
+        let testV = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight))
+        testV.backgroundColor = .gray
+        
+        playVideo(with: sources, and: testV, with: .barStyle)
+        CControlsManager.shared.backwardAction = { _ in
+            return SeekAction.seek(-5)
+            //                return SeekAction.open(URL(string:server + "/gen.php")!)
+        }
+        CControlsManager.shared.forwardAction = { _ in
+            return SeekAction.seek(5)
+            //                return SeekAction.open(URL(string:server + "/gen.php")!)
+        }
     }
 
     //////////////////////////////////////////////////////////////////
     /// Private: Play any thing
     //////////////////////////////////////////////////////////////////
-    fileprivate func playVideo (with sources:[CPlayerSource],and detailsView:UIView? = nil)
+    fileprivate func playVideo (with sources:[CPlayerSource],
+                                and detailsView:UIView? = nil,
+                                with style:CVConfiguration.ControlsStyle)
     {
         //Playing another video without changing the details view
         if detailsView == nil {
@@ -73,7 +94,7 @@ class ViewController: UIViewController {
             player.delegate = self
             player.play(from: sources, with: detailsView)
             //player.bottomSafeArea = tabBar.frame.height - screenSafeInsets.bottom
-            player.configs.controlsStyle = .barStyle
+            player.configs.controlsStyle = style
             player.configs.videoRatio = .widescreen
             CControlsManager.shared.backwardAction = { _ in
                 return SeekAction.seek(-5)

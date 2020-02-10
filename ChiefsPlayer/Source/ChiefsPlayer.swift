@@ -10,15 +10,15 @@ import UIKit
 import AVKit
 import AVFoundation
 
-public protocol ChiefsPlayerDelegate {
+public protocol ChiefsPlayerDelegate:class {
     //Called whene player get maximized or fullscreen
     func chiefsplayerStatusBarShouldBe (hidden:Bool)
     //Called only once, when player state is ReadyToPlay for the first time
-    func chiefsplayerWillStart (playing item:AVPlayerItem)
+    func chiefsplayerWillStart (playing item:CPlayerItem)
     //Called on dismiss() or playing another video
-    func chiefsplayerWillStop (playing item:AVPlayerItem)
+    func chiefsplayerWillStop (playing item:CPlayerItem)
     //Called periodically every when video is playing
-    func chiefsplayer (isPlaying item:AVPlayerItem, at second:Float, of totalSeconds:Float)
+    func chiefsplayer (isPlaying item:CPlayerItem, at second:Float, of totalSeconds:Float)
     
     func chiefsplayerAppeared ()
     func chiefsplayerDismissed()
@@ -38,9 +38,9 @@ public protocol ChiefsPlayerDelegate {
 //Make functions optional
 public extension ChiefsPlayerDelegate {
     func chiefsplayerStatusBarShouldBe (hidden:Bool) {}
-    func chiefsplayerWillStart (playing item:AVPlayerItem) {}
-    func chiefsplayerWillStop (playing item:AVPlayerItem) {}
-    func chiefsplayer (isPlaying item:AVPlayerItem, at second:Float, of totalSeconds:Float) {}
+    func chiefsplayerWillStart (playing item:CPlayerItem) {}
+    func chiefsplayerWillStop (playing item:CPlayerItem) {}
+    func chiefsplayer (isPlaying item:CPlayerItem, at second:Float, of totalSeconds:Float) {}
     func chiefsplayerAppeared () {}
     func chiefsplayerDismissed() {}
     func chiefsplayerMaximized() {}
@@ -126,6 +126,9 @@ public class ChiefsPlayer {
                     player.play()
                     videoView.startObservation()
                 }
+                
+                addCurrentSelectedSubtitles()
+                
                 break
             case .chromecast?:
                 controls.castButton?.isHidden = false
@@ -164,13 +167,13 @@ public class ChiefsPlayer {
         self.sources = sources
         let selectedResolution = selectedSource.resolutions[_selectedResolutionIndex]
         let sourceUrl = selectedResolution.source_m3u8 ?? selectedResolution.source_file!
-        ChiefsPlayer.Log(event: "\(#file) -> \(#function) - \(sourceUrl.path)")
+        ChiefsPlayer.Log(event: "\(#function) - \(sourceUrl.path)")
         
         //Add to media queue array
         mediaQueue.removeAll()
         mediaQueue.append(CMediaInfo(url: sourceUrl))
         
-        let item = AVPlayerItem(url: sourceUrl)
+        let item = CPlayerItem(url: sourceUrl)
         if player == nil {
             initPlayer(with: [item])
             
@@ -236,16 +239,18 @@ public class ChiefsPlayer {
                 replaceUserView(with: newDetailsView)
             }
             reinitPlayer(with: [item])
-            player.play()
+            if isCastingTo == .chromecast, let chromecastManager = chromecastManager {
+                chromecastManager.startCastingCurrentItem()
+            } else {
+                player.play()
+            }
             maximize()
             CControlsManager.shared.updateAllControllers()
         }
         
-        //Set subtitle
-        if let subtitles = selectedSource.subtitles, subtitles.count > 0 {
-            _selectedSubtitleIndex = _selectedSubtitleIndex ?? 0
-            let selectedSubtitle = subtitles[_selectedSubtitleIndex!]
-            addSubtitles().open(fileFromRemote: selectedSubtitle.source)
+        // Add subtitles if playing locally only
+        if isCastingTo == nil {
+            addCurrentSelectedSubtitles()
         }
     }
     func controlsForCurrentStyle() -> CBaseControlsView {
@@ -270,8 +275,8 @@ public class ChiefsPlayer {
             self.isCastingTo = airplayConnected ? .airplay : nil
         }
     }
-    func initPlayer (with items:[AVPlayerItem]) {
-        ChiefsPlayer.Log(event: "\(#file) -> \(#function)")
+    func initPlayer (with items:[CPlayerItem]) {
+        ChiefsPlayer.Log(event: "\(#function)")
         
         player = AVQueuePlayer(items: items)
         
@@ -283,14 +288,20 @@ public class ChiefsPlayer {
                     .sharedInstance()
                     .setCategory(AVAudioSession.Category.playback,
                                  mode: AVAudioSession.Mode.moviePlayback,
-                                 options: AVAudioSession.CategoryOptions.duckOthers)
+                                 options: [AVAudioSession.CategoryOptions.duckOthers,.allowAirPlay])
+                
+//                if #available(iOS 11.0, *) {
+//                    print(AVAudioSession.sharedInstance().routeSharingPolicy)
+//                } else {
+//                    // Fallback on earlier versions
+//                }
             }
         } catch {
             // report for an error
         }
     }
-    func reinitPlayer (with items:[AVPlayerItem]) {
-        ChiefsPlayer.Log(event: "\(#file) -> \(#function)")
+    func reinitPlayer (with items:[CPlayerItem]) {
+        ChiefsPlayer.Log(event: "\(#function)")
         
         announcePlayerWillStop()
         
@@ -309,8 +320,25 @@ public class ChiefsPlayer {
         videoView.startObservation()
         CControlsManager.shared.startObserving()
     }
+    /// Remove current item then insert it again
+    func reloadPlayer ()
+    {
+        let urls = mediaQueue.map({$0.url})
+        var items = [CPlayerItem]()
+        urls.forEach({items.append(CPlayerItem.init(url: $0))})
+        reinitPlayer(with: items)
+        
+        // Add subtitles if playing locally only
+        if isCastingTo == nil {
+            addCurrentSelectedSubtitles()
+        }
+
+        ChiefsPlayer.shared.player.play()
+        
+    }
+    
     private func announcePlayerWillStop () {
-        if let currentItem = player.currentItem,
+        if let currentItem = player.currentItem as? CPlayerItem,
             !isPlayerError
         {
             delegate?.chiefsplayerWillStop(playing: currentItem)
@@ -400,7 +428,7 @@ public class ChiefsPlayer {
         dY.isActive = true
         
         //Height
-        let spaceUnderVideo = screenHeight - screenWidth / configs.videoRatioValue
+        let spaceUnderVideo = screenHeight - screenWidth / configs.videoRatio.value
         dH = detailsContainer.heightAnchor
             .constraint(equalToConstant: spaceUnderVideo)
         dH.priority = .defaultHigh
@@ -410,7 +438,7 @@ public class ChiefsPlayer {
         // Ratios
         vHPortrait = videoContainer.heightAnchor
             .constraint(equalTo: videoContainer.widthAnchor,
-                        multiplier: 1/configs.videoRatioValue,
+                        multiplier: 1/configs.videoRatio.value,
                         constant: 1)
         vHPortrait.priority = .defaultLow
         vHPortrait.isActive = true
@@ -499,7 +527,6 @@ public class ChiefsPlayer {
         
         //player.pause()
         player.removeAllItems()
-        self.player = nil
         
         //Remove observers
         // done in deinit function
@@ -522,17 +549,9 @@ public class ChiefsPlayer {
         //Remove shared instance
         CControlsManager.shared._deinit()
         ChiefsPlayer.Static.instance = nil
-    }
-    
-    /// Remove current item then insert it again
-    func reloadPlayer ()
-    {
-        let urls = mediaQueue.map({$0.url})
-        var items = [AVPlayerItem]()
-        urls.forEach({items.append(AVPlayerItem.init(url: $0))})
-        reinitPlayer(with: items)
         
-        ChiefsPlayer.shared.player.play()
+        //Remove player after removing all observers and views
+        self.player = nil
     }
     
     /// Chenges videoView height according to video actual height
@@ -545,7 +564,7 @@ public class ChiefsPlayer {
         }
         var videoRatio = videoRect.width / videoRect.height
         //Set minimum video ratio
-        if videoRatio > 2.5 {videoRatio = 2.5}
+        if videoRatio > 2 {videoRatio = 2}
         //Disable current height constraint
         vHPortrait.isActive = false
         videoContainer.removeConstraint(vHPortrait)

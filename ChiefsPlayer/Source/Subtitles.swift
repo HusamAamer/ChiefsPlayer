@@ -247,6 +247,16 @@ extension ChiefsPlayer {
         }).resume()
     }
     
+    
+    /// Show selected subtitles on player
+    func addCurrentSelectedSubtitles () {
+        //Set subtitle
+        if let subtitles = selectedSource.subtitles, subtitles.count > 0 {
+            _selectedSubtitleIndex = _selectedSubtitleIndex ?? 0
+            let selectedSubtitle = subtitles[_selectedSubtitleIndex!]
+            addSubtitles().open(fileFromRemote: selectedSubtitle.source)
+        }
+    }
     /// Could be called from outside to disable subtitles
     /// or called internally to replace subtitles
     func removeCurrentSubtitles() {
@@ -315,7 +325,7 @@ extension ChiefsPlayer {
             subtitleLabel?.backgroundColor = UIColor.clear
             subtitleLabel?.textAlignment = .center
             subtitleLabel?.numberOfLines = 0
-            subtitleLabel?.font = UIFont.boldSystemFont(ofSize: UI_USER_INTERFACE_IDIOM() == .pad ? 40.0 : 22.0)
+            subtitleLabel?.font = UIFont.boldSystemFont(ofSize: UI_USER_INTERFACE_IDIOM() == .pad ? 22.0 : 12.0)
             subtitleLabel?.textColor = UIColor.white
             subtitleLabel?.numberOfLines = 0;
             subtitleLabel?.layer.shadowColor = UIColor.black.cgColor

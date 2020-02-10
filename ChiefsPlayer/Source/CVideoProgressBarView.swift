@@ -14,6 +14,9 @@ class CVideoProgressBarView: UIView {
     /// Reached playing time indicator
     var progress:CGFloat = 0 {
         didSet {
+            if progress < 0 || progress.isInfinite || progress.isNaN{
+                progress = 0
+            }
             barWidth.constant = abs(progress) * frame.width
             layoutIfNeeded()
         }
@@ -21,6 +24,9 @@ class CVideoProgressBarView: UIView {
     /// Loaded buffer bar
     var buffer:CGFloat = 0 {
         didSet {
+            if buffer < 0 || buffer.isInfinite || buffer.isNaN{
+                buffer = 0
+            }
             bufferWidth.constant = abs(buffer)
         }
     }

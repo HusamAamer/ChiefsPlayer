@@ -35,24 +35,25 @@ public class CBaseControlsView:UIView {
         fatalError("Could not load nib from bundle, Check podspec")
     }
     
+    /// Available resolutions action sheet
     func presentResolutionsAction (from buttonView:UIView) {
         var actions = [UIAlertAction]()
         let sources = ChiefsPlayer.shared.selectedSource.resolutions
         for resolutionSource in sources.enumerated() {
             let action = UIAlertAction(
                 title: resolutionSource.element.title,
-                style: .default, handler: { (_) in
-                
+                style: .default, handler: {[offset = resolutionSource.offset, element = resolutionSource.element] (_) in
+
                     ChiefsPlayer.shared.play(from: ChiefsPlayer.shared.sources,
                                          with: nil,
-                                         startWithResoultionAt: resolutionSource.offset)
-                    CControlsManager.shared.delegates.forEach({$0?.controlsPlayerDidChangeResolution(to: resolutionSource.element)})
+                                         startWithResoultionAt: offset)
+                    CControlsManager.shared.delegates.forEach({$0?.controlsPlayerDidChangeResolution(to: element)})
             })
-            
+
             if ChiefsPlayer.shared._selectedResolutionIndex == resolutionSource.offset {
                 action.setValue(true, forKey: "checked")
             }
-            
+
             actions.append(action)
         }
         

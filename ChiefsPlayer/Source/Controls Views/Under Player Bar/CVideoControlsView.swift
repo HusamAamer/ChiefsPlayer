@@ -113,7 +113,7 @@ class CVideoControlsView: CBaseControlsView {
     @IBAction func playBtn(_ sender: UIButton) {
         let state = CControlsManager.shared.play()
         if state != .Unknown {
-            sender.isSelected = state == .isPlaying
+            sender.isSelected = state == .isPaused
         }
     }
     @IBAction func nextBtn(_ sender: UIButton) {
@@ -195,7 +195,6 @@ extension CVideoControlsView : CControlsManagerDelegate {
         self.duration.text    = currentTime == "" ? "● Live" : currentTime
         self.currentTime.text = remaining   == "" ? "" : remaining
         //Update play button according to current playing state
-        self.play.isSelected  = !isPlaying
     }
     func controlsShouldAppearAboveVideo(in deviceOrientation: UIDeviceOrientation) -> Bool {
         switch deviceOrientation {

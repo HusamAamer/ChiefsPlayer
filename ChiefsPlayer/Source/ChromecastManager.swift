@@ -9,19 +9,16 @@
 import UIKit
 import GoogleCast
 import AVFoundation
-class ChromecastManager: NSObject {
-    private var sharedPlayer   = ChiefsPlayer.shared
-    private var sessionManager : GCKSessionManager!
-    private var castSession    : GCKCastSession!
-    private var progressTimer  : Timer?
+
+
+extension ChiefsPlayer {
     /// To use google cast app
     /// add app id as value to key `ChiefsPlayerChromecastAppID` in info.plist
-    private let appId : String? = Bundle.main.infoDictionary?["ChiefsPlayerChromecastAppID"] as? String
+    private static let appId : String? = Bundle.main.infoDictionary?["ChiefsPlayerChromecastAppID"] as? String
     
-    override init() {
-        super.init()
-        
-        // Initialize Google Cast SDK
+    /// Initialize Google Cast SDK before using player to reduce player launch delay
+    /// and discover devices before launching player
+    static public func initializeChromecastDiscovery() {
         var castOptions : GCKCastOptions!
         if let appId = appId, !appId.isEmpty {
             let discoveryCriteria = GCKDiscoveryCriteria(applicationID: appId)
@@ -31,49 +28,60 @@ class ChromecastManager: NSObject {
             castOptions = GCKCastOptions(discoveryCriteria: discoveryCriteria)
         }
         GCKCastContext.setSharedInstanceWith(castOptions)
+    }
+}
+
+
+
+class ChromecastManager: NSObject {
+    private var sharedPlayer   = ChiefsPlayer.shared
+    private var sessionManager : GCKSessionManager!
+    private var castSession    : GCKCastSession? {
+        get {return sessionManager?.currentCastSession}
+    }
+    private var progressTimer  : Timer?
+    
+    override init() {
+        super.init()
+        
+        if !GCKCastContext.isSharedInstanceInitialized() {
+            ChiefsPlayer.initializeChromecastDiscovery()
+        }
+        
+        #if DEBUG
         GCKLogger.sharedInstance().delegate = self
+        #endif
         sessionManager = GCKCastContext.sharedInstance().sessionManager
         sessionManager.add(self)
     }
     
-    func end (andStopCasting:Bool) {
-        progressTimer?.invalidate()
-        
-        if andStopCasting {
-            sessionManager.endSessionAndStopCasting(true)
-        }
-    }
-    deinit {
-        sessionManager.remove(self)
-    }
-}
-extension ChromecastManager: GCKLoggerDelegate {
-    func logMessage(_ message: String, at level: GCKLoggerLevel, fromFunction function: String, location: String) {
-        print("Message from Chromecast = Function:\(function) Message:\(message) Location: \(location)")
-    }
-}
-
-// MARK: - GCKSessionManagerListener
-extension ChromecastManager: GCKSessionManagerListener {
-    func sessionManager(_ sessionManager: GCKSessionManager, didStart session: GCKSession) {
-        sharedPlayer.isCastingTo = .chromecast
-        
-        self.castSession = session as? GCKCastSession
-        
-//        let urls = sharedPlayer.mediaQueue.map({$0.url})
-//        if let firstURL = urls.first {
-//            let media = mediaInfo(with: firstURL)
-//            load(media: media, byAppending: false)
-//        }
+    
+    func startCastingCurrentItem () {
         
         let selectedSource = ChiefsPlayer.shared.selectedSource
         let modifiedSource = ChiefsPlayer.shared.delegate?.chiefsplayerWillStartCasting(from: selectedSource)
         
         let selectedResolution = (modifiedSource ?? selectedSource).resolutions[ChiefsPlayer.shared._selectedResolutionIndex]
+        
+        let toPlayUrl = selectedResolution.source_m3u8 ?? selectedResolution.source_file!
+        
+        /// Check if url is local
+        if toPlayUrl.absoluteString.hasPrefix("file://") {
+            showAlert(withTitle: "Error", message: "Local content could not be streamed to Chromecast")
+            self.castSession?.end(with: .stopCasting)
+            return
+        }
+        
         var subtitleTracks:[GCKMediaTrack]?
         if let subs = selectedSource.subtitles {
             subtitleTracks = []
             for (index,sub) in subs.enumerated() {
+                
+                /// Check if url is local
+                if sub.source.absoluteString.hasPrefix("file://") {
+                    continue
+                }
+                
                 let track = GCKMediaTrack(
                     identifier: index + 1,
                     contentIdentifier: sub.source.absoluteString,
@@ -88,11 +96,47 @@ extension ChromecastManager: GCKSessionManagerListener {
         }
         
         let media = mediaInfo(with: selectedResolution.source_m3u8 ?? selectedResolution.source_file!,
-                              and:subtitleTracks)
+                              and: subtitleTracks,
+                              and: modifiedSource?.metadata)
         load(media: media, byAppending: false)
         
         //Listen to controls
-        session.remoteMediaClient?.add(self)
+        castSession?.remoteMediaClient?.add(self)
+    }
+    func end (andStopCasting:Bool) {
+        progressTimer?.invalidate()
+        sharedPlayer.isCastingTo = nil
+        
+        if andStopCasting {
+            sessionManager.endSessionAndStopCasting(true)
+        }
+    }
+    
+    
+    deinit {
+        sessionManager.remove(self)
+        progressTimer?.invalidate()
+        print("Chromecast Manager deinit")
+    }
+    
+    
+    func showAlert(withTitle title: String, message: String) {
+        let a = alert(title: title, body: message, cancel: localized("dismiss"))
+        ChiefsPlayer.shared.parentVC.present(a, animated: true, completion: nil)
+    }
+}
+extension ChromecastManager: GCKLoggerDelegate {
+    func logMessage(_ message: String, at level: GCKLoggerLevel, fromFunction function: String, location: String) {
+        print("Message from Chromecast at level = \(level.rawValue) \n Function:\(function) \n Message:\(message) \n Location: \(location)")
+    }
+}
+
+// MARK: - GCKSessionManagerListener
+extension ChromecastManager: GCKSessionManagerListener {
+    func sessionManager(_ sessionManager: GCKSessionManager, didStart session: GCKSession) {
+        sharedPlayer.isCastingTo = .chromecast
+        
+        startCastingCurrentItem()
     }
     func sessionManager(_ sessionManager: GCKSessionManager, didResumeCastSession session: GCKCastSession) {
         print("didResumeCastSession")
@@ -127,10 +171,10 @@ extension ChromecastManager: GCKSessionManagerListener {
 //        print(session.remoteMediaClient?.queueFetchItemIDs())
     }
     func sessionManager(_ sessionManager: GCKSessionManager, willEnd session: GCKSession) {
-        sharedPlayer.isCastingTo = nil
+        end(andStopCasting: false)
     }
     func sessionManager(_ sessionManager: GCKSessionManager, didEnd session: GCKSession, withError error: Error?) {
-
+                
         if error == nil {
             //if let view = UIApplication.shared.keyWindow?.rootViewController?.view {
                 //Toast.displayMessage("Session ended", for: 3, in: view)
@@ -144,12 +188,7 @@ extension ChromecastManager: GCKSessionManagerListener {
     func sessionManager(_ sessionManager: GCKSessionManager, didFailToStart session: GCKSession, withError error: Error) {
         let message = "Failed to start session:\n\(error.localizedDescription)"
         showAlert(withTitle: "Session error", message: message)
-        sharedPlayer.isCastingTo = nil
-    }
-    
-    func showAlert(withTitle title: String, message: String) {
-        let a = alert(title: title, body: message, cancel: localized("dismiss"))
-        ChiefsPlayer.shared.parentVC.present(a, animated: true, completion: nil)
+        end(andStopCasting: true)
     }
     
 }
@@ -164,17 +203,41 @@ extension ChromecastManager: GCKSessionManagerListener {
 
 
 extension ChromecastManager {
-    func mediaInfo(with mediaURL:URL,and mediaTracks:[GCKMediaTrack]?) -> GCKMediaInformation {
+    func mediaInfo(with mediaURL:URL,
+                   and mediaTracks:[GCKMediaTrack]?,
+                   and metadata:CPlayerMetadata? = nil) -> GCKMediaInformation
+    {
         
         let mediaInfoBuilder = GCKMediaInformationBuilder.init(contentURL: mediaURL)
-        mediaInfoBuilder.streamType = GCKMediaStreamType.none;
+        mediaInfoBuilder.streamType = GCKMediaStreamType.buffered;
+        mediaInfoBuilder.contentID = mediaURL.absoluteString
         
         if mediaURL.absoluteString.contains("m3u8") {
-            mediaInfoBuilder.contentType = "video/m3u8"
+            mediaInfoBuilder.contentType = "videos/m3u8"
         } else {
-            mediaInfoBuilder.contentType = "video/mp4"
+            mediaInfoBuilder.contentType = "videos/mp4"
         }
-        //mediaInfoBuilder.metadata = metadata;
+        
+        
+        let gckMetadata = GCKMediaMetadata.init(metadataType: .movie)
+        
+        if let metadata = metadata {
+            //Set title
+            gckMetadata.setString(metadata.title, forKey: kGCKMetadataKeyTitle)
+            
+            //Set image
+            if let metadataImage = metadata.image {
+                gckMetadata.addImage(GCKImage(url: metadataImage, width: 50, height: 100))
+                
+            }
+            
+            //Set description
+            if let desc = metadata.description {
+                gckMetadata.setString(desc, forKey: kGCKMetadataKeyDiscNumber)
+            }
+        }
+        
+        mediaInfoBuilder.metadata = gckMetadata
         mediaInfoBuilder.mediaTracks = mediaTracks;
         
         return mediaInfoBuilder.build()
@@ -196,7 +259,7 @@ extension ChromecastManager {
             let builder = GCKMediaQueueItemBuilder()
             builder.mediaInformation = media
             builder.autoplay = true
-            
+
             //builder.preloadTime = TimeInterval(UserDefaults.standard.integer(forKey: kPrefPreloadTime))
             let item = builder.build
             let playPosition = TimeInterval(sharedPlayer.player.currentItem?.currentTime().asFloat ?? 0)
@@ -209,10 +272,39 @@ extension ChromecastManager {
                 options.startIndex = 0
                 options.playPosition = playPosition
                 options.repeatMode = repeatMode
+
+                let builder = GCKMediaQueueItemBuilder()
+                builder.mediaInformation = media
+                builder.autoplay = true
+                builder.preloadTime = 3
+                let item = builder.build
+
                 let request = remoteMediaClient.queueLoad([item()], with: options)
                 request.delegate = self
             }
         }
+        
+//        if let remoteMediaClient = sessionManager.currentCastSession?.remoteMediaClient {
+//          let mediaQueueItemBuilder = GCKMediaQueueItemBuilder()
+//          mediaQueueItemBuilder.mediaInformation = media
+//          mediaQueueItemBuilder.autoplay = true
+//          mediaQueueItemBuilder.preloadTime = 3
+//          let mediaQueueItem = mediaQueueItemBuilder.build()
+//          if appending {
+//            let request = remoteMediaClient.queueInsert(mediaQueueItem, beforeItemWithID: kGCKMediaQueueInvalidItemID)
+//            request.delegate = self
+//          } else {
+//            let queueDataBuilder = GCKMediaQueueDataBuilder(queueType: .generic)
+//            queueDataBuilder.items = [mediaQueueItem]
+//            queueDataBuilder.repeatMode = remoteMediaClient.mediaStatus?.queueRepeatMode ?? .off
+//
+//            let mediaLoadRequestDataBuilder = GCKMediaLoadRequestDataBuilder()
+//            mediaLoadRequestDataBuilder.queueData = queueDataBuilder.build()
+//
+//            let request = remoteMediaClient.loadMedia(with: mediaLoadRequestDataBuilder.build())
+//            request.delegate = self
+//          }
+//        }
     }
 }
 
@@ -221,8 +313,9 @@ extension ChromecastManager : GCKRequestDelegate {
     func requestDidComplete(_ request: GCKRequest) {
         print("request \(Int(request.requestID)) completed")
         
-        progressTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.updateProgressUI), userInfo: nil, repeats: true)
-        
+        if progressTimer != nil {
+            progressTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.updateProgressUI), userInfo: nil, repeats: true)
+        }
         
         guard let currentItem = sharedPlayer.player.currentItem else {return}
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -260,6 +353,15 @@ extension ChromecastManager : GCKRequestDelegate {
     
     func request(_ request: GCKRequest, didFailWithError error: GCKError) {
         print("request \(Int(request.requestID)) failed with error \(error)")
+        let errorMessage = """
+        "Message": \(error.localizedDescription)
+        "Reason": \(error.localizedFailureReason ?? "Unknown")
+        "Suggestion": \(error.localizedRecoverySuggestion ?? "No suggestion")
+        "Error Code": \(error.code)
+        """
+        showAlert(withTitle: "Casting failed", message: errorMessage)
+        
+        end(andStopCasting: true)
     }
     @objc func updateProgressUI () {
         CChromecastRemoteControlFunctions.updateProgressUI()
@@ -270,8 +372,8 @@ extension ChromecastManager : GCKRequestDelegate {
         
         // Assuming player is playing
         let playerIsPlaying = true
-        let duration = AVCGlobalFuncs.timeFrom(seconds: fullTime)
-        let remaining = AVCGlobalFuncs.timeFrom(seconds: fullTime - streamPosition)
+        let duration = AVCGlobalFuncs.timeFrom(seconds: streamPosition)
+        let remaining = "-" + AVCGlobalFuncs.timeFrom(seconds: fullTime - streamPosition)
         CControlsManager.shared.delegates.forEach({$0?.controlsTimeUpdated(to: duration, remaining: remaining, andPlayer: playerIsPlaying)})
         
     }
@@ -281,10 +383,10 @@ extension ChromecastManager : GCKRequestDelegate {
 
 extension ChromecastManager:GCKRemoteMediaClientListener {
     func remoteMediaClient(_ client: GCKRemoteMediaClient, didStartMediaSessionWithID sessionID: Int) {
-        print(sessionID)
+        print(#function,sessionID)
     }
     func remoteMediaClient(_ client: GCKRemoteMediaClient, didReceive queueItems: [GCKMediaQueueItem]) {
-        print(queueItems)
+        print(#function,queueItems)
     }
     func remoteMediaClient(_ client: GCKRemoteMediaClient, didUpdate mediaStatus: GCKMediaStatus?) {
         
