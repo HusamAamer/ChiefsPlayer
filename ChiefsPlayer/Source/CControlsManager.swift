@@ -12,7 +12,7 @@ import AVFoundation
 import MediaPlayer
 import GoogleCast
 
-public typealias SeekActionBlock = (_ player:AVQueuePlayer)->(SeekAction)
+public typealias SeekActionBlock = (_ player:CAVQueuePlayer)->(SeekAction)
 public enum SeekAction {
     case none, open(URL), seek(Int)
 }
@@ -44,7 +44,7 @@ public class CControlsManager:NSObject {
     }
     
     
-    private var player : AVQueuePlayer {return ChiefsPlayer.shared.player}
+    private var player : CAVQueuePlayer {return ChiefsPlayer.shared.player}
     var delegates : [CControlsManagerDelegate?] = []
     
     override init() {
@@ -261,7 +261,10 @@ extension CControlsManager {
     }
     func subtitleBtnAction (_ sender:UIView) {
         
-        //From manual srt import
+        ////////////////////////////////////////////////
+        /// #From manual srt import
+        ////////////////////////////////////////////////
+        
         if let subs = ChiefsPlayer.shared.selectedSource.subtitles , subs.count > 0 {
             var actions = [UIAlertAction]()
             
@@ -273,6 +276,7 @@ extension CControlsManager {
                 style: .default) { (_) in
                     ChiefsPlayer.shared._selectedSubtitleIndex = nil
                     ChiefsPlayer.shared.removeCurrentSubtitles()
+                    CChromecastRemoteControlFunctions.subtitleDidChanged_srt()
             }
             if selectedSubtitle == nil {
                 noCaptionsAction.setValue(true, forKey: "checked")
@@ -287,6 +291,7 @@ extension CControlsManager {
                         
                         ChiefsPlayer.shared._selectedSubtitleIndex = thisIndex
                         ChiefsPlayer.shared.open(fileFromRemote: sub.source)
+                        CChromecastRemoteControlFunctions.subtitleDidChanged_srt()
                         
                 }
                 if thisIndex == selectedSubtitle {
@@ -305,7 +310,9 @@ extension CControlsManager {
             return
         }
         
-        //From m3u8
+        ////////////////////////////////////////////////
+        /// #From m3u8
+        ////////////////////////////////////////////////
         if let subs = player.currentItem?
             .asset.mediaSelectionGroup(forMediaCharacteristic: .legible)
         {
@@ -319,6 +326,7 @@ extension CControlsManager {
                 title: localized("no_caption"),
                 style: .default) { (_) in
                     self.player.currentItem?.select(nil, in: subs)
+                    CChromecastRemoteControlFunctions.subtitleDidChanged_m3u8()
             }
             if selected == nil {
                 noCaptionsAction.setValue(true, forKey: "checked")
@@ -332,7 +340,7 @@ extension CControlsManager {
                     style: .default) { (_) in
                         
                         self.player.currentItem?.select(sub, in: subs)
-                        
+                        CChromecastRemoteControlFunctions.subtitleDidChanged_m3u8()
                 }
                 if sub == selected {
                     action.setValue(true, forKey: "checked")

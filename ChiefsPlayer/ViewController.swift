@@ -23,25 +23,25 @@ class ViewController: UIViewController {
         let resoultion = CPlayerResolutionSource(title: "Local file", localVideoURL)
         
         
-        let url_1 = URL(string: "http://93.191.114.6:8081/vod/c92dc88f-0910-46e9-95c9-8cf6b8410ed6/aF0D88Q8sqh3bJ2/,aF0D88Q8sqh3bJ2_1080.mp4,.urlset/master.m3u8")!
-        let resoultion1_1 = CPlayerResolutionSource(title: "SC m3u8", url_1)
         
-        let url_2 = URL(string: "http://93.191.114.6/c92dc88f-0910-46e9-95c9-8cf6b8410ed6/aF0D88Q8sqh3bJ2/aF0D88Q8sqh3bJ2_1080.mp4")!
-        let resoultion1_2 = CPlayerResolutionSource(title: "SC Mp4", url_2)
+//        let url_1 = URL(string: "")!
+//        let resoultion1_1 = CPlayerResolutionSource(title: "SC m3u8", url_1)
+//
+//        let url_2 = URL(string: "")!
+//        let resoultion1_2 = CPlayerResolutionSource(title: "SC Mp4", url_2)
         
         
         let url = URL(string: "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8")!
         let resoultion1 = CPlayerResolutionSource(title: "Remote m3u8 + Subs", url)
         
-        let url2 = URL(string: "http://stream.shabakaty.com:6001/sport/ch2/adaptive.m3u8")!
-        let resoultion2 = CPlayerResolutionSource(title: "BEIN", url2)
+        let url2 = URL(string: "https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/hls/ForBiggerBlazes.m3u8")!
+        let resoultion2 = CPlayerResolutionSource(title: "ForBiggerBlazes m3u8", url2)
         
-        //https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4
         let url3 = URL(string: "https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/DesigningForGoogleCast.mp4")!
-        let resoultion3 = CPlayerResolutionSource(title: "Remote mp4", url3)
+        let resoultion3 = CPlayerResolutionSource(title: "Designing... mp4", url3)
         
-        let url4 = URL(string: "https://cndw2.shabakaty.com/m480/93F44BD4-6458-9302-3082-70A81BB5B472_video.mp4?response-content-disposition=attachment%3B%20filename%3D%22video.mp4%22&AWSAccessKeyId=RNA4592845GSJIHHTO9T&Expires=1581455750&Signature=lIi0iLXGqnVFsfcJlS%2B5Mxl%2BUig%3D")!
-        let resoultion4 = CPlayerResolutionSource(title: "1917 movie mp4", url4)
+        let url4 = URL(string: "https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/hls/DesigningForGoogleCast.m3u8")!
+        let resoultion4 = CPlayerResolutionSource(title: "Designing... m3u8", url4)
         
         //Remote subtitle
         let subtitleURL = URL(string: "https://raw.githubusercontent.com/andreyvit/subtitle-tools/master/sample.srt")!
@@ -53,8 +53,13 @@ class ViewController: UIViewController {
         let remoteSubtitle = CPlayerSubtitleSource(title: "Remote url", source: subtitleURL)
         let localSubtitle = CPlayerSubtitleSource(title: "Local url", source: localSubtitleURL)
         let subtitleSources = [localSubtitle,remoteSubtitle]
-        let sources = [CPlayerSource(resolutions: [resoultion1_1,resoultion1_2,resoultion4,resoultion,resoultion1,resoultion2,resoultion3],
-                                     subtitles: subtitleSources)]
+        
+        let metaData = CPlayerMetadata(title: "Chiefs Player",
+                                       image: URL(string: "https://scontent.fbgt1-2.fna.fbcdn.net/v/t1.0-9/28660963_1654832364585296_985124833228488704_n.png?_nc_cat=104&_nc_ohc=_Mzc7IU8FBsAX8F5yFe&_nc_ht=scontent.fbgt1-2.fna&oh=0dfaf144a15eab6997c208b015d0241e&oe=5EBC83EC"),
+                                                  description: "Description here")
+        let sources = [CPlayerSource(resolutions: [resoultion,resoultion1,resoultion4,resoultion2,resoultion3],
+                                     subtitles: nil,
+                                     metadata: metaData)]
         return sources
     }
     @IBAction func youtubeStylePlayer(_ sender: Any) {
@@ -89,6 +94,7 @@ class ViewController: UIViewController {
     //////////////////////////////////////////////////////////////////
     /// Private: Play any thing
     //////////////////////////////////////////////////////////////////
+    
     fileprivate func playVideo (with sources:[CPlayerSource],
                                 and detailsView:UIView? = nil,
                                 with style:CVConfiguration.ControlsStyle)
@@ -112,7 +118,10 @@ class ViewController: UIViewController {
                 return SeekAction.seek(5)
                 //return SeekAction.open(URL(string:server + "/gen.php")!)
             }
-            player.present(on: self.navigationController!)
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                ChiefsPlayer.shared.present(on: self.navigationController!)
+//            }
+            
         }
         
         

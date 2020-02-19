@@ -20,15 +20,17 @@ class CStreamingView: UIView {
     init(with frame:CGRect,and text: String) {
         super.init(frame: frame)
 
-        backgroundColor = .clear
-        
+        backgroundColor = UIColor.black.withAlphaComponent(0.8)
+        image.contentMode = .scaleAspectFit
         addSubview(image)
         image.translatesAutoresizingMaskIntoConstraints = false
         image.centerYAnchor.constraint(equalTo: centerYAnchor, constant: 0).isActive = true
         image.centerXAnchor.constraint(equalTo: centerXAnchor, constant: 0).isActive = true
+        image.widthAnchor.constraint(equalTo: image.heightAnchor, multiplier: 1.2).isActive = true
+        image.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.2).isActive = true
         
         label = UILabel()
-        label.textColor = .white
+        label.textColor = .gray
         label.text = text
         label.font = UIFont.systemFont(ofSize: 15)
         label.numberOfLines = 0
@@ -49,7 +51,6 @@ class CStreamingView: UIView {
     {
         let alpha = 1 - percent * 6
         label.alpha = alpha
-        ChiefsPlayer.shared.subtitleLabel?.alpha = alpha
     }
     
     

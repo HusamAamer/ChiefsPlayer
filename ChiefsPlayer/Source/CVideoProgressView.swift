@@ -23,13 +23,13 @@ class CVideoProgressView: UIView {
     init() {
         super.init(frame: .zero)
         
-        progressBar = CVideoProgressBarView()
-        addSubview(progressBar)
-        progressBar.translatesAutoresizingMaskIntoConstraints = false
-        progressBar.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        progressBar.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        progressBar.lastBaselineAnchor.constraint(equalTo: lastBaselineAnchor, constant: 0).isActive = true
-        progressBar.heightAnchor.constraint(equalToConstant: 3).isActive = true
+        self.progressBar = CVideoProgressBarView()
+        self.addSubview(self.progressBar)
+        self.progressBar.translatesAutoresizingMaskIntoConstraints = false
+        self.progressBar.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+        self.progressBar.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
+        self.progressBar.lastBaselineAnchor.constraint(equalTo: self.lastBaselineAnchor, constant: 0).isActive = true
+        self.progressBar.heightAnchor.constraint(equalToConstant: 3).isActive = true
         
         addGesture()
     }
@@ -37,7 +37,7 @@ class CVideoProgressView: UIView {
         if isChangingCurrentTime == true {
             return
         }
-        guard let item = ChiefsPlayer.shared.player.currentItem else {return}
+        guard let item = ChiefsPlayer.shared.player?.currentItem else {return}
         
         var playerDuration : TimeInterval!
         if let duration = AVCGlobalFuncs.playerItemDuration() {
@@ -51,10 +51,10 @@ class CVideoProgressView: UIView {
         let duration = CGFloat(playerDuration)
         if duration.isFinite && duration > 0 {
             let time = CGFloat(CMTimeGetSeconds(elapsedTime))
-            progressBar.progress = time / duration
+            progressBar?.progress = time / duration
             
             let bufferTime = CGFloat(item.currentBuffer())
-            progressBar.buffer = (bufferTime / duration) *  frame.width
+            progressBar?.buffer = (bufferTime / duration) *  frame.width
         }
     }
     
@@ -81,17 +81,18 @@ class CVideoProgressView: UIView {
                 return
             }
             isChangingCurrentTime = true
+            progressBar.userIsPanning = true
         }
         
         if pan.state == UIGestureRecognizer.State.ended {
             delegate.progressChanged(to: percent)
             isChangingCurrentTime = false
+            progressBar.userIsPanning = false
         }
         
         if pan.state == UIGestureRecognizer.State.changed {
             
             progressBar.progress = percent
-            progressBar.buffer = 0
         } else {
             // or something when its not moving
         }

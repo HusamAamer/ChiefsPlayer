@@ -63,7 +63,7 @@ class AVCGlobalFuncs: NSObject {
         return Bundle(url: bundleURL!)!
     }
     static func playerItemDuration() -> TimeInterval? {
-        let thePlayerItem = ChiefsPlayer.shared.player.currentItem
+        let thePlayerItem = ChiefsPlayer.shared.player?.currentItem
         if thePlayerItem?.status == .readyToPlay,
             let duration = thePlayerItem?.duration {
             if !duration.isIndefinite, duration.isValid, duration.isNumeric
@@ -172,7 +172,7 @@ public extension AVPlayerItem {
 extension AVPlayer {
     var isPlaying: Bool {return (self.rate != 0 && self.error == nil)}
 }
-extension AVQueuePlayer {
+extension CAVQueuePlayer {
     open override func pause() {
         if currentItem != nil {
             super.pause()
@@ -201,6 +201,7 @@ extension ChiefsPlayer {
 extension ChiefsPlayer {
     static func Log(event name:String) {
         ChiefsPlayer.shared.delegate?.chiefsplayerDebugLog(name)
+        debugPrint(name)
     }
 }
 
@@ -285,7 +286,14 @@ func localized (_ string:String) -> String {
     ], "pick_resolution_title": [
         "ar" : "إختر الدقة",
         "en" : "Pick resolution"
+    ],"streaming_in_progress": [
+        "ar" : "البث جـاهز",
+        "en" : "Streaming Video"
+    ],"chromecast_not_support_local": [
+        "ar" : "جهاز كرومكاست لا يدعم بث محتوى من جهازك",
+        "en" : "Chromecast doesn't support casting content saved in your device"
     ]]
+    
     
     var localeAbbrev:String = "en"
     
@@ -305,4 +313,9 @@ func localized (_ string:String) -> String {
     }
     
     return string
+}
+var isRTL:Bool {
+    get {
+        return UIApplication.shared.userInterfaceLayoutDirection == UIUserInterfaceLayoutDirection.rightToLeft
+    }
 }

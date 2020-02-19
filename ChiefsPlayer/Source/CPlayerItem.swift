@@ -20,13 +20,16 @@ public class CPlayerItem: AVPlayerItem {
         }
     }
 
+    @objc var player : AVPlayer? {
+        return ChiefsPlayer.shared.player
+    }
     private var paths: [String] {
         return [
             "playbackLikelyToKeepUp",
             "playbackBufferEmpty",
             "playbackBufferFull",
-            //#keyPath(player.status),
-            #keyPath(status),
+            #keyPath(player.status),
+            //#keyPath(status),
             #keyPath(error)
         ]
     }
@@ -46,13 +49,13 @@ public class CPlayerItem: AVPlayerItem {
                     self,
                     selector: #selector(playerItemDidPlayToEndTime(_:)),
                     name: NSNotification.Name.AVPlayerItemDidPlayToEndTime,
-                    object: self)
+                    object: nil)
 
             
             isObserving = true
         }
     }
-    func stopObserving () {
+    @objc func stopObserving () {
         if isObserving {
             for path in paths {
                 removeObserver(self, forKeyPath: path)
@@ -69,26 +72,25 @@ public class CPlayerItem: AVPlayerItem {
     }
     
     deinit {
-        debugPrint(">>>>>> Will be deinited")
+        ChiefsPlayer.Log(event: "Item will be deinited")
+        //performSelector(onMainThread: #selector(stopObserving), with: self, waitUntilDone: true)
         stopObserving()
         ChiefsPlayer.Log(event: "Item deinited")
-        debugPrint(">>>>>> Item deinited")
     }
     
     /// Called if error happened or player ended
     @objc func playerItemDidPlayToEndTime(_ notification: Notification) {
-        if let userInfo = notification.userInfo,
-            let error = userInfo["AVPlayerItemFailedToPlayToEndTimeErrorKey"] as? NSError
-        {
-            ChiefsPlayer.Log(event: "\(#function)")
-            delegate?.cplayerItemError(error)
-        } else {
-            delegate?.cplayerItemDidPlayToEndTime()
+        in_main {
+            if let userInfo = notification.userInfo,
+                let error = userInfo["AVPlayerItemFailedToPlayToEndTimeErrorKey"] as? NSError
+            {
+                ChiefsPlayer.Log(event: "\(#function) + ERROR")
+                self.delegate?.cplayerItemError(error)
+            } else {
+                ChiefsPlayer.Log(event: "\(#function) + SUCCESS")
+                self.delegate?.cplayerItemDidPlayToEndTime()
+            }
         }
-    }
-    @objc func playerError (error:NSError) {
-        ChiefsPlayer.Log(event: "\(#function) \(error.localizedDescription)")
-        delegate?.cplayerItemError(error)
     }
     override public func observeValue(
         forKeyPath keyPath: String?,
@@ -96,7 +98,6 @@ public class CPlayerItem: AVPlayerItem {
         change: [NSKeyValueChangeKey : Any]?,
         context: UnsafeMutableRawPointer?) {
         
-        debugPrint("\(#function) -> \(keyPath)")
         in_main { [weak self] in
             
             guard let `self` = self else {return}
@@ -104,24 +105,11 @@ public class CPlayerItem: AVPlayerItem {
             let delegate = self.delegate
             
             if keyPath == #keyPath(error) {
-                ChiefsPlayer.Log(event: "\(#function) -> Line \(#line) (ItemError)")
                 if let error = self.error {
+                    ChiefsPlayer.Log(event: "\(#function) -> Line \(#line) (ItemError)")
                     delegate?.cplayerItemError(error)
                 }
                 
-            } else
-            if keyPath == #keyPath(status) {
-                ChiefsPlayer.Log(event: "\(#function) -> Line \(#line) ItemStatus = \(self.status.rawValue)")
-                
-                // FAILED
-                if self.status == .failed {
-                    delegate?.cplayerItemFailed()
-                }
-                
-                // READY TO PLAY
-                else if self.status == .readyToPlay {
-                    delegate?.cplayerItemReadyToPlay()
-                }
             }
             
             if keyPath == "playbackBufferEmpty" {
@@ -149,12 +137,11 @@ public class CPlayerItem: AVPlayerItem {
 }
 
 public protocol CPlayerItemDelegate:class {
-    func cplayerItemReadyToPlay ()
-    func cplayerItemFailed()
     func cplayerItemPlaybackLikelyToKeepUp()
     func cplayerItemPlaybackBufferFull()
     func cplayerItemPlayebackBufferEmpty()
     func cplayerItemError(_ error:Error)
     func cplayerItemDidPlayToEndTime()
+    /// This might be called in background thread from deinit function
     func cplayerItemWillStopObserving()
 }

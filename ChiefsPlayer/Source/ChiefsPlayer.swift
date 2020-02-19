@@ -76,7 +76,7 @@ public class ChiefsPlayer {
     public var delegate        :ChiefsPlayerDelegate?
     public var acvStyle        :ACVStyle        = .maximized
     public var configs         :CVConfiguration = CVConfiguration()
-    public var player          :AVQueuePlayer!
+    public var player          :CAVQueuePlayer!
     public var sources         :[CPlayerSource] = []
     var _selectedSourceIndex:Int     = 0
     var _selectedResolutionIndex:Int = 0
@@ -107,18 +107,22 @@ public class ChiefsPlayer {
         get {return _currentCasting}
         set {
             
-            //Controls are nil when player is dismissing
-            if controls == nil {
-                return
-            }
+            print("isCasting was set to",newValue)
+            
+            ChiefsPlayer.Log(event: "isCasting to \(String(describing: newValue != nil ? newValue! : nil))")
+            //Prevent overriding
+            if newValue == _currentCasting {return}
+            
+            //Controls are nil when player is dismissing or before player presenting
+            let controls:CBaseControlsView? = self.controls
             
             switch newValue {
             case nil:
-                //videoView.removeStreamingViewIfExist()
+                videoView.removeStreamingViewIfExist()
                 
                 //App is not casting
-                controls.castButton?.isHidden = false
-                controls.airView?.isHidden    = false
+                controls?.castButton?.isHidden = false
+                controls?.airView?.isHidden    = false
                 //controls.subtitlesBtn.isHidden = false
                 
                 //Transition from chromecast to avplayer
@@ -130,6 +134,8 @@ public class ChiefsPlayer {
                         player.seek(to: curretCastSeekTime)
                     }
                     player.play()
+                    
+                    ///Start updating UI
                     videoView.startObservation()
                 }
                 
@@ -137,26 +143,26 @@ public class ChiefsPlayer {
                 
                 break
             case .chromecast?:
-                //videoView.addStreamingView(with: "Chromecast connected")
+                videoView.addStreamingView(with: localized("streaming_in_progress") + " Chromecast")
                 
-                controls.castButton?.isHidden = false
-                controls.airView?.isHidden    = true
+                controls?.castButton?.isHidden = false
+                controls?.airView?.isHidden    = true
                 //controls.subtitlesBtn.isHidden = true
                 
                 //Transition from avplayer to chromecast
                 if _currentCasting == nil {
                     player.pause()
+                    ///Stop updating UI
                     videoView.endPlayerObserving()
                 }
                 
                 
                 break
             case .airplay?:
-                controls.castButton?.isHidden = true
-                controls.airView?.isHidden    = false
-                
-                //videoView.addStreamingView(with: "AirPlay connected")
-                
+                videoView.addStreamingView(with: localized("streaming_in_progress") + " AirPlay")
+
+                controls?.castButton?.isHidden = true
+                controls?.airView?.isHidden    = false
                 break
             }
             _currentCasting = newValue
@@ -188,14 +194,20 @@ public class ChiefsPlayer {
         
         let item = CPlayerItem(url: sourceUrl)
         if player == nil {
-            initPlayer(with: [item])
             
             //Init chromecast
             chromecastManager = ChromecastManager()
 
+            initPlayer(with: [item])
+            
             //Init video player
             videoView = CVideoView()
             userView  = detailsView
+            
+            if let chromecastManager = chromecastManager, chromecastManager.sessionIsActive {
+                isCastingTo = .chromecast
+                chromecastManager.startCastingCurrentItem()
+            }
             
             orientationToken = NotificationCenter.default.addObserver(
                 forName: UIDevice.orientationDidChangeNotification,
@@ -239,12 +251,11 @@ public class ChiefsPlayer {
             })
             
             //Check if device already connected and streaming to AirPlay service
-            airplayChanged()
+            airplayChanged(calledProgrammatically: true)
             //Start observing airplay state change
-            airplayToken = NotificationCenter.default.addObserver(self, selector: #selector(airplayChanged),
+            airplayToken = NotificationCenter.default.addObserver(self, selector: #selector(airplayChanged(calledProgrammatically:)),
                                                                   name: AVAudioSession.routeChangeNotification,
                                                                   object: AVAudioSession.sharedInstance())
-            
             
         } else {
             //TODO: May needs improvement
@@ -252,7 +263,8 @@ public class ChiefsPlayer {
                 replaceUserView(with: newDetailsView)
             }
             reinitPlayer(with: [item])
-            if isCastingTo == .chromecast, let chromecastManager = chromecastManager {
+            if let chromecastManager = chromecastManager, chromecastManager.sessionIsActive {
+                isCastingTo = .chromecast
                 chromecastManager.startCastingCurrentItem()
             } else {
                 player.play()
@@ -274,7 +286,7 @@ public class ChiefsPlayer {
             return COverPlayerControlsView.instanceFromNib()
         }
     }
-    @objc func airplayChanged () {
+    @objc func airplayChanged (calledProgrammatically:Bool = false) {
         var airplayConnected = false
         let currentRoute = AVAudioSession.sharedInstance().currentRoute
         for output in currentRoute.outputs {
@@ -284,30 +296,33 @@ public class ChiefsPlayer {
             }
         }
         print( "airplay ::> ",airplayConnected)
+        
         in_main {
-            self.isCastingTo = airplayConnected ? .airplay : nil
+            //Change value only if there is a change to prevent calling didSet
+            if calledProgrammatically, airplayConnected == false {
+                
+            } else {
+                self.isCastingTo = airplayConnected ? .airplay : nil
+            }
         }
     }
     func initPlayer (with items:[CPlayerItem]) {
         ChiefsPlayer.Log(event: "\(#function)")
-        
-        player = AVQueuePlayer(items: items)
+
+        player = CAVQueuePlayer(with: [])
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.player.replaceCurrentItem(with: items.first!)
+        }
         
         //Enable sound when device in silent mode
         do {
-            
+
             if #available(iOS 10.0, *) {
                 try AVAudioSession
                     .sharedInstance()
                     .setCategory(AVAudioSession.Category.playback,
                                  mode: AVAudioSession.Mode.moviePlayback,
                                  options: [AVAudioSession.CategoryOptions.duckOthers,.allowAirPlay])
-                
-//                if #available(iOS 11.0, *) {
-//                    print(AVAudioSession.sharedInstance().routeSharingPolicy)
-//                } else {
-//                    // Fallback on earlier versions
-//                }
             }
         } catch {
             // report for an error
@@ -322,16 +337,17 @@ public class ChiefsPlayer {
         videoView.endPlayerObserving()
         CControlsManager.shared.endPlayerObserving()
         
-        player.pause()
-        player.removeAllItems()
-        player = nil
-        
-        initPlayer(with: items)
-        
-        videoView.vLayer.player = player
-        videoView.loadingView.state = .isLoading
-        videoView.startObservation()
-        CControlsManager.shared.startObserving()
+//        player.pause()
+//        player.removeAllItems()
+//        player = nil
+//        initPlayer(with: items)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.player.replaceCurrentItem(with: items.first!)
+            
+            self.videoView.loadingView.state = .isLoading
+            self.videoView.startObservation()
+            CControlsManager.shared.startObserving()
+        }
     }
     /// Remove current item then insert it again
     func reloadPlayer ()
@@ -538,7 +554,9 @@ public class ChiefsPlayer {
         videoView.endPlayerObserving()
         CControlsManager.shared.endPlayerObserving()
         
-        //player.pause()
+        /// # CRASH FIX:
+        /// App crashes when dismiss happenes and AirPlay & Chromecast is Active
+        (player.items() as! [CPlayerItem]).forEach({$0.stopObserving()})
         player.removeAllItems()
         
         //Remove observers
@@ -558,20 +576,20 @@ public class ChiefsPlayer {
         detailsContainer = nil
         
         delegate?.chiefsplayerDismissed()
-        
+
         //Remove shared instance
         CControlsManager.shared._deinit()
         ChiefsPlayer.Static.instance = nil
-        
+
         //Remove player after removing all observers and views
-        self.player = nil
+        //self.player = nil
     }
     
     /// Chenges videoView height according to video actual height
     ///
     /// - Parameter videoRect: Video layer frame inside videoView
     func updateViewsAccordingTo(videoRect:CGRect)
-    {
+    {   
         if videoRect.height == 0 {
             return
         }
@@ -770,6 +788,7 @@ public class ChiefsPlayer {
         }
         
         videoView.loadingView.setMinimize(with: movePercent)
+        videoView.streamingView?.setMinimize(with: movePercent)
         
         notchBackground?.alpha = 1 - movePercent * 6
         

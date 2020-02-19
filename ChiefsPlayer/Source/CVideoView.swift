@@ -18,18 +18,18 @@ public class CVideoView: UIView {
     var loadingView  : CLoadingView!
     var streamingView:CStreamingView?
     
-    var vLayer : AVPlayerLayer!
-    @objc var player : AVQueuePlayer {return ChiefsPlayer.shared.player}
+    var vLayer : AVPlayerLayer?
+    @objc var player : CAVQueuePlayer {return ChiefsPlayer.shared.player}
     private var timeObserver: Any?
     
     
     init() {
         super.init(frame: .zero)
         
-        vLayer = AVPlayerLayer(player: player)
-        layer.addSublayer(vLayer)
-        vLayer.backgroundColor = UIColor.black.cgColor
-        
+        self.vLayer = AVPlayerLayer(player: self.player)
+        self.vLayer?.videoGravity = .resizeAspect
+        self.vLayer?.backgroundColor = UIColor.black.cgColor
+        self.layer.insertSublayer(self.vLayer!, at: 0)
         
         loadingView = CLoadingView(frame: .zero)
         addSubview(loadingView)
@@ -94,7 +94,7 @@ public class CVideoView: UIView {
         case .moving(_):
             CATransaction.begin()
             CATransaction.setAnimationDuration(0)
-            vLayer.frame = bounds
+            vLayer?.frame = bounds
             CATransaction.commit()
         default:
             //Make animation with same view duration and timing
@@ -102,7 +102,7 @@ public class CVideoView: UIView {
             CATransaction.setAnimationDuration(0.15)
             CATransaction
                 .setAnimationTimingFunction(CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut))
-            vLayer.frame = bounds
+            vLayer?.frame = bounds
             CATransaction.commit()
         }
     }
@@ -117,10 +117,17 @@ public class CVideoView: UIView {
         if streamingView != nil {return}
         streamingView = CStreamingView(with: bounds, and: text)
         insertSubview(streamingView!, at: 1)
+        
+        streamingView?.translatesAutoresizingMaskIntoConstraints = false
+        streamingView?.topAnchor.constraint(equalTo: topAnchor, constant: 0).isActive = true
+        streamingView?.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0).isActive = true
+        streamingView?.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0).isActive = true
+        streamingView?.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0).isActive = true
     }
     public func removeStreamingViewIfExist (){
         if streamingView != nil {
             streamingView?.removeFromSuperview()
+            streamingView = nil
         }
     }
     
@@ -151,6 +158,8 @@ public class CVideoView: UIView {
     func startObservation() {
         ChiefsPlayer.Log(event: "\(NSStringFromClass(type(of: self))) -> \(#function)")
         
+        player.delegate = self
+        
         if let item = player.currentItem as? CPlayerItem {
             item.delegate = self
         }
@@ -178,6 +187,7 @@ public class CVideoView: UIView {
     func endPlayerObserving () {
         ChiefsPlayer.Log(event: "CVideoView \(#function)")
         if let timeObserver = timeObserver {
+            progressView.progressBar.progress = 0
             player.removeTimeObserver(timeObserver)
             self.timeObserver = nil
             chiefsplayerWillStartTriggered = false
@@ -193,10 +203,10 @@ public class CVideoView: UIView {
     }
     
     deinit {
+        print("CVideoView deinit")
         if timeObserver != nil {
             endPlayerObserving()
         }
-        print("CVideoView deinit")
     }
     
     
@@ -294,21 +304,36 @@ public class CVideoView: UIView {
     }
 }
 
-//MARK: Item Delegate xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-extension CVideoView: CPlayerItemDelegate {
-    public func cplayerItemReadyToPlay() {
-        ChiefsPlayer.shared.updateViewsAccordingTo(videoRect: vLayer.videoRect)
+//MARK: Player Delegate xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+extension CVideoView: CAVQueuePlayerDelegate {
+    public func cavqueueplayerReadyToPlay() {
+        //If player is not ready to play yet but casting started, we should pause it here
+        if let chromecastManager = ChiefsPlayer.shared.chromecastManager, chromecastManager.sessionIsActive {
+            if ChiefsPlayer.shared.isCastingTo != .chromecast {
+                print("HERE IS THE ISSUE")
+            }
+            ChiefsPlayer.shared.player.pause()
+        }
+        
+        if let vlayer = vLayer {
+            ChiefsPlayer.shared.updateViewsAccordingTo(videoRect: vlayer.videoRect)
+        }
         if !chiefsplayerWillStartTriggered {
             ChiefsPlayer.shared.delegate?.chiefsplayerWillStart(playing: ChiefsPlayer.shared.player.currentItem  as! CPlayerItem)
             chiefsplayerWillStartTriggered = true
         }
+        loadingView.state = .isPlaying
     }
     
-    public func cplayerItemFailed() {
+    public func cavqueueplayerFailed() {
         if let error = player.currentItem?.error {
             updateLoadingUI(with: error.localizedDescription)
         }
     }
+}
+
+//MARK: Item Delegate xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+extension CVideoView: CPlayerItemDelegate {
     
     public func cplayerItemPlaybackLikelyToKeepUp() {
         loadingView.state = .isPlaying
@@ -325,6 +350,7 @@ extension CVideoView: CPlayerItemDelegate {
     }
     
     public func cplayerItemError(_ error:Error) {
+        /// Handling error of player is fair enough
         updateLoadingUI(with: error.localizedDescription)
         endPlayerObserving()
     }
@@ -334,6 +360,5 @@ extension CVideoView: CPlayerItemDelegate {
     }
     
     public func cplayerItemWillStopObserving() {
-        updateLoadingUI(with: "")
     }
 }
