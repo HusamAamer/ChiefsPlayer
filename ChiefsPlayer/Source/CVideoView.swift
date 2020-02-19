@@ -155,15 +155,14 @@ public class CVideoView: UIView {
     /// Delegate should declare `chiefsplayerWillStart` before `chiefsplayer(isPlaying item:, at second:, of totalSeconds:)`
     var chiefsplayerWillStartTriggered: Bool = false
     
+    /**
+     #THIS WOULD BE CALLED EVEN IF PLAYER ITEM HAS NOT BEEN LOADED YET
+     */
     func startObservation() {
         ChiefsPlayer.Log(event: "\(NSStringFromClass(type(of: self))) -> \(#function)")
         
         player.delegate = self
         
-        if let item = player.currentItem as? CPlayerItem {
-            item.delegate = self
-        }
-
         let interval = CMTime(seconds: 0.5, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { [weak self] elapsedTime in
             guard let `self` = self else {return}
@@ -187,6 +186,7 @@ public class CVideoView: UIView {
     func endPlayerObserving () {
         ChiefsPlayer.Log(event: "CVideoView \(#function)")
         if let timeObserver = timeObserver {
+            player.delegate = nil
             progressView.progressBar.progress = 0
             player.removeTimeObserver(timeObserver)
             self.timeObserver = nil
@@ -306,6 +306,12 @@ public class CVideoView: UIView {
 
 //MARK: Player Delegate xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 extension CVideoView: CAVQueuePlayerDelegate {
+    public func cavqueueplayerItemReplaced(with item: AVPlayerItem?) {
+        if let item = player.currentItem as? CPlayerItem {
+            item.delegate = self
+        }
+    }
+    
     public func cavqueueplayerReadyToPlay() {
         //If player is not ready to play yet but casting started, we should pause it here
         if let chromecastManager = ChiefsPlayer.shared.chromecastManager, chromecastManager.sessionIsActive {

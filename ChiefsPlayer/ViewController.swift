@@ -57,7 +57,7 @@ class ViewController: UIViewController {
         let metaData = CPlayerMetadata(title: "Chiefs Player",
                                        image: URL(string: "https://scontent.fbgt1-2.fna.fbcdn.net/v/t1.0-9/28660963_1654832364585296_985124833228488704_n.png?_nc_cat=104&_nc_ohc=_Mzc7IU8FBsAX8F5yFe&_nc_ht=scontent.fbgt1-2.fna&oh=0dfaf144a15eab6997c208b015d0241e&oe=5EBC83EC"),
                                                   description: "Description here")
-        let sources = [CPlayerSource(resolutions: [resoultion,resoultion1,resoultion4,resoultion2,resoultion3],
+        let sources = [CPlayerSource(resolutions: [resoultion4,resoultion1,resoultion,resoultion2,resoultion3],
                                      subtitles: nil,
                                      metadata: metaData)]
         return sources

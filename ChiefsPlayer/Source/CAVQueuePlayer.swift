@@ -21,11 +21,12 @@ public class CAVQueuePlayer: AVQueuePlayer {
         self.init(items: items)
     }
     public override func replaceCurrentItem(with item: AVPlayerItem?) {
-        if isObserving {
-            stopObserving()
-        }
+        stopObserving()
         super.replaceCurrentItem(with: item)
-        startObserving()
+        if item != nil {
+            startObserving()
+            delegate?.cavqueueplayerItemReplaced(with:item)
+        }
     }
     deinit {
         ChiefsPlayer.Log(event: "CAVQueuePlayer will be deinited")
@@ -44,10 +45,12 @@ public class CAVQueuePlayer: AVQueuePlayer {
         })
     }
     func stopObserving () {
-        isObserving = false
-        ChiefsPlayer.Log(event: "CAVQueuePlayer \(#function)")
-        for path in paths {
-            removeObserver(self, forKeyPath: path)
+        if isObserving {
+            isObserving = false
+            ChiefsPlayer.Log(event: "CAVQueuePlayer \(#function)")
+            for path in paths {
+                removeObserver(self, forKeyPath: path)
+            }
         }
     }
     
@@ -83,4 +86,5 @@ public class CAVQueuePlayer: AVQueuePlayer {
 public protocol CAVQueuePlayerDelegate:class {
     func cavqueueplayerReadyToPlay ()
     func cavqueueplayerFailed()
+    func cavqueueplayerItemReplaced(with item:AVPlayerItem?)
 }

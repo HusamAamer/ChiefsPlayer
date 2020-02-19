@@ -164,8 +164,7 @@ extension CControlsManager {
     func performAction (action:SeekAction) {
         switch action {
         case .open(let url):
-            let playerItem = CPlayerItem(url: url)
-            ChiefsPlayer.shared.reinitPlayer(with: [playerItem])
+            ChiefsPlayer.shared.reinitPlayer(with: url)
             break
         case .seek(let seconds):
             seek(seconds: seconds)

@@ -192,13 +192,14 @@ public class ChiefsPlayer {
         mediaQueue.removeAll()
         mediaQueue.append(CMediaInfo(url: sourceUrl))
         
-        let item = CPlayerItem(url: sourceUrl)
+        //let item = CPlayerItem(url: sourceUrl)
         if player == nil {
             
             //Init chromecast
             chromecastManager = ChromecastManager()
 
-            initPlayer(with: [item])
+            initPlayer(with: [])
+            self.loadAsset(for: sourceUrl)
             
             //Init video player
             videoView = CVideoView()
@@ -262,7 +263,8 @@ public class ChiefsPlayer {
             if let newDetailsView = detailsView {
                 replaceUserView(with: newDetailsView)
             }
-            reinitPlayer(with: [item])
+            reinitPlayer(with: sourceUrl)
+            
             if let chromecastManager = chromecastManager, chromecastManager.sessionIsActive {
                 isCastingTo = .chromecast
                 chromecastManager.startCastingCurrentItem()
@@ -276,6 +278,59 @@ public class ChiefsPlayer {
         // Add subtitles if playing locally only
         if isCastingTo == nil {
             addCurrentSelectedSubtitles()
+        }
+    }
+    
+    let assetKeysRequiredToPlay = [
+        "playable"
+    ]
+    var newAsset:AVURLAsset!
+    func loadAsset (for url:URL) {
+        newAsset = AVURLAsset(url: url)
+        /*
+         Using AVAsset now runs the risk of blocking the current thread (the
+         main UI thread) whilst I/O happens to populate the properties. It's
+         prudent to defer our work until the properties we need have been loaded.
+         */
+        newAsset.loadValuesAsynchronously(forKeys: assetKeysRequiredToPlay) { [weak self] in
+            guard let `self` = self else {return}
+            
+            /*
+             The asset invokes its completion handler on an arbitrary queue.
+             To avoid multiple threads using our internal state at the same time
+             we'll elect to use the main thread at all times, let's dispatch
+             our handler to the main queue.
+             */
+            ChiefsPlayer.Log(event: "Asset loaded")
+            
+                /*
+                 Test whether the values of each of the keys we need have been
+                 successfully loaded.
+                 */
+                for key in self.assetKeysRequiredToPlay {
+                    var error: NSError?
+                    if self.newAsset.statusOfValue(forKey: key, error: &error) == .failed {
+                        let stringFormat = NSLocalizedString("error.asset_key_%@_failed.description", comment: "Can't use this AVAsset because one of it's keys failed to load")
+                        let message = String.localizedStringWithFormat(stringFormat, key)
+                        //self.handleErrorWithMessage(message, error: error)
+                        fatalError("#2")
+                        return
+                    }
+                }
+                // We can't play this asset.
+                if !self.newAsset.isPlayable || self.newAsset.hasProtectedContent {
+                    let message = NSLocalizedString("error.asset_not_playable.description", comment: "Can't use this AVAsset because it isn't playable or has protected content")
+//                    self.handleErrorWithMessage(message)
+                    fatalError("#1")
+                    return
+                }
+            
+            DispatchQueue.main.async {
+                ChiefsPlayer.Log(event: "Asset loaded #2")
+                let playerItem = CPlayerItem(asset: self.newAsset)
+                self.player.replaceCurrentItem(with: playerItem)
+            
+            }
         }
     }
     func controlsForCurrentStyle() -> CBaseControlsView {
@@ -309,10 +364,10 @@ public class ChiefsPlayer {
     func initPlayer (with items:[CPlayerItem]) {
         ChiefsPlayer.Log(event: "\(#function)")
 
-        player = CAVQueuePlayer(with: [])
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            self.player.replaceCurrentItem(with: items.first!)
-        }
+        player = CAVQueuePlayer()
+        //DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            //self.player.replaceCurrentItem(with: items.first!)
+        //}
         
         //Enable sound when device in silent mode
         do {
@@ -328,7 +383,7 @@ public class ChiefsPlayer {
             // report for an error
         }
     }
-    func reinitPlayer (with items:[CPlayerItem]) {
+    func reinitPlayer (with url:URL) {
         ChiefsPlayer.Log(event: "\(#function)")
         
         announcePlayerWillStop()
@@ -337,32 +392,26 @@ public class ChiefsPlayer {
         videoView.endPlayerObserving()
         CControlsManager.shared.endPlayerObserving()
         
-//        player.pause()
-//        player.removeAllItems()
-//        player = nil
-//        initPlayer(with: items)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.player.replaceCurrentItem(with: items.first!)
+        player.replaceCurrentItem(with: nil)
+        loadAsset(for: url)
             
-            self.videoView.loadingView.state = .isLoading
-            self.videoView.startObservation()
-            CControlsManager.shared.startObserving()
-        }
+        videoView.loadingView.state = .isLoading
+        videoView.startObservation()
+        CControlsManager.shared.startObserving()
     }
     /// Remove current item then insert it again
     func reloadPlayer ()
     {
-        let urls = mediaQueue.map({$0.url})
-        var items = [CPlayerItem]()
-        urls.forEach({items.append(CPlayerItem.init(url: $0))})
-        reinitPlayer(with: items)
+        if let url = mediaQueue.first?.url {
+            reinitPlayer(with: url)
         
-        // Add subtitles if playing locally only
-        if isCastingTo == nil {
-            addCurrentSelectedSubtitles()
-        }
+            // Add subtitles if playing locally only
+            if isCastingTo == nil {
+                addCurrentSelectedSubtitles()
+            }
 
-        ChiefsPlayer.shared.player.play()
+            ChiefsPlayer.shared.player.play()
+        }
         
     }
     
@@ -577,12 +626,14 @@ public class ChiefsPlayer {
         
         delegate?.chiefsplayerDismissed()
 
+        //Remove player after removing all observers and views
+        self.player.stopObserving()
+        self.player = nil
+        
         //Remove shared instance
         CControlsManager.shared._deinit()
         ChiefsPlayer.Static.instance = nil
 
-        //Remove player after removing all observers and views
-        //self.player = nil
     }
     
     /// Chenges videoView height according to video actual height
