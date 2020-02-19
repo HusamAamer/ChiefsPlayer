@@ -45,18 +45,18 @@ public class CVideoView: UIView {
         //bar_bottom.priority = .defaultLow //To give the high priority for on video controls (in landscape)
         bar_bottom.isActive = true
         
-        bar_leading = progressView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0)
-        bar_leading.isActive = true
+        bar_left = progressView.leftAnchor.constraint(equalTo: leftAnchor, constant: 0)
+        bar_left.isActive = true
         
-        bar_trailing = progressView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0)
-        bar_trailing.isActive = true
+        bar_width = progressView.widthAnchor.constraint(equalToConstant: screenWidth)
+        bar_width.isActive = true
         
         progressView.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
         startObservation()
     }
-    var bar_trailing : NSLayoutConstraint!
-    var bar_leading : NSLayoutConstraint!
+    var bar_width : NSLayoutConstraint!
+    var bar_left : NSLayoutConstraint!
     var bar_bottom : NSLayoutConstraint!
     
     func setupProgressViewLayout () {
@@ -64,8 +64,8 @@ public class CVideoView: UIView {
         if isFullscreen {
             let safe = screenSafeInsets
             print(safe)
-            bar_trailing.constant = -20 - safe.right
-            bar_leading.constant = 20 + safe.left
+            bar_width.constant = [screenWidth,screenHeight].max()! - 40 - safe.right
+            bar_left.constant = 20 + safe.left
             
             if ChiefsPlayer.shared.configs.controlsStyle == .youtube {
                 bar_bottom.constant = -30 - safe.bottom
@@ -73,8 +73,8 @@ public class CVideoView: UIView {
                 bar_bottom.constant = -116 - safe.bottom
             }
         } else {
-            bar_trailing.constant = 0
-            bar_leading.constant = 0
+            bar_width.constant = screenWidth
+            bar_left.constant = 0
             bar_bottom.constant = 0
         }
         layoutIfNeeded()
