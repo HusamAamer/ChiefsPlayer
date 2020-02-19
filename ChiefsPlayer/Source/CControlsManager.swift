@@ -116,23 +116,29 @@ extension CControlsManager {
         case isPlaying, isPaused, Unknown
     }
     func play () -> PlayerState {
+        var out :PlayerState = .Unknown
+        
         if ChiefsPlayer.shared.isCastingTo == .chromecast {
             let result = CChromecastRemoteControlFunctions.playPause()
             if result.Toggled, let isPlaying = result.NewStateIsPlaying {
-                return isPlaying ? .isPlaying : .isPaused
+                out = isPlaying ? .isPlaying : .isPaused
             }
         } else {
             
             if ChiefsPlayer.shared.isPlayerError {return .Unknown}
             if player.isPlaying {
                 player.pause()
-                return .isPaused
+                out = .isPaused
             } else {
                 player.play()
-                return .isPlaying
+                out = .isPlaying
             }
         }
-        return .Unknown
+        
+        //Tell observers about this change
+        delegates.forEach({$0?.controlsPlayPauseChanged(to: out == .isPlaying)})
+        
+        return out
     }
 }
 

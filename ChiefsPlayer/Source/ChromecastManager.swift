@@ -74,7 +74,7 @@ class ChromecastManager: NSObject {
         /// Check if url is local
         if toPlayUrl.absoluteString.hasPrefix("file://") {
             showAlert(withTitle: "Error", message: localized("chromecast_not_support_local"))
-            castSession?.end(with: .stopCasting)
+            end(andStopCasting: true)
             ChiefsPlayer.shared.isCastingTo = nil
             return
         }
@@ -116,7 +116,7 @@ class ChromecastManager: NSObject {
         sharedPlayer.isCastingTo = nil
         
         if andStopCasting {
-            //sessionManager.endSessionAndStopCasting(true)
+            sessionManager.endSessionAndStopCasting(true)
         }
     }
     
@@ -147,39 +147,37 @@ extension ChromecastManager: GCKSessionManagerListener {
         startCastingCurrentItem()
     }
     func sessionManager(_ sessionManager: GCKSessionManager, didResumeCastSession session: GCKCastSession) {
-        print("didResumeCastSession")
         
-        sharedPlayer.isCastingTo = .chromecast
-        startCastingCurrentItem()
-        sharedPlayer.player.pause()
-//        let urls = sharedPlayer.mediaQueue.map({$0.url})
-//        if let firstURL = urls.first {
+        ChiefsPlayer.Log(event: "didResumeCastSession \(session.remoteMediaClient?.mediaStatus?.mediaInformation?.contentID ?? "nothing streamed")")
+        let urls = sharedPlayer.mediaQueue.map({$0.url})
+        if let firstURL = urls.first {
 //            print(session.remoteMediaClient)
 //            print(session.remoteMediaClient?.mediaStatus)
 //            print(session.remoteMediaClient?.mediaStatus?.mediaInformation)
 //            print(session.remoteMediaClient?.mediaStatus?.mediaInformation?.contentID)
-//          print(session.remoteMediaClient?.mediaStatus?.mediaInformation?.streamDuration)
-//
+//            print(session.remoteMediaClient?.mediaStatus?.mediaInformation?.streamDuration)
 //            print(session.remoteMediaClient?.queueFetchItemIDs())
-//            if session.remoteMediaClient?.mediaStatus?.mediaInformation?.contentID
-//                == firstURL.absoluteString {
+            if session.remoteMediaClient?.mediaStatus?.mediaInformation?.contentID
+                == firstURL.absoluteString {
+                
+                if sharedPlayer.isCastingTo == .chromecast {
+                    print("1")
+                    ChiefsPlayer.Log(event: "1")
+                } else {
+                    print("2")
+                    sharedPlayer.isCastingTo = .chromecast
+                    startCastingCurrentItem()
+                    sharedPlayer.player.pause()
+                }
 //                sharedPlayer.isCastingTo = .chromecast
-//
-//                self.castSession = session as? GCKCastSession
 //
 //                //Listen to controls
 //                session.remoteMediaClient?.add(self)
-//            }
-//        }
+            }
+        }
     }
     func sessionManager(_ sessionManager: GCKSessionManager, didResumeSession session: GCKSession) {
         print("didResumeSession")
-//        print(session.remoteMediaClient)
-//        print(session.remoteMediaClient?.mediaStatus)
-//        print(session.remoteMediaClient?.mediaStatus?.mediaInformation)
-//        print(session.remoteMediaClient?.mediaStatus?.mediaInformation?.contentID)
-//        print(session.remoteMediaClient?.mediaStatus?.mediaInformation?.streamDuration)
-//        print(session.remoteMediaClient?.queueFetchItemIDs())
     }
     func sessionManager(_ sessionManager: GCKSessionManager, willEnd session: GCKSession) {
         end(andStopCasting: false)
@@ -199,7 +197,7 @@ extension ChromecastManager: GCKSessionManagerListener {
     func sessionManager(_ sessionManager: GCKSessionManager, didFailToStart session: GCKSession, withError error: Error) {
         let message = "Failed to start session:\n\(error.localizedDescription)"
         showAlert(withTitle: "Session error", message: message)
-        end(andStopCasting: true)
+        end(andStopCasting: false)
     }
     
 }
@@ -359,7 +357,7 @@ extension ChromecastManager : GCKRequestDelegate {
         """
         showAlert(withTitle: "Casting failed", message: errorMessage)
         
-        end(andStopCasting: true)
+        end(andStopCasting: false)
     }
     @objc func updateProgressUI () {
         if ChiefsPlayer.shared.player == nil {

@@ -292,6 +292,12 @@ func localized (_ string:String) -> String {
     ],"chromecast_not_support_local": [
         "ar" : "جهاز كرومكاست لا يدعم بث محتوى من جهازك",
         "en" : "Chromecast doesn't support casting content saved in your device"
+    ],"error.asset_key_playable_failed.description": [
+        "ar" : "لا يمكن تشغيل الرابط، الرابط قد يكون غير مدعوم",
+        "en" : "Failed to load resource"
+    ],"error.asset_not_playable.description": [
+        "ar" : "المحتوى قد يكون محمي او لا يمكن تشغيله",
+        "en" : "Could not run, It isn't playable or has protected content"
     ]]
     
     

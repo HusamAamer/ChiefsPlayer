@@ -309,16 +309,26 @@ extension CVideoView: CAVQueuePlayerDelegate {
     public func cavqueueplayerItemReplaced(with item: AVPlayerItem?) {
         if let item = player.currentItem as? CPlayerItem {
             item.delegate = self
+            
+            if let chromecastManager = ChiefsPlayer.shared.chromecastManager, chromecastManager.sessionIsActive
+            {
+                ChiefsPlayer.shared.isCastingTo = .chromecast
+                chromecastManager.startCastingCurrentItem()
+            }
         }
+        
+        // Trigger delegates to tell onVideoControls that we have subtitles or not
+        CControlsManager.shared.reloadVidoInfo()
     }
     
     public func cavqueueplayerReadyToPlay() {
         //If player is not ready to play yet but casting started, we should pause it here
         if let chromecastManager = ChiefsPlayer.shared.chromecastManager, chromecastManager.sessionIsActive {
-            if ChiefsPlayer.shared.isCastingTo != .chromecast {
-                print("HERE IS THE ISSUE")
+            if ChiefsPlayer.shared.isCastingTo == .chromecast {
+                ChiefsPlayer.shared.player.pause()
+                endPlayerObserving()
+                
             }
-            ChiefsPlayer.shared.player.pause()
         }
         
         if let vlayer = vLayer {

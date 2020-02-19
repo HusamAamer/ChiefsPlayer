@@ -205,11 +205,6 @@ public class ChiefsPlayer {
             videoView = CVideoView()
             userView  = detailsView
             
-            if let chromecastManager = chromecastManager, chromecastManager.sessionIsActive {
-                isCastingTo = .chromecast
-                chromecastManager.startCastingCurrentItem()
-            }
-            
             orientationToken = NotificationCenter.default.addObserver(
                 forName: UIDevice.orientationDidChangeNotification,
                 object: nil,queue: .main,using: { [weak self] notification in
@@ -265,12 +260,6 @@ public class ChiefsPlayer {
             }
             reinitPlayer(with: sourceUrl)
             
-            if let chromecastManager = chromecastManager, chromecastManager.sessionIsActive {
-                isCastingTo = .chromecast
-                chromecastManager.startCastingCurrentItem()
-            } else {
-                player.play()
-            }
             maximize()
             CControlsManager.shared.updateAllControllers()
         }
@@ -311,18 +300,27 @@ public class ChiefsPlayer {
                 for key in self.assetKeysRequiredToPlay {
                     var error: NSError?
                     if self.newAsset.statusOfValue(forKey: key, error: &error) == .failed {
-                        let stringFormat = NSLocalizedString("error.asset_key_%@_failed.description", comment: "Can't use this AVAsset because one of it's keys failed to load")
-                        let message = String.localizedStringWithFormat(stringFormat, key)
-                        //self.handleErrorWithMessage(message, error: error)
-                        fatalError("#2")
+                        ChiefsPlayer.Log(event: "Asset error #1")
+                        /**
+                         "Can't use this AVAsset because one of it's keys failed to load"
+                         */
+                        let message = localized("error.asset_key_%@_failed.description".replacingOccurrences(of: "%@", with: key))
+                        DispatchQueue.main.async {
+                            self.videoView.loadingView.state = .Error(msg: message)
+                        }
                         return
                     }
                 }
                 // We can't play this asset.
                 if !self.newAsset.isPlayable || self.newAsset.hasProtectedContent {
-                    let message = NSLocalizedString("error.asset_not_playable.description", comment: "Can't use this AVAsset because it isn't playable or has protected content")
-//                    self.handleErrorWithMessage(message)
-                    fatalError("#1")
+                    ChiefsPlayer.Log(event: "Asset error #2")
+                    /**
+                     "Can't use this AVAsset because it isn't playable or has protected content"
+                    */
+                    let message = localized("error.asset_not_playable.description")
+                    DispatchQueue.main.async {
+                        self.videoView.loadingView.state = .Error(msg: message)
+                    }
                     return
                 }
             
@@ -330,7 +328,6 @@ public class ChiefsPlayer {
                 ChiefsPlayer.Log(event: "Asset loaded #2")
                 let playerItem = CPlayerItem(asset: self.newAsset)
                 player.replaceCurrentItem(with: playerItem)
-            
             }
         }
     }
