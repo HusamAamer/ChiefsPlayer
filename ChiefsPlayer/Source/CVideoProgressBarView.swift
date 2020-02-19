@@ -89,6 +89,10 @@ class CVideoProgressBarView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         gradient.frame = bounds
+        
+        updateBarFrame()
+        updateBufferFrame()
+        updateOrbFrame()
     }
     func updateBarFrame () {
         let newWidth = abs(progress) * frame.width

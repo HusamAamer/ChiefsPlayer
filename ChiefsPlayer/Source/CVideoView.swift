@@ -70,7 +70,7 @@ public class CVideoView: UIView {
             if ChiefsPlayer.shared.configs.controlsStyle == .youtube {
                 bar_bottom.constant = -30 - safe.bottom
             } else {
-                bar_bottom.constant = -116 - safe.bottom
+                bar_bottom.constant = -114 - safe.bottom
             }
         } else {
             bar_width.constant = screenWidth

@@ -71,13 +71,11 @@ class CVideoControlsView: CBaseControlsView {
         //play.isSelected = !player.isPlaying
         
         //Setup AirPlay button
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-//            if let castButton = self.castButton {
-//                castButton.tintColor = UIColor.white
-//                castButton.alpha = 0.6
-//                self.rightStack.insertArrangedSubview(castButton, at: 0)
-//            }
-//        }
+        if let castButton = self.castButton {
+            castButton.tintColor = UIColor.white
+            castButton.alpha = 0.6
+            self.rightStack.insertArrangedSubview(castButton, at: 0)
+        }
         
         if let airView = airView {
             airView.sizeToFit()

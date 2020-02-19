@@ -57,7 +57,6 @@ class CVideoProgressView: UIView {
             progressBar?.buffer = (bufferTime / duration) *  frame.width
         }
     }
-    
     //Change progress
     func addGesture () {
         let drag = UIPanGestureRecognizer(

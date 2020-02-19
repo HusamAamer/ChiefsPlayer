@@ -294,6 +294,7 @@ public class ChiefsPlayer {
          */
         newAsset.loadValuesAsynchronously(forKeys: assetKeysRequiredToPlay) { [weak self] in
             guard let `self` = self else {return}
+            guard let player = self.player else {return}
             
             /*
              The asset invokes its completion handler on an arbitrary queue.
@@ -328,7 +329,7 @@ public class ChiefsPlayer {
             DispatchQueue.main.async {
                 ChiefsPlayer.Log(event: "Asset loaded #2")
                 let playerItem = CPlayerItem(asset: self.newAsset)
-                self.player.replaceCurrentItem(with: playerItem)
+                player.replaceCurrentItem(with: playerItem)
             
             }
         }

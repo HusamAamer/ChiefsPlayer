@@ -17,7 +17,7 @@ class ViewController: UIViewController {
     }
     
     
-    var sources : [CPlayerSource] {
+    var resolutions : [CPlayerResolutionSource] {
         let localVideo = Bundle.main.path(forResource: "sample", ofType: "mp4")
         let localVideoURL = URL(fileURLWithPath: localVideo!)
         let resoultion = CPlayerResolutionSource(title: "Local file", localVideoURL)
@@ -42,24 +42,44 @@ class ViewController: UIViewController {
         
         let url4 = URL(string: "https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/hls/DesigningForGoogleCast.m3u8")!
         let resoultion4 = CPlayerResolutionSource(title: "Designing... m3u8", url4)
+        return [resoultion4,resoultion1,resoultion,resoultion2,resoultion3]
+    }
+    var metaData:CPlayerMetadata {
+        let metaData = CPlayerMetadata(title: "Chiefs Player",
+        image: URL(string: "https://scontent.fbgt1-2.fna.fbcdn.net/v/t1.0-9/28660963_1654832364585296_985124833228488704_n.png?_nc_cat=104&_nc_ohc=_Mzc7IU8FBsAX8F5yFe&_nc_ht=scontent.fbgt1-2.fna&oh=0dfaf144a15eab6997c208b015d0241e&oe=5EBC83EC"),
+                   description: "Description here")
+        return metaData
+    }
+    var sources : [CPlayerSource] {
         
-        //Remote subtitle
-        let subtitleURL = URL(string: "https://raw.githubusercontent.com/andreyvit/subtitle-tools/master/sample.srt")!
-        
+        let sources = [CPlayerSource(resolutions: resolutions,
+                                     subtitles: nil,
+                                     metadata: metaData)]
+        return sources
+    }
+    var sourcesWithLocalSubtitle : [CPlayerSource] {
         //Local subtitle
         let subtitleFile = Bundle.main.path(forResource: "sample", ofType: "srt")
         let localSubtitleURL = URL(fileURLWithPath: subtitleFile!)
         
-        let remoteSubtitle = CPlayerSubtitleSource(title: "Remote url", source: subtitleURL)
         let localSubtitle = CPlayerSubtitleSource(title: "Local url", source: localSubtitleURL)
-        let subtitleSources = [localSubtitle,remoteSubtitle]
+        let subtitleSources = [localSubtitle]
         
-        let metaData = CPlayerMetadata(title: "Chiefs Player",
-                                       image: URL(string: "https://scontent.fbgt1-2.fna.fbcdn.net/v/t1.0-9/28660963_1654832364585296_985124833228488704_n.png?_nc_cat=104&_nc_ohc=_Mzc7IU8FBsAX8F5yFe&_nc_ht=scontent.fbgt1-2.fna&oh=0dfaf144a15eab6997c208b015d0241e&oe=5EBC83EC"),
-                                                  description: "Description here")
-        let sources = [CPlayerSource(resolutions: [resoultion4,resoultion1,resoultion,resoultion2,resoultion3],
-                                     subtitles: nil,
-                                     metadata: metaData)]
+        let sources = [CPlayerSource(resolutions: resolutions,
+                        subtitles: subtitleSources,
+                        metadata: metaData)]
+        return sources
+    }
+    var sourcesWithRemoteSubtitle : [CPlayerSource] {
+        //Remote subtitle
+        let subtitleURL = URL(string: "https://raw.githubusercontent.com/andreyvit/subtitle-tools/master/sample.srt")!
+        
+        let remoteSubtitle = CPlayerSubtitleSource(title: "Remote url", source: subtitleURL)
+        let subtitleSources = [remoteSubtitle]
+        
+        let sources = [CPlayerSource(resolutions: resolutions,
+                        subtitles: subtitleSources,
+                        metadata: metaData)]
         return sources
     }
     @IBAction func youtubeStylePlayer(_ sender: Any) {
@@ -91,6 +111,18 @@ class ViewController: UIViewController {
         }
     }
 
+    @IBAction func withLocalSubtitleAction(_ sender: Any) {
+        let testV = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight))
+        testV.backgroundColor = .green
+        playVideo(with: sourcesWithLocalSubtitle, and: testV, with: .barStyle)
+    }
+    
+    @IBAction func withRemoteSubtitleAction(_ sender: Any) {
+        let testV = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight))
+        testV.backgroundColor = .green
+        playVideo(with: sourcesWithRemoteSubtitle, and: testV, with: .barStyle)
+    }
+    
     //////////////////////////////////////////////////////////////////
     /// Private: Play any thing
     //////////////////////////////////////////////////////////////////
