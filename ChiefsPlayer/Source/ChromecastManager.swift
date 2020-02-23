@@ -331,9 +331,9 @@ extension ChromecastManager : GCKRequestDelegate {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //If m3u8
         ///////////////////////////////////////
-        if let subs = currentItem
+        if currentItem
             .asset
-            .mediaSelectionGroup(forMediaCharacteristic: .legible)
+            .mediaSelectionGroup(forMediaCharacteristic: .legible) != nil
         {
             CChromecastRemoteControlFunctions.subtitleDidChanged_m3u8()
         }

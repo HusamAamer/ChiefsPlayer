@@ -106,9 +106,7 @@ public class ChiefsPlayer {
     var isCastingTo     :CastingService? {
         get {return _currentCasting}
         set {
-            
-            print("isCasting was set to",newValue)
-            
+                        
             ChiefsPlayer.Log(event: "isCasting to \(String(describing: newValue != nil ? newValue! : nil))")
             //Prevent overriding
             if newValue == _currentCasting {return}
