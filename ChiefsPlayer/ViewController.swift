@@ -103,6 +103,13 @@ class ViewController: UIViewController {
             return SeekAction.seek(5)
             //                return SeekAction.open(URL(string:server + "/gen.php")!)
         }
+        
+        CControlsManager.shared.leftButtons = {
+            return [UIButton(type: .contactAdd)]
+        }
+        CControlsManager.shared.rightButtons = {
+            return [UIButton(type: .detailDisclosure)]
+        }
     }
     @IBAction func barStylePlayer(_ sender: Any) {
         let testV = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight))
@@ -117,6 +124,14 @@ class ViewController: UIViewController {
             return SeekAction.seek(5)
             //                return SeekAction.open(URL(string:server + "/gen.php")!)
         }
+        
+        CControlsManager.shared.leftButtons = {
+            return [UIButton(type: .contactAdd)]
+        }
+        CControlsManager.shared.rightButtons = {
+            return [UIButton(type: .detailDisclosure)]
+        }
+        
     }
 
     @IBAction func withLocalSubtitleAction(_ sender: Any) {

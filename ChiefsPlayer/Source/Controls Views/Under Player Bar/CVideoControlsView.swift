@@ -12,6 +12,9 @@ import GoogleCast
 
 class CVideoControlsView: CBaseControlsView {
     
+    static var ACCESSORY_VIEW_TAG = 9999
+    
+    @IBOutlet weak var leftStack: UIStackView!
     @IBOutlet weak var rightStack: UIStackView!
     
     @IBOutlet weak private var nextButton: UIButton!
@@ -152,6 +155,38 @@ class CVideoControlsView: CBaseControlsView {
 }
 
 extension CVideoControlsView : CControlsManagerDelegate {
+    func controlsLeftAccessoryViewsDidChange(to newViews: [UIView]?) {
+        
+        //Remove old views
+        let old = leftStack.arrangedSubviews.filter({$0.tag == CVideoControlsView.ACCESSORY_VIEW_TAG})
+        old.forEach({$0.removeFromSuperview()})
+        
+        //Add new views
+        if let views = newViews {
+            views.forEach({
+                let v = $0
+                v.tag = CVideoControlsView.ACCESSORY_VIEW_TAG
+                leftStack.addArrangedSubview(v)
+            })
+        }
+        
+    }
+    
+    func controlsRightAccessoryViewsDidChange(to newViews: [UIView]?) {
+        //Remove old views
+        let old = rightStack.arrangedSubviews.filter({$0.tag == CVideoControlsView.ACCESSORY_VIEW_TAG})
+        old.forEach({$0.removeFromSuperview()})
+        
+        //Add new views
+        if let views = newViews {
+            views.forEach({
+                let v = $0
+                v.tag = CVideoControlsView.ACCESSORY_VIEW_TAG
+                rightStack.insertArrangedSubview(v, at: 0)
+            })
+        }
+    }
+    
     func controlsForwardActionDidChange(to newAction: SeekAction?) {
         if let action = newAction {
             switch action {

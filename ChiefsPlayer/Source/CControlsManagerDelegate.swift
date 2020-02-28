@@ -62,6 +62,8 @@ public struct CPlayerMetadata : Codable {
     }
 }
 public protocol CControlsManagerDelegate : NSObjectProtocol {
+    func controlsLeftAccessoryViewsDidChange (to newViews:[UIView]?)
+    func controlsRightAccessoryViewsDidChange (to newViews:[UIView]?)
     func controlsForwardActionDidChange (to newAction:SeekAction?)
     func controlsBackwardActionDidChange (to newAction:SeekAction?)
     func controlsSubtitles(are available:Bool)

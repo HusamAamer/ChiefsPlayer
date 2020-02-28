@@ -13,14 +13,13 @@ import MediaPlayer
 import GoogleCast
 
 public typealias SeekActionBlock = (_ player:CAVQueuePlayer)->(SeekAction)
+public typealias AccessoryViewsBlock = ()->([UIView])
 public enum SeekAction {
     case none, open(URL), seek(Int)
 }
 public enum CastingService {
     case chromecast, airplay
 }
-
-
 
 
 
@@ -104,7 +103,19 @@ public class CControlsManager:NSObject {
         }
     }
     
-    
+    ////////////////////////////////////////////////////////////////
+    // MARK:- Right / Left accessory buttons
+    ////////////////////////////////////////////////////////////////
+    public var leftButtons : AccessoryViewsBlock? {
+        didSet {
+            delegates.forEach({$0?.controlsLeftAccessoryViewsDidChange(to: leftButtons?())})
+        }
+    }
+    public var rightButtons : AccessoryViewsBlock? {
+        didSet {
+            delegates.forEach({$0?.controlsRightAccessoryViewsDidChange(to: rightButtons?())})
+        }
+    }
 }
 
 ////////////////////////////////////////////////////////////////
@@ -230,6 +241,8 @@ extension CControlsManager {
         })
     }
     func update (controller observer:CControlsManagerDelegate) {
+        observer.controlsLeftAccessoryViewsDidChange(to: leftButtons?())
+        observer.controlsRightAccessoryViewsDidChange(to: rightButtons?())
         observer.controlsBackwardActionDidChange(to: backwardAction?(player))
         observer.controlsForwardActionDidChange(to: forwardAction?(player))
         let chiefsPlayer = ChiefsPlayer.shared

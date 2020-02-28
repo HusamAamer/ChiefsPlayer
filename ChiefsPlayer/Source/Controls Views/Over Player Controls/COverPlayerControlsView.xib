@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -149,6 +149,7 @@
                 <outlet property="currentTime" destination="PZH-yq-jdp" id="PRm-jE-c1i"/>
                 <outlet property="duration" destination="5Sc-Qv-e4A" id="Suw-6p-UsQ"/>
                 <outlet property="fullscreenBtn" destination="NxY-rk-jsc" id="ml7-f5-Eq7"/>
+                <outlet property="leftStack" destination="TEK-n7-L7P" id="9r5-FD-K3B"/>
                 <outlet property="nextButton" destination="Yd1-3f-WXh" id="LLN-3h-W00"/>
                 <outlet property="playButton" destination="xXH-Bc-xRv" id="PF5-0m-N1y"/>
                 <outlet property="prevButton" destination="Xfi-p1-Tpg" id="u4O-dL-Hmo"/>
