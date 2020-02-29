@@ -1,1 +1,2 @@
-# ChiefsPlayer\nFloating player with streaming services
+# ChiefsPlayer
+Floating player with streaming services

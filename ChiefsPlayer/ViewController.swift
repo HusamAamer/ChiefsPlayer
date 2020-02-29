@@ -50,7 +50,7 @@ class ViewController: UIViewController {
         
         let url4 = URL(string: "https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/hls/DesigningForGoogleCast.m3u8")!
         let resoultion4 = CPlayerResolutionSource(title: "Designing... m3u8", url4)
-        return [resoultion_yt1,resoultion_yt2,resoultion4,resoultion1,resoultion,resoultion2,resoultion3]
+        return [resoultion,resoultion_yt1,resoultion_yt2,resoultion4,resoultion1,resoultion2,resoultion3]
     }
     var metaData:CPlayerMetadata {
         let metaData = CPlayerMetadata(title: "Chiefs Player",

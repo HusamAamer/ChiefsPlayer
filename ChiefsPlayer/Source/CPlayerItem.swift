@@ -28,8 +28,8 @@ public class CPlayerItem: AVPlayerItem {
             "playbackLikelyToKeepUp",
             "playbackBufferEmpty",
             "playbackBufferFull",
-            #keyPath(player.status),
-            //#keyPath(status),
+            //#keyPath(player.status),
+            #keyPath(status),
             #keyPath(error)
         ]
     }
@@ -131,12 +131,17 @@ public class CPlayerItem: AVPlayerItem {
                     delegate?.cplayerItemPlaybackLikelyToKeepUp()
                     ChiefsPlayer.Log(event: "\(#function) -> Line \(#line) (playbackLikelyToKeepUp)")
                 }
+            } else if keyPath == "status" {
+                if self.status == .readyToPlay {
+                    delegate?.cplayerItemReadyToPlay()
+                }
             }
         }
     }
 }
 
 public protocol CPlayerItemDelegate:class {
+    func cplayerItemReadyToPlay()
     func cplayerItemPlaybackLikelyToKeepUp()
     func cplayerItemPlaybackBufferFull()
     func cplayerItemPlayebackBufferEmpty()

@@ -322,6 +322,19 @@ extension CVideoView: CAVQueuePlayerDelegate {
     }
     
     public func cavqueueplayerReadyToPlay() {
+        
+    }
+    
+    public func cavqueueplayerFailed() {
+        if let error = player.currentItem?.error {
+            updateLoadingUI(with: error.localizedDescription)
+        }
+    }
+}
+
+//MARK: Item Delegate xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+extension CVideoView: CPlayerItemDelegate {
+    public func cplayerItemReadyToPlay() {
         //If player is not ready to play yet but casting started, we should pause it here
         if let chromecastManager = ChiefsPlayer.shared.chromecastManager, chromecastManager.sessionIsActive {
             if ChiefsPlayer.shared.isCastingTo == .chromecast {
@@ -340,16 +353,6 @@ extension CVideoView: CAVQueuePlayerDelegate {
         }
         loadingView.state = .isPlaying
     }
-    
-    public func cavqueueplayerFailed() {
-        if let error = player.currentItem?.error {
-            updateLoadingUI(with: error.localizedDescription)
-        }
-    }
-}
-
-//MARK: Item Delegate xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-extension CVideoView: CPlayerItemDelegate {
     
     public func cplayerItemPlaybackLikelyToKeepUp() {
         loadingView.state = .isPlaying
