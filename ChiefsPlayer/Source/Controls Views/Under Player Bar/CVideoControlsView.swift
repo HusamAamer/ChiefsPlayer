@@ -9,6 +9,7 @@
 import UIKit
 import MediaPlayer
 import GoogleCast
+import AVKit
 
 class CVideoControlsView: CBaseControlsView {
     
@@ -82,8 +83,12 @@ class CVideoControlsView: CBaseControlsView {
         
         if let airView = airView {
             airView.sizeToFit()
-            airView.tintColor = UIColor.white
-            airView.alpha = 0.6
+            if #available(iOS 11.0, *) {
+                if let airView = airView as? AVRoutePickerView {
+                    airView.tintColor = UIColor.init(red: 113/255, green: 124/255, blue: 159/255, alpha: 1)
+                    airView.activeTintColor = UIColor(red:213/255, green:38/255, blue:71/255, alpha:1) //almost red
+                }
+            }
             rightStack.insertArrangedSubview(airView, at: 0)
         }
         if Device.IS_IPAD {
