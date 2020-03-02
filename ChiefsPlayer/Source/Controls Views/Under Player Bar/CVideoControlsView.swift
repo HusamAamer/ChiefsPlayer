@@ -251,7 +251,7 @@ extension CVideoControlsView : CControlsManagerDelegate {
         resolutionBtn.isHidden = resolutions.count == 0
     }
     func controlsPlayerDidChangeResolution(to resolution: CPlayerResolutionSource) {
-        resolutionBtn.setTitle(resolution.title, for: .normal)
+        resolutionBtn.setTitle(resolution.title + " ", for: .normal)
     }
     func controlsProgressBarBottomPositionValueForLandscape() -> CGFloat {
         return frame.height

@@ -77,7 +77,7 @@
                     </constraints>
                 </stackView>
                 <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" alignment="center" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="TEK-n7-L7P">
-                    <rect key="frame" x="15" y="78" width="84" height="30"/>
+                    <rect key="frame" x="15" y="78" width="92" height="30"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o8W-wJ-htn">
                             <rect key="frame" x="0.0" y="0.0" width="30" height="30"/>
@@ -90,15 +90,17 @@
                                 <action selector="subtitlesBtn:" destination="iN0-l3-epB" eventType="touchUpInside" id="r0b-L4-sHv"/>
                             </connections>
                         </button>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Aec-R0-arB">
-                            <rect key="frame" x="34" y="5" width="50" height="20"/>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Aec-R0-arB">
+                            <rect key="frame" x="34" y="5" width="58" height="20"/>
                             <color key="backgroundColor" red="0.44313725490196076" green="0.48627450980392156" blue="0.62352941176470589" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
-                                <constraint firstAttribute="width" constant="50" id="vw3-p6-sqS"/>
+                                <constraint firstAttribute="width" relation="lessThanOrEqual" constant="100" id="f1x-wP-aiB"/>
+                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="vw3-p6-sqS"/>
                                 <constraint firstAttribute="height" constant="20" id="xEe-WE-9f7"/>
                             </constraints>
-                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="10"/>
-                            <state key="normal" title="Quality">
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="12"/>
+                            <inset key="imageEdgeInsets" minX="0.0" minY="2" maxX="0.0" maxY="0.0"/>
+                            <state key="normal" title="Quality" image="resolutionArrow-1">
                                 <color key="titleColor" red="0.13" green="0.16" blue="0.23000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </state>
                             <userDefinedRuntimeAttributes>
@@ -157,6 +159,7 @@
         <image name="BackTrack-1" width="25" height="20"/>
         <image name="NextTrack-1" width="25" height="20"/>
         <image name="fullscreen-1" width="26" height="24"/>
+        <image name="resolutionArrow-1" width="16" height="16"/>
         <image name="subtitles-1" width="26" height="24"/>
     </resources>
 </document>
