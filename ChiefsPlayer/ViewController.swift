@@ -189,6 +189,18 @@ class ViewController: UIViewController {
 }
 
 extension ViewController:ChiefsPlayerDelegate {
+    func chiefsplayerAppeared() {
+        AppUtility.lockOrientation(.all)
+    }
+    func chiefsplayerDismissed() {
+        AppUtility.lockOrientation([.portraitUpsideDown,.portrait])
+    }
+    func chiefsplayerMinimized() {
+        AppUtility.lockOrientation([.portraitUpsideDown,.portrait])
+    }
+    func chiefsplayerMaximized() {
+        AppUtility.lockOrientation(.all)
+    }
 //    func chiefsplayer(isCastingTo castingService: CastingService?) {
 //        let service = castingService == nil ? "Not casting" : "\(castingService!)"
 //        FABLog(event: "Casting to : \(service)")

@@ -216,7 +216,6 @@ public class ChiefsPlayer {
                     
                     if self.acvStyle == .minimized {return}
                     let newOrientation = UIDevice.current.orientation
-                    if newOrientation == self.lastRotate {return}
                     
                     if let interfaceOrientaion = self.interfaceOrientation(for: newOrientation) {
                         self.delegate?.chiefsplayerOrientationChanged(to: interfaceOrientaion)
@@ -245,9 +244,7 @@ public class ChiefsPlayer {
                     default:
                         print("other")
                         break
-                    }
-                    
-                    self.lastRotate = newOrientation
+                    }                    
             })
             
             //Check if device already connected and streaming to AirPlay service
@@ -809,6 +806,7 @@ public class ChiefsPlayer {
         setViewsScale()
         
         let movePercent = abs(vY.constant / (parentVC.view.frame.height - bottomSafeArea))
+        print(#function,"Move percent",movePercent, "yTranslation",yTranslation)
         acvStyle = .moving(movePercent)
     }
     func dismissView (with xTranslation:CGFloat){
@@ -842,13 +840,10 @@ public class ChiefsPlayer {
         
         videoView.loadingView.setMinimize(with: movePercent)
         videoView.streamingView?.setMinimize(with: movePercent)
+        videoView.setMinimize(with: movePercent)
         
         notchBackground?.alpha = 1 - movePercent * 6
         
-        //If user is rotating device
-        if lastRotate == UIDevice.current.orientation {
-            videoView.setMinimize(with: movePercent)
-        }
         
         //parentVC.view.setNeedsLayout()
         parentVC.view.layoutIfNeeded()
@@ -890,12 +885,4 @@ public class ChiefsPlayer {
         
         delegate?.chiefsplayerMinimized()
     }
-    
-    
-    
-    //xxxxxxxxxxxxxxxxxxxxxxxxxxxx-- Rotation --xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    // If you do not use the notification var in your callback,
-    // you can safely replace it with _
-    var lastRotate:UIDeviceOrientation = UIDevice.current.orientation
-    
 }

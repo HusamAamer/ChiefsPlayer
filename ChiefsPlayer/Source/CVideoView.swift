@@ -297,6 +297,7 @@ public class CVideoView: UIView {
     func setMinimize (with percent:CGFloat)
     {
         let newAlpha = 1 - (percent * 5)// Set alpha 0 at 5th of reached move
+        print("Percent",percent, "New alpha",newAlpha)
         if !controlsAreHidden {
             onVideoControls?.alpha = newAlpha
         }
