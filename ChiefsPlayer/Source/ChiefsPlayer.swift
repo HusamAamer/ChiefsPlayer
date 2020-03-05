@@ -181,7 +181,8 @@ public class ChiefsPlayer {
         _selectedResolutionIndex    = resolutionIndex
         _selectedSubtitleIndex      = subtitleIndex
         
-        if _selectedResolutionIndex > (selectedSource.resolutions.count - 1) {
+        if _selectedSourceIndex <= (sources.count - 1),
+            _selectedResolutionIndex > (sources[sourceIndex].resolutions.count - 1) {
             ChiefsPlayer.Log(event: "\(#function) - Index out of range")
             return
         }
