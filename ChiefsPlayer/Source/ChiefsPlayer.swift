@@ -181,6 +181,11 @@ public class ChiefsPlayer {
         _selectedResolutionIndex    = resolutionIndex
         _selectedSubtitleIndex      = subtitleIndex
         
+        if _selectedResolutionIndex > (selectedSource.resolutions.count - 1) {
+            ChiefsPlayer.Log(event: "\(#function) - Index out of range")
+            return
+        }
+        
         self.sources = sources
         let selectedResolution = selectedSource.resolutions[_selectedResolutionIndex]
         let sourceUrl = selectedResolution.source_m3u8 ?? selectedResolution.source_file!

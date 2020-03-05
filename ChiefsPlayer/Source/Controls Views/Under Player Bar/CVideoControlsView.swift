@@ -74,10 +74,10 @@ class CVideoControlsView: CBaseControlsView {
         
         //play.isSelected = !player.isPlaying
         
+        let tintColor = UIColor.init(red: 113/255, green: 124/255, blue: 159/255, alpha: 1)
         //Setup AirPlay button
         if let castButton = self.castButton {
-            castButton.tintColor = UIColor.white
-            castButton.alpha = 0.6
+            castButton.tintColor = tintColor
             self.rightStack.insertArrangedSubview(castButton, at: 0)
         }
         
@@ -85,7 +85,7 @@ class CVideoControlsView: CBaseControlsView {
             airView.sizeToFit()
             if #available(iOS 11.0, *) {
                 if let airView = airView as? AVRoutePickerView {
-                    airView.tintColor = UIColor.init(red: 113/255, green: 124/255, blue: 159/255, alpha: 1)
+                    airView.tintColor = tintColor
                     airView.activeTintColor = UIColor(red:213/255, green:38/255, blue:71/255, alpha:1) //almost red
                 }
             }
