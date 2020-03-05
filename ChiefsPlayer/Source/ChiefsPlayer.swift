@@ -244,7 +244,7 @@ public class ChiefsPlayer {
                     default:
                         print("other")
                         break
-                    }                    
+                    }
             })
             
             //Check if device already connected and streaming to AirPlay service
@@ -806,7 +806,6 @@ public class ChiefsPlayer {
         setViewsScale()
         
         let movePercent = abs(vY.constant / (parentVC.view.frame.height - bottomSafeArea))
-        print(#function,"Move percent",movePercent, "yTranslation",yTranslation)
         acvStyle = .moving(movePercent)
     }
     func dismissView (with xTranslation:CGFloat){
