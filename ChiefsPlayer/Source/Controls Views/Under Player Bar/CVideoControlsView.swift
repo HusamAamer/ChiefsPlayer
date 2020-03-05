@@ -197,10 +197,10 @@ extension CVideoControlsView : CControlsManagerDelegate {
             switch action {
             case .open(_):
                 
-                nextButton.setImage(UIImage.make(name: "NextTrack-1")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                nextButton.setImage(UIImage.make(name: "BarNextTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
             case .seek(_):
-                nextButton.setImage(UIImage.make(name: "NextTrack2-1")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                nextButton.setImage(UIImage.make(name: "BarSeekPlus")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
             default:
                 return
@@ -214,10 +214,10 @@ extension CVideoControlsView : CControlsManagerDelegate {
         if let action = newAction {
             switch action {
             case .open(_):
-                prevButton.setImage(UIImage.make(name: "BackTrack-1")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                prevButton.setImage(UIImage.make(name: "BarBackTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
             case .seek(_):
-                prevButton.setImage(UIImage.make(name: "BackTrack2-1")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                prevButton.setImage(UIImage.make(name: "BarSeekMinus")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
             default:
                 return
