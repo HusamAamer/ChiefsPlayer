@@ -47,14 +47,6 @@ class COverPlayerControlsView: CBaseControlsView {
         currentTime.text = nil
         duration.text = nil
         
-        // Add bottom decoration
-        let sepHeight:CGFloat = 2
-        separator.frame.size = CGSize(width: frame.width - 30, height: sepHeight)
-        addSubview(separator)
-        separator.backgroundColor = UIColor(red:0.20, green:0.22, blue:0.31, alpha:1.00)
-        separator.autoresizingMask = [.flexibleTopMargin,.flexibleWidth]
-        separator.center = CGPoint(x: frame.width/2, y: frame.height - sepHeight/2)
-        
         //play.isSelected = !player.isPlaying
         
         //Setup AirPlay button

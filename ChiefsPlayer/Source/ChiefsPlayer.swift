@@ -227,7 +227,7 @@ public class ChiefsPlayer {
                         print("landscape")
                         self.vHLandscape.isActive = true
                         self.videoView.isFullscreen = true
-                        self.maximize()
+                        //self.maximize()
                         if shouldShowControls {
                             self.videoView.addOnVideoControls()
                         }
@@ -236,7 +236,7 @@ public class ChiefsPlayer {
                         print("Portrait")
                         self.vHLandscape.isActive = false
                         self.videoView.isFullscreen = false
-                        self.maximize()
+                        //self.maximize()
                         if !shouldShowControls {
                             self.videoView.removeOnVideoControls()
                         }
