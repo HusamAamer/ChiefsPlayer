@@ -27,6 +27,7 @@ class CVideoControlsView: CBaseControlsView {
     @IBOutlet weak var resolutionBtn: UIButton!
     var play: UIRoundedButton!
     var separator:UIView!
+    var airViewContainer: UIView!
     
     class func instanceFromNib() -> CVideoControlsView {
         return super.instanceFromNib(with: "CVideoControlsView")
@@ -66,22 +67,48 @@ class CVideoControlsView: CBaseControlsView {
         //play.isSelected = !player.isPlaying
         
         let tintColor = UIColor.init(red: 113/255, green: 124/255, blue: 159/255, alpha: 1)
-        //Setup AirPlay button
-        if let castButton = self.castButton {
-            castButton.tintColor = tintColor
-            self.rightStack.insertArrangedSubview(castButton, at: 0)
-        }
         
+        //Setup AirPlay button
         if let airView = airView {
+            
+            
             airView.sizeToFit()
+            airView.tintColor = tintColor
             if #available(iOS 11.0, *) {
                 if let airView = airView as? AVRoutePickerView {
-                    airView.tintColor = tintColor
                     airView.activeTintColor = UIColor(red:213/255, green:38/255, blue:71/255, alpha:1) //almost red
                 }
+                
+                rightStack.insertArrangedSubview(airView, at: 0)
+                airView.widthAnchor.constraint(equalToConstant: 30).isActive = true
+                airView.heightAnchor.constraint(equalToConstant: 30).isActive = true
+            } else {
+                airViewContainer = UIView()
+                airViewContainer.clipsToBounds = true
+                airViewContainer.backgroundColor = .clear
+                
+                
+                airView.sizeToFit()
+                airView.translatesAutoresizingMaskIntoConstraints = false
+                airViewContainer.addSubview(airView)
+                
+                //airView.center = CGPoint(x: airViewContainer.frame.width/2, y: airViewContainer.frame.height/2)
+                airView.widthAnchor.constraint(equalTo: airViewContainer.widthAnchor).isActive = true
+                airView.heightAnchor.constraint(equalTo: airViewContainer.heightAnchor).isActive = true
+                airView.centerYAnchor.constraint(equalTo: airViewContainer.centerYAnchor).isActive = true
+                airView.centerXAnchor.constraint(equalTo: airViewContainer.centerXAnchor).isActive = true
+                
+                rightStack.insertArrangedSubview(airViewContainer, at: 0)
+                airViewContainer.widthAnchor.constraint(equalToConstant: 30).isActive = true
+                airViewContainer.heightAnchor.constraint(equalToConstant: 30).isActive = true
             }
-            rightStack.insertArrangedSubview(airView, at: 0)
         }
+        
+        if let castButton = self.castButton {
+            castButton.tintColor = tintColor
+            rightStack.addArrangedSubview(castButton)
+        }
+        
         if Device.IS_IPAD {
             fullscreenBtn.isHidden = true
         }

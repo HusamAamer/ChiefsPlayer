@@ -64,7 +64,7 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="QuO-X6-NrU">
-                    <rect key="frame" x="253" y="12" width="93" height="25"/>
+                    <rect key="frame" x="273" y="12" width="73" height="25"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pWj-Gh-ZiK">
                             <rect key="frame" x="0.0" y="0.0" width="35" height="25"/>
@@ -75,9 +75,9 @@
                             </constraints>
                         </view>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NxY-rk-jsc">
-                            <rect key="frame" x="43" y="0.0" width="50" height="25"/>
+                            <rect key="frame" x="43" y="0.0" width="30" height="25"/>
                             <constraints>
-                                <constraint firstAttribute="width" constant="50" id="2hW-xk-RUh"/>
+                                <constraint firstAttribute="width" constant="30" id="2hW-xk-RUh"/>
                                 <constraint firstAttribute="height" constant="25" id="da8-TM-tbh"/>
                             </constraints>
                             <state key="normal" image="fullscreen"/>

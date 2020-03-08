@@ -58,19 +58,28 @@ class COverPlayerControlsView: CBaseControlsView {
                 if let avRoute = airView as? AVRoutePickerView {
                     avRoute.activeTintColor = UIColor.red
                 }
+                rightStack.addArrangedSubview(airView)
+                airView.widthAnchor.constraint(equalToConstant: 30).isActive = true
+                airView.heightAnchor.constraint(equalToConstant: 30).isActive = true
+            } else {
+                airView.translatesAutoresizingMaskIntoConstraints = false
+                airViewContainer.clipsToBounds = true
+                airViewContainer.addSubview(airView)
+                //airView.center = CGPoint(x: airViewContainer.frame.width/2, y: airViewContainer.frame.height/2)
+                airView.widthAnchor.constraint(equalTo: airViewContainer.widthAnchor).isActive = true
+                airView.heightAnchor.constraint(equalTo: airViewContainer.heightAnchor).isActive = true
+                airView.centerYAnchor.constraint(equalTo: airViewContainer.centerYAnchor).isActive = true
+                airView.centerXAnchor.constraint(equalTo: airViewContainer.centerXAnchor).isActive = true
+                
+                rightStack.insertArrangedSubview(airViewContainer, at: 0)
+                airViewContainer.widthAnchor.constraint(equalToConstant: 30).isActive = true
+                airViewContainer.heightAnchor.constraint(equalToConstant: 30).isActive = true
             }
-            airViewContainer.addSubview(airView)
-            //airView.center = CGPoint(x: airViewContainer.frame.width/2, y: airViewContainer.frame.height/2)
-            airView.translatesAutoresizingMaskIntoConstraints = false
-            airView.widthAnchor.constraint(equalTo: airViewContainer.widthAnchor).isActive = true
-            airView.heightAnchor.constraint(equalTo: airViewContainer.heightAnchor).isActive = true
-            airView.centerYAnchor.constraint(equalTo: airViewContainer.centerYAnchor).isActive = true
-            airView.centerXAnchor.constraint(equalTo: airViewContainer.centerXAnchor).isActive = true
         }
         if let castButton = castButton {
             castButton.tintColor = UIColor.white
             castButton.alpha = 0.6
-            rightStack.insertArrangedSubview(castButton, at: 1)
+            rightStack.addArrangedSubview(castButton)
         }
         
         
