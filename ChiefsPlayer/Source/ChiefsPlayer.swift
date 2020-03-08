@@ -737,7 +737,7 @@ public class ChiefsPlayer {
             if acvStyle == .maximized {
                 onMaxFrame = pan.view!.bounds
             }
-            onTouchBeganFrame = pan.view!.bounds
+            onTouchBeganFrame = pan.view!.frame.insetBy(dx: 0, dy: -topSafeArea)
         }
         
         if pan.state == UIGestureRecognizer.State.ended {
@@ -803,10 +803,12 @@ public class ChiefsPlayer {
         }
     }
     func minimizeView (with yTranslation:CGFloat){
-        let y = onTouchBeganFrame.minY + yTranslation
+        var y = onTouchBeganFrame.minY + yTranslation
         
         //don't move videoView off of the screen
-        if y < 0 {return}
+        if y < 0 {
+            y = 0
+        }
         
         vY.constant = y
         
