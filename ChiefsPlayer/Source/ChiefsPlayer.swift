@@ -227,6 +227,7 @@ public class ChiefsPlayer {
                         print("landscape")
                         self.vHLandscape.isActive = true
                         self.videoView.isFullscreen = true
+                        //self.vY.constant = self.topSafeArea
                         //self.maximize()
                         if shouldShowControls {
                             self.videoView.addOnVideoControls()
@@ -236,6 +237,7 @@ public class ChiefsPlayer {
                         print("Portrait")
                         self.vHLandscape.isActive = false
                         self.videoView.isFullscreen = false
+                        //self.vY.constant = self.topSafeArea
                         //self.maximize()
                         if !shouldShowControls {
                             self.videoView.removeOnVideoControls()
@@ -496,9 +498,14 @@ public class ChiefsPlayer {
         
         // Y
         
-        vY = videoContainer.topAnchor
+        if #available(iOS 11.0, *) {
+            //For notch devices
+            vY = videoContainer.topAnchor
+                .constraint(equalTo: parentVC.view.safeAreaLayoutGuide.topAnchor)
+        } else {
+            vY = videoContainer.topAnchor
             .constraint(equalTo: parentVC.view.topAnchor)
-        vY.constant = topSafeArea
+        }
         vY.isActive = true
         dY = detailsContainer.topAnchor
             .constraint(equalTo: videoContainer.bottomAnchor)
@@ -699,24 +706,29 @@ public class ChiefsPlayer {
     }
     
     private var topSafeArea:CGFloat {
-        var value:CGFloat?
         if #available(iOS 11.0, *) {
-            if Device.HAS_NOTCH {
-                value = UIApplication.shared.keyWindow?.safeAreaInsets.top
-            }
+            return UIApplication.shared.keyWindow?.safeAreaInsets.top ?? 0
         }
-        return value ?? 0
+        return 0
     }
-    public var bottomSafeArea:CGFloat = 0 {
-        didSet {
-            var newValue = bottomSafeArea
+    
+    /// Additional space under player in minimized status
+    public var additionalBottomSafeArea:CGFloat?
+    
+    private var bottomSafeArea:CGFloat {
+        set {}
+        get {
+            var value:CGFloat = 0
             if #available(iOS 11.0, *) {
-                newValue += UIApplication.shared.keyWindow?
-                    .safeAreaInsets.bottom ?? 0
+                value += UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0
             }
-            bottomSafeArea = newValue
+            if let additional = additionalBottomSafeArea {
+                value += additional
+            }
+            return value
         }
     }
+    
     let minimumScale  :CGFloat = 0.4
     var onMaxFrame:CGRect  = .zero
     var onTouchBeganFrame:CGRect  = .zero
@@ -727,9 +739,9 @@ public class ChiefsPlayer {
         
         if pan.state == UIGestureRecognizer.State.began {
             if acvStyle == .maximized {
-                onMaxFrame = pan.view!.frame
+                onMaxFrame = pan.view!.bounds
             }
-            onTouchBeganFrame = pan.view!.frame
+            onTouchBeganFrame = pan.view!.bounds
         }
         
         if pan.state == UIGestureRecognizer.State.ended {
@@ -818,14 +830,15 @@ public class ChiefsPlayer {
     }
     func setViewsScale () {
         if !Device.HAS_NOTCH {
-            if vY.constant <= topSafeArea {
+            let statusBarHeight = UIApplication.shared.statusBarFrame.height
+            if vY.constant <= statusBarHeight {
                 delegate?.chiefsplayerStatusBarShouldBe(hidden: true)
             } else {
                 delegate?.chiefsplayerStatusBarShouldBe(hidden: false)
             }
         }
-        let lastY = (parentVC.view.frame.height - bottomSafeArea - topSafeArea) - minimumScale * onMaxFrame.height
-        let movePercent = abs((vY.constant - topSafeArea) / lastY)
+        let lastY = (parentVC.view.frame.height - bottomSafeArea) - minimumScale * onMaxFrame.height
+        let movePercent = abs(vY.constant / lastY)
         let newScale = 1 - (movePercent * (1 - minimumScale))
         vW.constant = parentVC.view.frame.width * newScale
         dY.constant = bottomSafeArea * movePercent
@@ -855,7 +868,7 @@ public class ChiefsPlayer {
         UIView.animate(
             withDuration: 0.15, delay: 0, options: [.curveEaseOut,.allowAnimatedContent,.allowUserInteraction],
             animations: {
-                self.vY.constant = self.topSafeArea
+                self.vY.constant = 0
                 self.setViewsScale()
                 self.parentVC.view.layoutIfNeeded()
                 self.dY.constant = newdY
@@ -868,7 +881,7 @@ public class ChiefsPlayer {
     public func minimize () {
         acvStyle = .minimized
         videoView.progressView.isUserInteractionEnabled = false
-        let y = parentVC.view.bounds.height - bottomSafeArea - onMaxFrame.height * minimumScale
+        let y = parentVC.view.bounds.height - bottomSafeArea - topSafeArea - onMaxFrame.height * minimumScale
         UIView.animate(
             withDuration: 0.15, delay: 0, options: [.curveEaseOut,.allowAnimatedContent,.allowUserInteraction],
             animations: {
