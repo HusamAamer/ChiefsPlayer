@@ -37,6 +37,11 @@ public struct CVConfiguration {
     public enum Language:String {
         case automatic = "automatic",arabic = "ar", english = "en"
     }
+    public struct ProgressBarStyle {
+        var defualtHeight : CGFloat = 3
+        var panningHeight : CGFloat = 6
+        var showsLivePanDuration = false
+    }
     
     // MARK: - Properties
     
@@ -51,6 +56,8 @@ public struct CVConfiguration {
     public var language : Language?
         
     public var videoRatio : VideoRatio = .widescreen
+    
+    public var progressBarStyle : ProgressBarStyle = .init()
     
     // Initialization
     

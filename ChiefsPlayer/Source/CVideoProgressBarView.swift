@@ -45,12 +45,17 @@ class CVideoProgressBarView: UIView {
         }
         set{}
     }
+    private var heightConstraint:NSLayoutConstraint!
     
     override init(frame: CGRect) {
         super.init(frame: .zero)
         layer.cornerRadius = 2
         
         backgroundColor = UIColor(red: 0.2147547934, green: 0.2642100249, blue: 0.364286835, alpha: 0.9)
+        
+        //Height of self
+        heightConstraint = heightAnchor.constraint(equalToConstant: ChiefsPlayer.shared.configs.progressBarStyle.defualtHeight)
+        heightConstraint.isActive = true
         
         //Buffer
         bufferBar.backgroundColor = UIColor(white: 1, alpha: 0.2).cgColor
@@ -89,7 +94,8 @@ class CVideoProgressBarView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         gradient.frame = bounds
-        
+        bufferBar.frame = CGRect(x: bufferBar.frame.origin.x, y: 0, width: bufferBar.frame.width, height: bounds.height)
+            
         updateBarFrame()
         updateBufferFrame()
         updateOrbFrame()
@@ -115,10 +121,19 @@ class CVideoProgressBarView: UIView {
         let orbSide = self.orbSide
         orb.cornerRadius = orbSide/2
         let newX = isRTL ? barLayer.frame.minX - orbSide/2 : barLayer.frame.maxX - orbSide/2
-        orb.frame = CGRect(x: newX,
-                           y: bounds.height/2 - orbSide/2,
-                           width: orbSide,
-                           height: orbSide)
+        
+        let newOrbFrame = CGRect(x: newX,
+                            y: bounds.height/2 - orbSide/2,
+                            width: orbSide,
+                            height: orbSide)
+        
+
+        self.heightConstraint.constant = userIsPanning ? ChiefsPlayer.shared.configs.progressBarStyle.panningHeight : ChiefsPlayer.shared.configs.progressBarStyle.defualtHeight
+        UIView.animate(withDuration: 0.5) {
+            self.orb.frame = newOrbFrame
+            self.superview?.layoutIfNeeded()
+        }
+        
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
