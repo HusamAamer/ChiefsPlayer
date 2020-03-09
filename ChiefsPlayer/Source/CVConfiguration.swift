@@ -38,9 +38,18 @@ public struct CVConfiguration {
         case automatic = "automatic",arabic = "ar", english = "en"
     }
     public struct ProgressBarStyle {
-        var defualtHeight : CGFloat = 3
-        var panningHeight : CGFloat = 6
-        var showsLivePanDuration = false
+        public var defualtHeight : CGFloat = 3
+        public var panningHeight : CGFloat = 6
+        public var showsLivePanDuration = false
+        
+        public init () {
+            
+        }
+        public init(defaultHeight:CGFloat? = nil, panningHeight:CGFloat? = nil, showsLivePanDuration:Bool? = nil) {
+            self.defualtHeight = defaultHeight ?? self.defualtHeight
+            self.panningHeight = panningHeight ?? self.panningHeight
+            self.showsLivePanDuration = showsLivePanDuration ?? self.showsLivePanDuration
+        }
     }
     
     // MARK: - Properties
