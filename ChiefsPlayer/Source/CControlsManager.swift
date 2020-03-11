@@ -123,10 +123,10 @@ public class CControlsManager:NSObject {
 ////////////////////////////////////////////////////////////////
 
 extension CControlsManager {
-    enum PlayerState {
+    public enum PlayerState {
         case isPlaying, isPaused, Unknown
     }
-    func play () -> PlayerState {
+    public func play () -> PlayerState {
         var out :PlayerState = .Unknown
         
         if ChiefsPlayer.shared.isCastingTo == .chromecast {
@@ -146,10 +146,20 @@ extension CControlsManager {
             }
         }
         
-        //Tell observers about this change
-        delegates.forEach({$0?.controlsPlayPauseChanged(to: out == .isPlaying)})
+        ///Tell observers about this change
+        ///Depricated in 1.2.4, player rate observation used instead
+        ///updateControlsPlayButton(to: out == .isPlaying)
         
         return out
+    }
+    /// Called when player status is changed
+    /// - Parameter isPlaying: is playing media
+    public func updateControlsPlayButton(to isPlaying:Bool) {
+        /// Disable/Enable device sleep
+        UIApplication.shared.isIdleTimerDisabled = isPlaying
+        
+        /// Update UI
+        delegates.forEach({$0?.controlsPlayPauseChanged(to: isPlaying)})
     }
 }
 

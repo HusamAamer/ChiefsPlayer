@@ -52,8 +52,8 @@ class CVideoControlsView: CBaseControlsView {
         
         
         let gradients = [
-            UIColor(red: 253/255, green: 90/255, blue: 148/255, alpha: 1),
-            UIColor(red: 134/255, green: 65/255, blue: 163/255, alpha: 1)
+            UIColor(red: 228/255, green: 40/255, blue: 79/255, alpha: 1),
+            UIColor(red: 173/255, green: 28/255, blue: 66/255, alpha: 1)
         ]
         play = UIRoundedButton(gradientColors: gradients)
         play.setImage(UIImage.make(name: "pause-1"), for: .normal)

@@ -68,6 +68,12 @@ public struct CVConfiguration {
     
     public var progressBarStyle : ProgressBarStyle = .init()
     
+    /// Size of the player while being minimized in relative to maximized
+    public var onMinimizedMinimumScale : CGFloat = 0.3
+    
+    /// Space under player on minimized status
+    public var onMinimizedAdditionalBottomSafeArea : CGFloat?
+    
     // Initialization
     
     init() {

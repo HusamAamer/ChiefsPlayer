@@ -14,6 +14,7 @@ public class CAVQueuePlayer: AVQueuePlayer {
     private var paths: [String] {
         return [
             #keyPath(status),
+            #keyPath(rate)
         ]
     }
     
@@ -79,6 +80,11 @@ public class CAVQueuePlayer: AVQueuePlayer {
                     delegate?.cavqueueplayerReadyToPlay()
                 }
             }
+            
+            if keyPath == #keyPath(rate) {
+                print(self.rate)
+                delegate?.cavqueueplayerPlayingStatus(is: self.rate == 1)
+            }
         }
     }
 }
@@ -87,4 +93,5 @@ public protocol CAVQueuePlayerDelegate:class {
     func cavqueueplayerReadyToPlay ()
     func cavqueueplayerFailed()
     func cavqueueplayerItemReplaced(with item:AVPlayerItem?)
+    func cavqueueplayerPlayingStatus(is playing:Bool)
 }

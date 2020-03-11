@@ -330,11 +330,14 @@ extension CVideoView: CAVQueuePlayerDelegate {
             updateLoadingUI(with: error.localizedDescription)
         }
     }
+    public func cavqueueplayerPlayingStatus(is playing: Bool) {
+        CControlsManager.shared.updateControlsPlayButton(to: playing)
+    }
 }
 
 //MARK: Item Delegate xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 extension CVideoView: CPlayerItemDelegate {
-    public func cplayerItemReadyToPlay() {
+    public func cplayerItemReadyToPlay(_ item:CPlayerItem) {
         //If player is not ready to play yet but casting started, we should pause it here
         if let chromecastManager = ChiefsPlayer.shared.chromecastManager, chromecastManager.sessionIsActive {
             if ChiefsPlayer.shared.isCastingTo == .chromecast {
@@ -348,10 +351,11 @@ extension CVideoView: CPlayerItemDelegate {
             ChiefsPlayer.shared.updateViewsAccordingTo(videoRect: vlayer.videoRect)
         }
         if !chiefsplayerWillStartTriggered {
-            ChiefsPlayer.shared.delegate?.chiefsplayerWillStart(playing: ChiefsPlayer.shared.player.currentItem  as! CPlayerItem)
+            ChiefsPlayer.shared.delegate?.chiefsplayerWillStart(playing: item)
             chiefsplayerWillStartTriggered = true
         }
         loadingView.state = .isPlaying
+        CControlsManager.shared.updateControlsPlayButton(to: true)
     }
     
     public func cplayerItemPlaybackLikelyToKeepUp() {
@@ -372,10 +376,13 @@ extension CVideoView: CPlayerItemDelegate {
         /// Handling error of player is fair enough
         updateLoadingUI(with: error.localizedDescription)
         endPlayerObserving()
+        CControlsManager.shared.updateControlsPlayButton(to: false)
     }
     
     public func cplayerItemDidPlayToEndTime() {
         updateLoadingUI(with: "")
+        CControlsManager.shared.updateAllControllers()
+        CControlsManager.shared.updateControlsPlayButton(to: false)
     }
     
     public func cplayerItemWillStopObserving() {

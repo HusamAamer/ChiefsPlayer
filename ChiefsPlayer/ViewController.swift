@@ -165,7 +165,7 @@ class ViewController: UIViewController {
             //player.bottomSafeArea = tabBar.frame.height - screenSafeInsets.bottom
             player.configs.controlsStyle = style
             player.configs.videoRatio = .widescreen
-            player.additionalBottomSafeArea = 20
+            player.configs.onMinimizedAdditionalBottomSafeArea = 20
             CControlsManager.shared.backwardAction = { _ in
                 return SeekAction.seek(-5)
                 //return SeekAction.open(URL(string:server + "/gen.php")!)

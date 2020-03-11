@@ -133,7 +133,7 @@ public class CPlayerItem: AVPlayerItem {
                 }
             } else if keyPath == "status" {
                 if self.status == .readyToPlay {
-                    delegate?.cplayerItemReadyToPlay()
+                    delegate?.cplayerItemReadyToPlay(self)
                 }
             }
         }
@@ -141,7 +141,7 @@ public class CPlayerItem: AVPlayerItem {
 }
 
 public protocol CPlayerItemDelegate:class {
-    func cplayerItemReadyToPlay()
+    func cplayerItemReadyToPlay(_ item:CPlayerItem)
     func cplayerItemPlaybackLikelyToKeepUp()
     func cplayerItemPlaybackBufferFull()
     func cplayerItemPlayebackBufferEmpty()

@@ -56,18 +56,18 @@ class UIRoundedButton: UIButton {
         }
         
         // setup shadow
-        layer.shadowColor = UIColor.darkGray.cgColor
+        layer.shadowColor = UIColor.black.cgColor
         layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: halfOfButtonHeight).cgPath
         layer.shadowOffset = CGSize(width: 0.0, height: 1.0)
-        layer.shadowOpacity = 0.85
-        layer.shadowRadius = 4.0
+        layer.shadowOpacity = 0.2
+        layer.shadowRadius = 2.0
     }
     
-    override var isSelected: Bool {
-        didSet {
-            print("Play isSelected")
-        }
-    }
+//    override var isSelected: Bool {
+//        didSet {
+//            print("Play isSelected")
+//        }
+//    }
     override var isHighlighted: Bool {
         didSet {
             let newOpacity : Float = isHighlighted ? 0.6 : 0.85

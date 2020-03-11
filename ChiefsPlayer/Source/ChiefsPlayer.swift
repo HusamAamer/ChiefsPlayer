@@ -272,17 +272,19 @@ public class ChiefsPlayer {
     let assetKeysRequiredToPlay = [
         "playable"
     ]
-    var newAsset:AVURLAsset!
+    var newAsset:AVURLAsset?
     func loadAsset (for url:URL) {
+
         newAsset = AVURLAsset(url: url)
         /*
          Using AVAsset now runs the risk of blocking the current thread (the
          main UI thread) whilst I/O happens to populate the properties. It's
          prudent to defer our work until the properties we need have been loaded.
          */
-        newAsset.loadValuesAsynchronously(forKeys: assetKeysRequiredToPlay) { [weak self] in
+        newAsset?.loadValuesAsynchronously(forKeys: assetKeysRequiredToPlay) { [weak self] in
             guard let `self` = self else {return}
             guard let player = self.player else {return}
+            guard let newAsset = self.newAsset else {return}
             
             /*
              The asset invokes its completion handler on an arbitrary queue.
@@ -292,40 +294,40 @@ public class ChiefsPlayer {
              */
             ChiefsPlayer.Log(event: "Asset loaded")
             
-                /*
-                 Test whether the values of each of the keys we need have been
-                 successfully loaded.
-                 */
-                for key in self.assetKeysRequiredToPlay {
-                    var error: NSError?
-                    if self.newAsset.statusOfValue(forKey: key, error: &error) == .failed {
-                        ChiefsPlayer.Log(event: "Asset error #1")
-                        /**
-                         "Can't use this AVAsset because one of it's keys failed to load"
-                         */
-                        let message = localized("error.asset_key_%@_failed.description".replacingOccurrences(of: "%@", with: key))
-                        DispatchQueue.main.async {
-                            self.videoView.loadingView.state = .Error(msg: message)
-                        }
-                        return
-                    }
-                }
-                // We can't play this asset.
-                if !self.newAsset.isPlayable || self.newAsset.hasProtectedContent {
-                    ChiefsPlayer.Log(event: "Asset error #2")
+            /*
+             Test whether the values of each of the keys we need have been
+             successfully loaded.
+             */
+            for key in self.assetKeysRequiredToPlay {
+                var error: NSError?
+                if newAsset.statusOfValue(forKey: key, error: &error) == .failed {
+                    ChiefsPlayer.Log(event: "Asset error #1")
                     /**
-                     "Can't use this AVAsset because it isn't playable or has protected content"
-                    */
-                    let message = localized("error.asset_not_playable.description")
+                     "Can't use this AVAsset because one of it's keys failed to load"
+                     */
+                    let message = localized("error.asset_key_%@_failed.description".replacingOccurrences(of: "%@", with: key))
                     DispatchQueue.main.async {
                         self.videoView.loadingView.state = .Error(msg: message)
                     }
                     return
                 }
+            }
+            // We can't play this asset.
+            if !newAsset.isPlayable || newAsset.hasProtectedContent {
+                ChiefsPlayer.Log(event: "Asset error #2")
+                /**
+                 "Can't use this AVAsset because it isn't playable or has protected content"
+                */
+                let message = localized("error.asset_not_playable.description")
+                DispatchQueue.main.async {
+                    self.videoView.loadingView.state = .Error(msg: message)
+                }
+                return
+            }
             
             DispatchQueue.main.async {
                 ChiefsPlayer.Log(event: "Asset loaded #2")
-                let playerItem = CPlayerItem(asset: self.newAsset)
+                let playerItem = CPlayerItem(asset: newAsset)
                 player.replaceCurrentItem(with: playerItem)
             }
         }
@@ -390,6 +392,7 @@ public class ChiefsPlayer {
         CControlsManager.shared.endPlayerObserving()
         
         player.replaceCurrentItem(with: nil)
+        loadAsset(for: url)
         loadAsset(for: url)
             
         videoView.loadingView.state = .isLoading
@@ -708,9 +711,6 @@ public class ChiefsPlayer {
         return 0
     }
     
-    /// Additional space under player in minimized status
-    public var additionalBottomSafeArea:CGFloat?
-    
     private var bottomSafeArea:CGFloat {
         set {}
         get {
@@ -718,14 +718,13 @@ public class ChiefsPlayer {
             if #available(iOS 11.0, *) {
                 value += UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0
             }
-            if let additional = additionalBottomSafeArea {
+            if let additional = configs.onMinimizedAdditionalBottomSafeArea {
                 value += additional
             }
             return value
         }
     }
     
-    let minimumScale  :CGFloat = 0.4
     var onMaxFrame:CGRect  = .zero
     var onTouchBeganFrame:CGRect  = .zero
     @objc func dragVideo (pan:UIPanGestureRecognizer) {
@@ -835,9 +834,9 @@ public class ChiefsPlayer {
                 delegate?.chiefsplayerStatusBarShouldBe(hidden: false)
             }
         }
-        let lastY = (parentVC.view.frame.height - bottomSafeArea) - minimumScale * onMaxFrame.height
+        let lastY = (parentVC.view.frame.height - bottomSafeArea) - configs.onMinimizedMinimumScale * onMaxFrame.height
         let movePercent = abs(vY.constant / lastY)
-        let newScale = 1 - (movePercent * (1 - minimumScale))
+        let newScale = 1 - (movePercent * (1 - configs.onMinimizedMinimumScale))
         vW.constant = parentVC.view.frame.width * newScale
         dY.constant = bottomSafeArea * movePercent
         if newScale == 1, !vWFullScale.isActive {
@@ -879,7 +878,7 @@ public class ChiefsPlayer {
     public func minimize () {
         acvStyle = .minimized
         videoView.progressView.isUserInteractionEnabled = false
-        let y = parentVC.view.bounds.height - bottomSafeArea - topSafeArea - onMaxFrame.height * minimumScale
+        let y = parentVC.view.bounds.height - bottomSafeArea - topSafeArea - onMaxFrame.height * configs.onMinimizedMinimumScale
         UIView.animate(
             withDuration: 0.15, delay: 0, options: [.curveEaseOut,.allowAnimatedContent,.allowUserInteraction],
             animations: {
