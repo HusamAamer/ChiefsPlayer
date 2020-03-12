@@ -127,8 +127,8 @@ class CVideoProgressView: UIView {
         }
         
         if pan.state == UIGestureRecognizer.State.changed {
-            updatePanLabel(with: percent)
             progressBar.progress = percent
+            updatePanLabel(with: percent)
         } else {
             // or something when its not moving
         }
@@ -167,6 +167,22 @@ extension CVideoProgressView {
         if let duration = playerDuration {
             panLabel.text = AVCGlobalFuncs.timeFrom(seconds: TimeInterval(percentage * duration))
         }
-        panLabel.center = CGPoint(x: bounds.width * percentage, y: panLabel.center.y)
+        panLabel.sizeToFit()
+        
+        /*
+         Set label always inside screen above progress orb
+         with 10 left and right padding
+         */
+        let halfWidth = panLabel.frame.width/2
+        let orbX = progressBar.orb.frame.midX
+        var newLabelCenterX = orbX
+        let screenWidth = bounds.width
+        if newLabelCenterX - halfWidth < 10 {
+            newLabelCenterX = 10 + halfWidth
+        } else if newLabelCenterX + halfWidth > (screenWidth - 10) {
+            newLabelCenterX = screenWidth - 10 - halfWidth
+        }
+        
+        panLabel.center = CGPoint(x:  newLabelCenterX , y: panLabel.center.y)
     }
 }

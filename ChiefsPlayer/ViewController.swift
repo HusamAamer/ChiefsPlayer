@@ -166,6 +166,8 @@ class ViewController: UIViewController {
             player.configs.controlsStyle = style
             player.configs.videoRatio = .widescreen
             player.configs.onMinimizedAdditionalBottomSafeArea = 20
+            player.configs.progressBarStyle.showsLivePanDuration = true
+            
             CControlsManager.shared.backwardAction = { _ in
                 return SeekAction.seek(-5)
                 //return SeekAction.open(URL(string:server + "/gen.php")!)
