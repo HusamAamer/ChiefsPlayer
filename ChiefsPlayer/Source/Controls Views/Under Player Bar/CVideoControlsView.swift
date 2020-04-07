@@ -44,9 +44,7 @@ class CVideoControlsView: CBaseControlsView {
     override func awakeFromNib() {
         
         subtitlesBtn.isHidden = true
-        resolutionBtn.isHidden = true
-        
-        
+                
         currentTime.text = nil
         duration.text = nil
         
@@ -266,7 +264,7 @@ extension CVideoControlsView : CControlsManagerDelegate {
         play.isSelected = !isPlaying
     }
     func controlsPlayer(has resolutions: [CPlayerResolutionSource]) {
-        resolutionBtn.isHidden = resolutions.count == 0
+        resolutionBtn.isEnabled = resolutions.count > 1
     }
     func controlsPlayerDidChangeResolution(to resolution: CPlayerResolutionSource) {
         resolutionBtn.setTitle(" " + resolution.title + " ", for: .normal)

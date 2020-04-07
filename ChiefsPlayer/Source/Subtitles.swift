@@ -325,7 +325,7 @@ extension ChiefsPlayer {
             subtitleLabel?.backgroundColor = UIColor.clear
             subtitleLabel?.textAlignment = .center
             subtitleLabel?.numberOfLines = 0
-            subtitleLabel?.font = UIFont.boldSystemFont(ofSize: UI_USER_INTERFACE_IDIOM() == .pad ? 22.0 : 12.0)
+            subtitleLabel?.font = UIFont.boldSystemFont(ofSize: UI_USER_INTERFACE_IDIOM() == .pad ? 25.0 : 20.0)
             subtitleLabel?.textColor = UIColor.white
             subtitleLabel?.numberOfLines = 0;
             subtitleLabel?.layer.shadowColor = UIColor.black.cgColor

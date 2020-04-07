@@ -42,7 +42,6 @@ class COverPlayerControlsView: CBaseControlsView {
     override func awakeFromNib() {
         
         subtitlesBtn.isHidden = true
-        resolutionBtn.isHidden = true
         
         currentTime.text = nil
         duration.text = nil
@@ -230,7 +229,7 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
         self.playButton.isSelected = !isPlaying
     }
     func controlsPlayer(has resolutions: [CPlayerResolutionSource]) {
-        resolutionBtn.isHidden = resolutions.count <= 1
+        resolutionBtn.isEnabled = resolutions.count > 1
     }
     func controlsPlayerDidChangeResolution(to resolution: CPlayerResolutionSource) {
         resolutionBtn.setTitle(resolution.title, for: .normal)
