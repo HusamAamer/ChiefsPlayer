@@ -40,7 +40,6 @@ class COverPlayerControlsView: CBaseControlsView {
     
     //Init UI
     override func awakeFromNib() {
-        
         subtitlesBtn.isHidden = true
         
         currentTime.text = nil
@@ -54,10 +53,12 @@ class COverPlayerControlsView: CBaseControlsView {
             airView.tintColor = UIColor.white
             airView.alpha = 0.6
             if #available(iOS 11.0, *) {
+                airViewContainer.removeFromSuperview()
+                
                 if let avRoute = airView as? AVRoutePickerView {
                     avRoute.activeTintColor = UIColor.red
                 }
-                rightStack.addArrangedSubview(airView)
+                rightStack.insertArrangedSubview(airView, at: 0)
                 airView.widthAnchor.constraint(equalToConstant: 30).isActive = true
                 airView.heightAnchor.constraint(equalToConstant: 30).isActive = true
             } else {
@@ -78,7 +79,7 @@ class COverPlayerControlsView: CBaseControlsView {
         if let castButton = castButton {
             castButton.tintColor = UIColor.white
             castButton.alpha = 0.6
-            rightStack.addArrangedSubview(castButton)
+            rightStack.insertArrangedSubview(castButton, at: 0)
         }
         
         

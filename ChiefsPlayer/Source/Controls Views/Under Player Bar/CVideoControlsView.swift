@@ -104,7 +104,7 @@ class CVideoControlsView: CBaseControlsView {
         
         if let castButton = self.castButton {
             castButton.tintColor = tintColor
-            rightStack.addArrangedSubview(castButton)
+            rightStack.insertArrangedSubview(castButton, at: 0)
         }
         
         if Device.IS_IPAD {

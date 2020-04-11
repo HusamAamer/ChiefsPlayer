@@ -121,6 +121,7 @@ public class ChiefsPlayer {
                 //App is not casting
                 controls?.castButton?.isHidden = false
                 controls?.airView?.isHidden    = false
+                controls?.airView?.sizeToFit()
                 //controls.subtitlesBtn.isHidden = false
                 
                 //Transition from chromecast to avplayer
@@ -346,7 +347,14 @@ public class ChiefsPlayer {
         for output in currentRoute.outputs {
             if output.portType == AVAudioSession.Port.airPlay {
                 print("Airplay Device connected with name: \(output.portName)")
-                airplayConnected = true
+                /**
+                 If iOS ScreenMirror is enabled `UIScreen.screens.count` equals 2
+                 else
+                 Then we are streaming only this AVPlayer
+                 */
+                if UIScreen.screens.count == 1 {
+                    airplayConnected = true
+                }
             }
         }
         print( "airplay ::> ",airplayConnected)
