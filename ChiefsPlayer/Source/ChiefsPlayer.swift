@@ -51,16 +51,20 @@ public protocol ChiefsPlayerDelegate:class {
     func chiefsplayerDebugLog(_ string:String)
     
     /// Backward action, Return nil to hide backward button
-    func chiefsplayerBackwardAction() -> SeekAction?
+    /// - Parameter willTriggerAction: a boolean value indicating thet action will be triggered now
+    func chiefsplayerBackwardAction(_ willTriggerAction:Bool) -> SeekAction?
     
     /// Forward action, Return nil to hide forward button
-    func chiefsplayerForwardAction() -> SeekAction?
+    /// - Parameter willTriggerAction: a boolean value indicating thet action will be triggered now
+    func chiefsplayerForwardAction(_ willTriggerAction:Bool) -> SeekAction?
     
     /// Previous action, Return nil to hide previous button
-    func chiefsplayerPrevAction() -> SeekAction?
+    /// - Parameter willTriggerAction: a boolean value indicating thet action will be triggered now
+    func chiefsplayerPrevAction(_ willTriggerAction:Bool) -> SeekAction?
     
     /// Next action, Return nil to hide next button
-    func chiefsplayerNextAction() -> SeekAction?
+    /// - Parameter willTriggerAction: a boolean value indicating thet action will be triggered now
+    func chiefsplayerNextAction(_ willTriggerAction:Bool) -> SeekAction?
 }
 
 //Make functions optional
@@ -80,10 +84,10 @@ public extension ChiefsPlayerDelegate {
     func chiefsplayer(isCastingTo castingService:CastingService?){}
     func chiefsplayerWillStartCasting(from source:CPlayerSource) -> CPlayerSource? { return nil}
     func chiefsplayerDebugLog(_ string:String) {}
-    func chiefsplayerBackwardAction() -> SeekAction? {return nil}
-    func chiefsplayerForwardAction() -> SeekAction?  {return nil}
-    func chiefsplayerPrevAction() -> SeekAction? {return nil}
-    func chiefsplayerNextAction() -> SeekAction? {return nil}
+    func chiefsplayerBackwardAction(_ willTriggerAction:Bool) -> SeekAction? {return nil}
+    func chiefsplayerForwardAction(_ willTriggerAction:Bool) -> SeekAction?  {return nil}
+    func chiefsplayerPrevAction(_ willTriggerAction:Bool) -> SeekAction? {return nil}
+    func chiefsplayerNextAction(_ willTriggerAction:Bool) -> SeekAction? {return nil}
 }
 public class ChiefsPlayer {
     private struct Static

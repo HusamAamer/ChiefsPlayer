@@ -154,24 +154,24 @@ extension CControlsManager {
 
 extension CControlsManager {
     func nextBtnAction () -> Bool {
-        if let action = ChiefsPlayer.shared.delegate?.chiefsplayerNextAction() {
+        if let action = ChiefsPlayer.shared.delegate?.chiefsplayerNextAction(true) {
             performAction(action: action)
             return true
         }
         return false
     }
     func prevBtnAction () {
-        if let action = ChiefsPlayer.shared.delegate?.chiefsplayerPrevAction() {
+        if let action = ChiefsPlayer.shared.delegate?.chiefsplayerPrevAction(true) {
             performAction(action: action)
         }
     }
     func forwardBtnAction () {
-        if let action = ChiefsPlayer.shared.delegate?.chiefsplayerForwardAction() {
+        if let action = ChiefsPlayer.shared.delegate?.chiefsplayerForwardAction(true) {
             performAction(action: action)
         }
     }
     func backwardBtnAction () {
-        if let action = ChiefsPlayer.shared.delegate?.chiefsplayerBackwardAction() {
+        if let action = ChiefsPlayer.shared.delegate?.chiefsplayerBackwardAction(true) {
             performAction(action: action)
         }
     }
@@ -252,25 +252,25 @@ extension CControlsManager {
         observer.controlsRightAccessoryViewsDidChange(to: rightButtons?())
         
         
-        if let backwardAction = chiefsPlayer.delegate?.chiefsplayerBackwardAction() {
+        if let backwardAction = chiefsPlayer.delegate?.chiefsplayerBackwardAction(false) {
             observer.controlsBackwardActionDidChange(to: backwardAction)
         } else {
             observer.controlsBackwardActionDidChange(to: nil)
         }
         
-        if let forwardAction = chiefsPlayer.delegate?.chiefsplayerForwardAction() {
+        if let forwardAction = chiefsPlayer.delegate?.chiefsplayerForwardAction(false) {
             observer.controlsForwardActionDidChange(to: forwardAction)
         } else {
             observer.controlsForwardActionDidChange(to: nil)
         }
         
-        if let backwardAction = chiefsPlayer.delegate?.chiefsplayerPrevAction() {
+        if let backwardAction = chiefsPlayer.delegate?.chiefsplayerPrevAction(false) {
             observer.controlsPrevActionDidChange(to: backwardAction)
         } else {
             observer.controlsPrevActionDidChange(to: nil)
         }
         
-        if let forwardAction = chiefsPlayer.delegate?.chiefsplayerNextAction() {
+        if let forwardAction = chiefsPlayer.delegate?.chiefsplayerNextAction(false) {
             observer.controlsNextActionDidChange(to: forwardAction)
         } else {
             observer.controlsNextActionDidChange(to: nil)
