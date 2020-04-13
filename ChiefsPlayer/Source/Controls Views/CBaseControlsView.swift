@@ -61,6 +61,11 @@ public class CBaseControlsView:UIView {
                     ChiefsPlayer.shared.play(from: ChiefsPlayer.shared.sources,
                                          with: nil,
                                          startWithResoultionAt: offset)
+                    
+                    //Tell Parent App
+                    ChiefsPlayer.shared.delegate?
+                        .chiefsplayerResolutionChanged(to: element, from: ChiefsPlayer.shared.selectedSource)
+                    
                     CControlsManager.shared.delegates.forEach({$0?.controlsPlayerDidChangeResolution(to: element)})
             })
 
@@ -82,21 +87,3 @@ public class CBaseControlsView:UIView {
     }
 
 }
-
-//extension CBaseControlsView : CControlsManagerDelegate {
-//    func controlsForwardActionDidChange(to newAction: SeekAction?) {
-//        
-//    }
-//    func controlsBackwardActionDidChange(to newAction: SeekAction?) {
-//        
-//    }
-//    func controlsSubtitles(are available:Bool) {
-//        
-//    }
-//    func controlsTimeUpdated(to currentTime: String, remaining: String, andPlayer isPlaying: Bool) {
-//        
-//    }
-//    func controlsShouldAppearAboveVideo(in deviceOrientation: UIDeviceOrientation) -> Bool {
-//        return false
-//    }
-//}

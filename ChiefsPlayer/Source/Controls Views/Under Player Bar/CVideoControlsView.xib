@@ -23,28 +23,60 @@
                         <action selector="playBtn:" destination="iN0-l3-epB" eventType="touchUpInside" id="o5i-eZ-06R"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Yd1-3f-WXh">
-                    <rect key="frame" x="225.5" y="0.0" width="63" height="80"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="63" id="Dpz-F7-HHs"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                    <state key="normal" image="NextTrack-1"/>
-                    <connections>
-                        <action selector="nextBtn:" destination="iN0-l3-epB" eventType="touchUpInside" id="Lwr-1p-jHT"/>
-                    </connections>
-                </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xfi-p1-Tpg">
-                    <rect key="frame" x="72.5" y="0.0" width="63" height="80"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="63" id="PwW-lq-n0J"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                    <state key="normal" image="BackTrack-1"/>
-                    <connections>
-                        <action selector="prevBtn:" destination="iN0-l3-epB" eventType="touchUpInside" id="ApR-V7-33Z"/>
-                    </connections>
-                </button>
+                <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dYn-ld-zhL">
+                    <rect key="frame" x="225.5" y="0.0" width="126" height="80"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dMG-62-zsL" userLabel="Forward Seek Button">
+                            <rect key="frame" x="0.0" y="0.0" width="63" height="80"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="63" id="9kt-eX-DK3"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <state key="normal" image="BarSeekPlus"/>
+                            <connections>
+                                <action selector="forwardSeekBtn:" destination="iN0-l3-epB" eventType="touchUpInside" id="WKO-6d-ZRq"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Yd1-3f-WXh">
+                            <rect key="frame" x="63" y="0.0" width="63" height="80"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="63" id="Dpz-F7-HHs"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <state key="normal" image="BarNextTrack"/>
+                            <connections>
+                                <action selector="nextBtn:" destination="iN0-l3-epB" eventType="touchUpInside" id="Lwr-1p-jHT"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                </stackView>
+                <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cVD-LI-Eik">
+                    <rect key="frame" x="9.5" y="0.0" width="126" height="80"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xfi-p1-Tpg">
+                            <rect key="frame" x="0.0" y="0.0" width="63" height="80"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="63" id="PwW-lq-n0J"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <state key="normal" image="BarBackTrack"/>
+                            <connections>
+                                <action selector="prevBtn:" destination="iN0-l3-epB" eventType="touchUpInside" id="ApR-V7-33Z"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qc5-Ss-SeZ" userLabel="Backward Seek Button">
+                            <rect key="frame" x="63" y="0.0" width="63" height="80"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="63" id="NaG-Pt-OSE"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <state key="normal" image="BarSeekMinus"/>
+                            <connections>
+                                <action selector="backwardSeekBtn:" destination="iN0-l3-epB" eventType="touchUpInside" id="DJq-8l-yJO"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                </stackView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3:00" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Sc-Qv-e4A">
                     <rect key="frame" x="15" y="7.5" width="23.5" height="12"/>
                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="10"/>
@@ -120,29 +152,31 @@
             </subviews>
             <color key="backgroundColor" red="0.23921568630000001" green="0.2784313725" blue="0.67450980390000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
+                <constraint firstItem="dYn-ld-zhL" firstAttribute="centerY" secondItem="xXH-Bc-xRv" secondAttribute="centerY" id="0lr-J7-C55"/>
                 <constraint firstItem="5Sc-Qv-e4A" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="7.5" id="15p-qd-nlF"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="QuO-X6-NrU" secondAttribute="trailing" constant="15" id="6Wb-fU-GbU"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="PZH-yq-jdp" secondAttribute="trailing" constant="15" id="CcR-JW-0Ia"/>
                 <constraint firstItem="xXH-Bc-xRv" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="DJB-Rc-WjQ"/>
+                <constraint firstItem="dYn-ld-zhL" firstAttribute="leading" secondItem="xXH-Bc-xRv" secondAttribute="trailing" constant="30" id="Dlw-Il-czg"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="TEK-n7-L7P" secondAttribute="bottom" constant="8" id="I8d-Sk-AqG"/>
-                <constraint firstItem="Yd1-3f-WXh" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="InX-HU-hXx"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="QuO-X6-NrU" secondAttribute="bottom" constant="8" id="LpY-Az-nG0"/>
-                <constraint firstItem="Yd1-3f-WXh" firstAttribute="centerY" secondItem="xXH-Bc-xRv" secondAttribute="centerY" id="PM2-QW-XAm"/>
                 <constraint firstItem="xXH-Bc-xRv" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" priority="750" constant="25" id="QTa-yl-KKg"/>
-                <constraint firstItem="xXH-Bc-xRv" firstAttribute="leading" secondItem="Xfi-p1-Tpg" secondAttribute="trailing" constant="30" id="WZz-5x-QB7"/>
-                <constraint firstItem="Xfi-p1-Tpg" firstAttribute="centerY" secondItem="xXH-Bc-xRv" secondAttribute="centerY" id="Y8e-fF-lXT"/>
+                <constraint firstItem="cVD-LI-Eik" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="XB7-0e-STQ"/>
                 <constraint firstItem="5Sc-Qv-e4A" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="15" id="YpP-uY-lvg"/>
+                <constraint firstItem="xXH-Bc-xRv" firstAttribute="leading" secondItem="cVD-LI-Eik" secondAttribute="trailing" constant="30" id="awF-P5-Uc2"/>
+                <constraint firstItem="cVD-LI-Eik" firstAttribute="centerY" secondItem="xXH-Bc-xRv" secondAttribute="centerY" id="ay9-de-1R4"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="xXH-Bc-xRv" secondAttribute="bottom" constant="20" id="fWA-9x-8du"/>
                 <constraint firstItem="TEK-n7-L7P" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="15" id="iTO-5x-brh"/>
-                <constraint firstItem="Yd1-3f-WXh" firstAttribute="leading" secondItem="xXH-Bc-xRv" secondAttribute="trailing" constant="30" id="nnR-ft-xVf"/>
-                <constraint firstItem="Xfi-p1-Tpg" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="p3b-yq-9aJ"/>
+                <constraint firstItem="dYn-ld-zhL" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="oqc-N7-Ehh"/>
                 <constraint firstItem="PZH-yq-jdp" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="7" id="xeT-2c-t1R"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <connections>
+                <outlet property="backwardSeekButton" destination="Qc5-Ss-SeZ" id="7aX-I6-4CU"/>
                 <outlet property="currentTime" destination="PZH-yq-jdp" id="PRm-jE-c1i"/>
                 <outlet property="duration" destination="5Sc-Qv-e4A" id="Suw-6p-UsQ"/>
+                <outlet property="forwardSeekButton" destination="dMG-62-zsL" id="DMK-Ze-B6r"/>
                 <outlet property="fullscreenBtn" destination="NxY-rk-jsc" id="ml7-f5-Eq7"/>
                 <outlet property="leftStack" destination="TEK-n7-L7P" id="hNL-IJ-L7r"/>
                 <outlet property="nextButton" destination="Yd1-3f-WXh" id="LLN-3h-W00"/>
@@ -156,8 +190,10 @@
         </view>
     </objects>
     <resources>
-        <image name="BackTrack-1" width="25" height="20"/>
-        <image name="NextTrack-1" width="25" height="20"/>
+        <image name="BarBackTrack" width="27" height="20"/>
+        <image name="BarNextTrack" width="27" height="20"/>
+        <image name="BarSeekMinus" width="27" height="20"/>
+        <image name="BarSeekPlus" width="27" height="20"/>
         <image name="fullscreen-1" width="26" height="24"/>
         <image name="resolutionArrow-1" width="16" height="16"/>
         <image name="subtitles-1" width="26" height="24"/>

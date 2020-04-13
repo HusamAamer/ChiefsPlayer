@@ -66,6 +66,8 @@ public protocol CControlsManagerDelegate : NSObjectProtocol {
     func controlsRightAccessoryViewsDidChange (to newViews:[UIView]?)
     func controlsForwardActionDidChange (to newAction:SeekAction?)
     func controlsBackwardActionDidChange (to newAction:SeekAction?)
+    func controlsNextActionDidChange (to newAction:SeekAction?)
+    func controlsPrevActionDidChange (to newAction:SeekAction?)
     func controlsSubtitles(are available:Bool)
     func controlsTimeUpdated (to currentTime:String, remaining:String,andPlayer isPlaying:Bool)
     func controlsShouldAppearAboveVideo (in deviceOrientation:UIDeviceOrientation) -> Bool

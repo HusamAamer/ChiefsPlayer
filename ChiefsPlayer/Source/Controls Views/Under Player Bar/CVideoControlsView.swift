@@ -19,7 +19,9 @@ class CVideoControlsView: CBaseControlsView {
     @IBOutlet weak var rightStack: UIStackView!
     
     @IBOutlet weak private var nextButton: UIButton!
+    @IBOutlet weak var forwardSeekButton: UIButton!
     @IBOutlet weak private var playButton: UIButton!
+    @IBOutlet weak var backwardSeekButton: UIButton!
     @IBOutlet weak private var prevButton: UIButton!
     @IBOutlet weak var subtitlesBtn: UIButton!
     @IBOutlet weak var duration: UILabel!
@@ -144,6 +146,12 @@ class CVideoControlsView: CBaseControlsView {
     @IBAction func prevBtn(_ sender: UIButton) {
         CControlsManager.shared.prevBtnAction()
     }
+    @IBAction func forwardSeekBtn(_ sender: UIButton) {
+        CControlsManager.shared.forwardBtnAction()
+    }
+    @IBAction func backwardSeekBtn(_ sender: UIButton) {
+        CControlsManager.shared.backwardBtnAction()
+    }
     
     
     
@@ -211,32 +219,55 @@ extension CVideoControlsView : CControlsManagerDelegate {
     func controlsForwardActionDidChange(to newAction: SeekAction?) {
         if let action = newAction {
             switch action {
-            case .open(_):
-                
-                nextButton.setImage(UIImage.make(name: "BarNextTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+            case .play(_):
+                forwardSeekButton.setImage(UIImage.make(name: "BarNextTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
             case .seek(_):
-                nextButton.setImage(UIImage.make(name: "BarSeekPlus")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                forwardSeekButton.setImage(UIImage.make(name: "BarSeekPlus")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
-            default:
-                return
             }
         } else {
-            nextButton.isHidden = true
+            forwardSeekButton.isHidden = true
         }
 
     }
     func controlsBackwardActionDidChange(to newAction: SeekAction?) {
         if let action = newAction {
             switch action {
-            case .open(_):
+            case .play(_):
+                backwardSeekButton.setImage(UIImage.make(name: "BarBackTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                break
+            case .seek(_):
+                backwardSeekButton.setImage(UIImage.make(name: "BarSeekMinus")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                break
+            }
+        } else {
+            backwardSeekButton.isHidden = true
+        }
+    }
+    func controlsNextActionDidChange(to newAction: SeekAction?) {
+        if let action = newAction {
+            switch action {
+            case .play(_):
+                nextButton.setImage(UIImage.make(name: "BarNextTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                break
+            case .seek(_):
+                nextButton.setImage(UIImage.make(name: "BarSeekPlus")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                break
+            }
+        } else {
+            nextButton.isHidden = true
+        }
+    }
+    func controlsPrevActionDidChange(to newAction: SeekAction?) {
+        if let action = newAction {
+            switch action {
+            case .play(_):
                 prevButton.setImage(UIImage.make(name: "BarBackTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
             case .seek(_):
                 prevButton.setImage(UIImage.make(name: "BarSeekMinus")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
-            default:
-                return
             }
         } else {
             prevButton.isHidden = true

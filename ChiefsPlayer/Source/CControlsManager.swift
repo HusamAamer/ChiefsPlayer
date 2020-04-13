@@ -15,7 +15,7 @@ import GoogleCast
 public typealias SeekActionBlock = (_ player:CAVQueuePlayer)->(SeekAction)
 public typealias AccessoryViewsBlock = ()->([UIView])
 public enum SeekAction {
-    case none, open(URL), seek(Int)
+    case play([CPlayerSource]), seek(Int)
 }
 public enum CastingService {
     case chromecast, airplay
@@ -87,22 +87,7 @@ public class CControlsManager:NSObject {
     func shouldShowControlsAboveVideo(for deviceOrientation:UIDeviceOrientation) -> Bool {
         return delegates.first??.controlsShouldAppearAboveVideo(in: deviceOrientation) ?? true
     }
-    ////////////////////////////////////////////////////////////////
-    // MARK:- Forward / Backward actions
-    ////////////////////////////////////////////////////////////////
 
-    
-    public var forwardAction : SeekActionBlock? {
-        didSet {
-            delegates.forEach({$0?.controlsForwardActionDidChange(to: forwardAction?(player))})
-        }
-    }
-    public var backwardAction : SeekActionBlock? {
-        didSet {
-            delegates.forEach({$0?.controlsBackwardActionDidChange(to: backwardAction?(player))})
-        }
-    }
-    
     ////////////////////////////////////////////////////////////////
     // MARK:- Right / Left accessory buttons
     ////////////////////////////////////////////////////////////////
@@ -168,13 +153,25 @@ extension CControlsManager {
 ////////////////////////////////////////////////////////////////
 
 extension CControlsManager {
-    func nextBtnAction () {
-        if let action = forwardAction?(player) {
+    func nextBtnAction () -> Bool {
+        if let action = ChiefsPlayer.shared.delegate?.chiefsplayerNextAction() {
+            performAction(action: action)
+            return true
+        }
+        return false
+    }
+    func prevBtnAction () {
+        if let action = ChiefsPlayer.shared.delegate?.chiefsplayerPrevAction() {
             performAction(action: action)
         }
     }
-    func prevBtnAction () {
-        if let action = backwardAction?(player) {
+    func forwardBtnAction () {
+        if let action = ChiefsPlayer.shared.delegate?.chiefsplayerForwardAction() {
+            performAction(action: action)
+        }
+    }
+    func backwardBtnAction () {
+        if let action = ChiefsPlayer.shared.delegate?.chiefsplayerBackwardAction() {
             performAction(action: action)
         }
     }
@@ -190,14 +187,12 @@ extension CControlsManager {
     }
     func performAction (action:SeekAction) {
         switch action {
-        case .open(let url):
-            ChiefsPlayer.shared.reinitPlayer(with: url)
+        case .play(let sourceArray):
+            ChiefsPlayer.shared.play(from: sourceArray, with: nil)
             break
         case .seek(let seconds):
             seek(seconds: seconds)
             break
-        default:
-            return
         }
     }
 }
@@ -251,11 +246,36 @@ extension CControlsManager {
         })
     }
     func update (controller observer:CControlsManagerDelegate) {
+        let chiefsPlayer = ChiefsPlayer.shared
+        
         observer.controlsLeftAccessoryViewsDidChange(to: leftButtons?())
         observer.controlsRightAccessoryViewsDidChange(to: rightButtons?())
-        observer.controlsBackwardActionDidChange(to: backwardAction?(player))
-        observer.controlsForwardActionDidChange(to: forwardAction?(player))
-        let chiefsPlayer = ChiefsPlayer.shared
+        
+        
+        if let backwardAction = chiefsPlayer.delegate?.chiefsplayerBackwardAction() {
+            observer.controlsBackwardActionDidChange(to: backwardAction)
+        } else {
+            observer.controlsBackwardActionDidChange(to: nil)
+        }
+        
+        if let forwardAction = chiefsPlayer.delegate?.chiefsplayerForwardAction() {
+            observer.controlsForwardActionDidChange(to: forwardAction)
+        } else {
+            observer.controlsForwardActionDidChange(to: nil)
+        }
+        
+        if let backwardAction = chiefsPlayer.delegate?.chiefsplayerPrevAction() {
+            observer.controlsPrevActionDidChange(to: backwardAction)
+        } else {
+            observer.controlsPrevActionDidChange(to: nil)
+        }
+        
+        if let forwardAction = chiefsPlayer.delegate?.chiefsplayerNextAction() {
+            observer.controlsNextActionDidChange(to: forwardAction)
+        } else {
+            observer.controlsNextActionDidChange(to: nil)
+        }
+        
         observer.controlsPlayer(has: chiefsPlayer.selectedSource.resolutions)
         observer.controlsPlayerDidChangeResolution(to: chiefsPlayer.selectedSource.resolutions[chiefsPlayer._selectedResolutionIndex])
         observer.controlsPlayPauseChanged(to: player.isPlaying)
@@ -305,6 +325,9 @@ extension CControlsManager {
                     ChiefsPlayer.shared._selectedSubtitleIndex = nil
                     ChiefsPlayer.shared.removeCurrentSubtitles()
                     CChromecastRemoteControlFunctions.subtitleDidChanged_srt()
+                    //Tell Parent App
+                    ChiefsPlayer.shared.delegate?
+                    .chiefsplayerAttachedSubtitleChanged(to: nil, from: ChiefsPlayer.shared.selectedSource)
             }
             if selectedSubtitle == nil {
                 noCaptionsAction.setValue(true, forKey: "checked")
@@ -320,6 +343,9 @@ extension CControlsManager {
                         ChiefsPlayer.shared._selectedSubtitleIndex = thisIndex
                         ChiefsPlayer.shared.open(fileFromRemote: sub.source)
                         CChromecastRemoteControlFunctions.subtitleDidChanged_srt()
+                        //Tell Parent App
+                        ChiefsPlayer.shared.delegate?
+                        .chiefsplayerAttachedSubtitleChanged(to: sub, from: ChiefsPlayer.shared.selectedSource)
                         
                 }
                 if thisIndex == selectedSubtitle {

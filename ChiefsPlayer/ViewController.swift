@@ -95,14 +95,6 @@ class ViewController: UIViewController {
         testV.backgroundColor = .darkGray
         
         playVideo(with: sources, and: testV, with: .youtube)
-        CControlsManager.shared.backwardAction = { _ in
-            return SeekAction.seek(-5)
-            //                return SeekAction.open(URL(string:server + "/gen.php")!)
-        }
-        CControlsManager.shared.forwardAction = { _ in
-            return SeekAction.seek(5)
-            //                return SeekAction.open(URL(string:server + "/gen.php")!)
-        }
         
         CControlsManager.shared.leftButtons = {
             return [UIButton(type: .contactAdd)]
@@ -116,14 +108,6 @@ class ViewController: UIViewController {
         testV.backgroundColor = .gray
         
         playVideo(with: sources, and: testV, with: .barStyle)
-        CControlsManager.shared.backwardAction = { _ in
-            return SeekAction.seek(-5)
-            //                return SeekAction.open(URL(string:server + "/gen.php")!)
-        }
-        CControlsManager.shared.forwardAction = { _ in
-            return SeekAction.seek(5)
-            //                return SeekAction.open(URL(string:server + "/gen.php")!)
-        }
         
         CControlsManager.shared.leftButtons = {
             return [UIButton(type: .contactAdd)]
@@ -168,14 +152,6 @@ class ViewController: UIViewController {
             player.configs.onMinimizedAdditionalBottomSafeArea = 20
             player.configs.progressBarStyle.showsLivePanDuration = true
             
-            CControlsManager.shared.backwardAction = { _ in
-                return SeekAction.seek(-5)
-                //return SeekAction.open(URL(string:server + "/gen.php")!)
-            }
-            CControlsManager.shared.forwardAction = { _ in
-                return SeekAction.seek(5)
-                //return SeekAction.open(URL(string:server + "/gen.php")!)
-            }
 //            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 ChiefsPlayer.shared.present(on: self.navigationController!)
 //            }
@@ -203,6 +179,24 @@ extension ViewController:ChiefsPlayerDelegate {
     }
     func chiefsplayerMaximized() {
         AppUtility.lockOrientation(.all)
+    }
+    func chiefsplayerResolutionChanged(to resolution: CPlayerResolutionSource, from source: CPlayerSource) {
+        //print(resolution,source)
+    }
+    func chiefsplayerAttachedSubtitleChanged(to subtitle: CPlayerSubtitleSource?, from source: CPlayerSource) {
+        //print(subtitle,source)
+    }
+    func chiefsplayerBackwardAction() -> SeekAction? {
+        return .seek(8)
+    }
+    func chiefsplayerForwardAction() -> SeekAction? {
+        return .seek(10)
+    }
+    func chiefsplayerNextAction() -> SeekAction? {
+        return .play([CPlayerSource(resolutions: [resolutions.last!])])
+    }
+    func chiefsplayerPrevAction() -> SeekAction? {
+        return .play([CPlayerSource(resolutions: [resolutions.last!])])
     }
 //    func chiefsplayer(isCastingTo castingService: CastingService?) {
 //        let service = castingService == nil ? "Not casting" : "\(castingService!)"

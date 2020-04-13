@@ -153,7 +153,7 @@ public class CVideoView: UIView {
     
     
     /// Delegate should declare `chiefsplayerWillStart` before `chiefsplayer(isPlaying item:, at second:, of totalSeconds:)`
-    var chiefsplayerWillStartTriggered: Bool = false
+    var chiefsplayerReadyToPlayTriggerred: Bool = false
     
     /**
      #THIS WOULD BE CALLED EVEN IF PLAYER ITEM HAS NOT BEEN LOADED YET
@@ -170,7 +170,7 @@ public class CVideoView: UIView {
             
             if let item = self.player.currentItem as? CPlayerItem,
                 !ChiefsPlayer.shared.isPlayerError,
-                self.chiefsplayerWillStartTriggered
+                self.chiefsplayerReadyToPlayTriggerred
             {
                 guard
                     let second = item.currentTime().asFloat,
@@ -190,7 +190,7 @@ public class CVideoView: UIView {
             progressView.progressBar.progress = 0
             player.removeTimeObserver(timeObserver)
             self.timeObserver = nil
-            chiefsplayerWillStartTriggered = false
+            chiefsplayerReadyToPlayTriggerred = false
         }
     }
     func updateLoadingUI (with error:String)
@@ -271,6 +271,21 @@ public class CVideoView: UIView {
         if onVideoControls != nil {
             if frame.width == screenWidth { //if not minimized
                 controlsAreHidden = !controlsAreHidden
+                if controlsAreHidden == false {
+                    scheduleControlsHiding()
+                }
+            }
+        }
+    }
+    private func scheduleControlsHiding () {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {[weak self] in
+            if self?.progressView.isChangingCurrentTime == false {
+                if self?.controlsAreHidden == false {
+                    self?.controlsAreHidden = true
+                }
+            } else {
+                //Try again after delay, until user stops changing current time
+                self?.scheduleControlsHiding()
             }
         }
     }
@@ -350,9 +365,13 @@ extension CVideoView: CPlayerItemDelegate {
         if let vlayer = vLayer {
             ChiefsPlayer.shared.updateViewsAccordingTo(videoRect: vlayer.videoRect)
         }
-        if !chiefsplayerWillStartTriggered {
-            ChiefsPlayer.shared.delegate?.chiefsplayerWillStart(playing: item)
-            chiefsplayerWillStartTriggered = true
+        if !chiefsplayerReadyToPlayTriggerred {
+            let selectedResolutionIndex = ChiefsPlayer.shared._selectedResolutionIndex
+            let selectedSource = ChiefsPlayer.shared.selectedSource
+            if selectedResolutionIndex < selectedSource.resolutions.count {
+                ChiefsPlayer.shared.delegate?.chiefsplayerReadyToPlay(selectedSource.resolutions[selectedResolutionIndex], from: selectedSource)
+            }
+            chiefsplayerReadyToPlayTriggerred = true
         }
         loadingView.state = .isPlaying
         CControlsManager.shared.updateControlsPlayButton(to: true)
@@ -380,9 +399,12 @@ extension CVideoView: CPlayerItemDelegate {
     }
     
     public func cplayerItemDidPlayToEndTime() {
-        updateLoadingUI(with: "")
-        CControlsManager.shared.updateAllControllers()
-        CControlsManager.shared.updateControlsPlayButton(to: false)
+        //If next action was not set then show retry button
+        if !CControlsManager.shared.nextBtnAction() {
+            updateLoadingUI(with: "")
+            CControlsManager.shared.updateAllControllers()
+            CControlsManager.shared.updateControlsPlayButton(to: false)
+        }
     }
     
     public func cplayerItemWillStopObserving() {

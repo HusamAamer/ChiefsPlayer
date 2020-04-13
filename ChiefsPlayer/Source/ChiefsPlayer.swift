@@ -11,13 +11,26 @@ import AVKit
 import AVFoundation
 
 public protocol ChiefsPlayerDelegate:class {
-    //Called whene player get maximized or fullscreen
+    ///Called whene player get maximized or fullscreen
     func chiefsplayerStatusBarShouldBe (hidden:Bool)
-    //Called only once, when player state is ReadyToPlay for the first time
+    
+    ///Called only once, when player state is ReadyToPlay for the first time
+    @available(*, deprecated, message: "Use chiefsplayerReadyToPlay(..) instead")
     func chiefsplayerWillStart (playing item:CPlayerItem)
-    //Called on dismiss() or playing another video
+    
+    ///Called only once, when player state is ReadyToPlay for the first time
+    func chiefsplayerReadyToPlay (_ resolution:CPlayerResolutionSource, from source:CPlayerSource)
+    
+    ///Called when user change resolution manually
+    func chiefsplayerResolutionChanged (to resolution:CPlayerResolutionSource, from source:CPlayerSource)
+    
+    ///Called when user change subtitle manually. Not called for m3u8 subtitles
+    func chiefsplayerAttachedSubtitleChanged (to subtitle:CPlayerSubtitleSource?, from source:CPlayerSource)
+    
+    ///Called on dismiss() or playing another video
     func chiefsplayerWillStop (playing item:CPlayerItem)
-    //Called periodically every when video is playing
+    
+    ///Called periodically every when video is playing
     func chiefsplayer (isPlaying item:CPlayerItem, at second:Float, of totalSeconds:Float)
     
     func chiefsplayerAppeared ()
@@ -25,23 +38,38 @@ public protocol ChiefsPlayerDelegate:class {
     func chiefsplayerMaximized()
     func chiefsplayerMinimized()
     
-    //Called when video needs to be oriented
+    ///Called when video needs to be oriented
     func chiefsplayerOrientationChanged (to newOrientation:UIInterfaceOrientation)
     
-    //Called when player is streaming to airply or chromecast
+    ///Called when player is streaming to airply or chromecast
     func chiefsplayer(isCastingTo castingService:CastingService?)
     
-    //Here you can apply any modification to source before casting starts
+    ///Here you can apply any modification to source before casting starts
     func chiefsplayerWillStartCasting(from source:CPlayerSource) -> CPlayerSource?
     
-    /// Optionaly write logs to firebase or other service for crash reporting
+    ///Optionaly write logs to firebase or other service for crash reporting
     func chiefsplayerDebugLog(_ string:String)
+    
+    /// Backward action, Return nil to hide backward button
+    func chiefsplayerBackwardAction() -> SeekAction?
+    
+    /// Forward action, Return nil to hide forward button
+    func chiefsplayerForwardAction() -> SeekAction?
+    
+    /// Previous action, Return nil to hide previous button
+    func chiefsplayerPrevAction() -> SeekAction?
+    
+    /// Next action, Return nil to hide next button
+    func chiefsplayerNextAction() -> SeekAction?
 }
 
 //Make functions optional
 public extension ChiefsPlayerDelegate {
     func chiefsplayerStatusBarShouldBe (hidden:Bool) {}
     func chiefsplayerWillStart (playing item:CPlayerItem) {}
+    func chiefsplayerReadyToPlay (_ resolution:CPlayerResolutionSource, from source:CPlayerSource) {}
+    func chiefsplayerResolutionChanged (to resolution:CPlayerResolutionSource, from source:CPlayerSource) {}
+    func chiefsplayerAttachedSubtitleChanged (to subtitle:CPlayerSubtitleSource?, from source:CPlayerSource) {}
     func chiefsplayerWillStop (playing item:CPlayerItem) {}
     func chiefsplayer (isPlaying item:CPlayerItem, at second:Float, of totalSeconds:Float) {}
     func chiefsplayerAppeared () {}
@@ -52,6 +80,10 @@ public extension ChiefsPlayerDelegate {
     func chiefsplayer(isCastingTo castingService:CastingService?){}
     func chiefsplayerWillStartCasting(from source:CPlayerSource) -> CPlayerSource? { return nil}
     func chiefsplayerDebugLog(_ string:String) {}
+    func chiefsplayerBackwardAction() -> SeekAction? {return nil}
+    func chiefsplayerForwardAction() -> SeekAction?  {return nil}
+    func chiefsplayerPrevAction() -> SeekAction? {return nil}
+    func chiefsplayerNextAction() -> SeekAction? {return nil}
 }
 public class ChiefsPlayer {
     private struct Static
@@ -254,7 +286,6 @@ public class ChiefsPlayer {
                                                                   object: AVAudioSession.sharedInstance())
             
         } else {
-            //TODO: May needs improvement
             if let newDetailsView = detailsView {
                 replaceUserView(with: newDetailsView)
             }
