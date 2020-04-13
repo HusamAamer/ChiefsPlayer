@@ -218,6 +218,7 @@ extension CVideoControlsView : CControlsManagerDelegate {
     
     func controlsForwardActionDidChange(to newAction: SeekAction?) {
         if let action = newAction {
+            forwardSeekButton.isHidden = false
             switch action {
             case .play(_):
                 forwardSeekButton.setImage(UIImage.make(name: "BarNextTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
@@ -233,6 +234,7 @@ extension CVideoControlsView : CControlsManagerDelegate {
     }
     func controlsBackwardActionDidChange(to newAction: SeekAction?) {
         if let action = newAction {
+            backwardSeekButton.isHidden = false
             switch action {
             case .play(_):
                 backwardSeekButton.setImage(UIImage.make(name: "BarBackTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
@@ -247,6 +249,7 @@ extension CVideoControlsView : CControlsManagerDelegate {
     }
     func controlsNextActionDidChange(to newAction: SeekAction?) {
         if let action = newAction {
+            nextButton.isHidden = false
             switch action {
             case .play(_):
                 nextButton.setImage(UIImage.make(name: "BarNextTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
@@ -261,6 +264,7 @@ extension CVideoControlsView : CControlsManagerDelegate {
     }
     func controlsPrevActionDidChange(to newAction: SeekAction?) {
         if let action = newAction {
+            prevButton.isHidden = false
             switch action {
             case .play(_):
                 prevButton.setImage(UIImage.make(name: "BarBackTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
