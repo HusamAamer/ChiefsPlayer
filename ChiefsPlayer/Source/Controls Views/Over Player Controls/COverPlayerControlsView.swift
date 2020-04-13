@@ -189,6 +189,7 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
     
     func controlsForwardActionDidChange(to newAction: SeekAction?) {
         if let action = newAction {
+            forwardSeekButton.isHidden = false
             switch action {
             case .play(_):
                 forwardSeekButton.setImage(UIImage.make(name: "NextTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
@@ -204,6 +205,7 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
     }
     func controlsBackwardActionDidChange(to newAction: SeekAction?) {
         if let action = newAction {
+            backwardSeekButton.isHidden = false
             switch action {
             case .play(_):
                 backwardSeekButton.setImage(UIImage.make(name: "BackTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
@@ -218,6 +220,7 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
     }
     func controlsNextActionDidChange(to newAction: SeekAction?) {
         if let action = newAction {
+            nextButton.isHidden = false
             switch action {
             case .play(_):
                 nextButton.setImage(UIImage.make(name: "NextTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
@@ -232,6 +235,7 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
     }
     func controlsPrevActionDidChange(to newAction: SeekAction?) {
         if let action = newAction {
+            prevButton.isHidden = false
             switch action {
             case .play(_):
                 prevButton.setImage(UIImage.make(name: "BackTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)

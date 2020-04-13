@@ -186,16 +186,16 @@ extension ViewController:ChiefsPlayerDelegate {
     func chiefsplayerAttachedSubtitleChanged(to subtitle: CPlayerSubtitleSource?, from source: CPlayerSource) {
         //print(subtitle,source)
     }
-    func chiefsplayerBackwardAction() -> SeekAction? {
+    func chiefsplayerBackwardAction(_ willTriggerAction: Bool) -> SeekAction? {
         return .seek(8)
     }
-    func chiefsplayerForwardAction() -> SeekAction? {
+    func chiefsplayerForwardAction(_ willTriggerAction: Bool) -> SeekAction? {
         return .seek(10)
     }
-    func chiefsplayerNextAction() -> SeekAction? {
+    func chiefsplayerNextAction(_ willTriggerAction: Bool) -> SeekAction? {
         return .play([CPlayerSource(resolutions: [resolutions.last!])])
     }
-    func chiefsplayerPrevAction() -> SeekAction? {
+    func chiefsplayerPrevAction(_ willTriggerAction: Bool) -> SeekAction? {
         return .play([CPlayerSource(resolutions: [resolutions.last!])])
     }
 //    func chiefsplayer(isCastingTo castingService: CastingService?) {
