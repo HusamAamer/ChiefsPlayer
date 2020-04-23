@@ -14,8 +14,15 @@ import GoogleCast
 
 public typealias SeekActionBlock = (_ player:CAVQueuePlayer)->(SeekAction)
 public typealias AccessoryViewsBlock = ()->([UIView])
+
+public typealias CustomSeekActionIcon = UIImage
+
+/// Seek Action determinse icon and action of the button, use `customPlay` for custom icon and then you can trigger custom code on `willTriggerAction = true`
 public enum SeekAction {
-    case play([CPlayerSource]), seek(Int)
+    case
+    play([CPlayerSource]),
+    seek(Int),
+    custom(CustomSeekActionIcon?)
 }
 public enum CastingService {
     case chromecast, airplay
@@ -187,6 +194,9 @@ extension CControlsManager {
     }
     func performAction (action:SeekAction) {
         switch action {
+        case .custom(_):
+            // Custom type is intended to be used to apply custom developer action outside of the ChiefsPlayer
+            break
         case .play(let sourceArray):
             ChiefsPlayer.shared.play(from: sourceArray, with: nil)
             break

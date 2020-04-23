@@ -220,6 +220,9 @@ extension CVideoControlsView : CControlsManagerDelegate {
         if let action = newAction {
             forwardSeekButton.isHidden = false
             switch action {
+            case .custom(let icon):
+                forwardSeekButton.setImage(icon ?? UIImage.make(name: "BarNextTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                break
             case .play(_):
                 forwardSeekButton.setImage(UIImage.make(name: "BarNextTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
@@ -236,6 +239,9 @@ extension CVideoControlsView : CControlsManagerDelegate {
         if let action = newAction {
             backwardSeekButton.isHidden = false
             switch action {
+            case .custom(let icon):
+                backwardSeekButton.setImage(icon ?? UIImage.make(name: "BarBackTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                break
             case .play(_):
                 backwardSeekButton.setImage(UIImage.make(name: "BarBackTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
@@ -251,6 +257,9 @@ extension CVideoControlsView : CControlsManagerDelegate {
         if let action = newAction {
             nextButton.isHidden = false
             switch action {
+            case .custom(let icon):
+                nextButton.setImage(icon ?? UIImage.make(name: "BarNextTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                break
             case .play(_):
                 nextButton.setImage(UIImage.make(name: "BarNextTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
@@ -266,6 +275,9 @@ extension CVideoControlsView : CControlsManagerDelegate {
         if let action = newAction {
             prevButton.isHidden = false
             switch action {
+            case .custom(let icon):
+                prevButton.setImage(icon ?? UIImage.make(name: "BarBackTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                break
             case .play(_):
                 prevButton.setImage(UIImage.make(name: "BarBackTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break

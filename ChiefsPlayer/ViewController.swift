@@ -189,6 +189,19 @@ extension ViewController:ChiefsPlayerDelegate {
     func chiefsplayerBackwardAction(_ willTriggerAction: Bool) -> SeekAction? {
         return .seek(8)
     }
+    
+    
+    /**
+     EXAMPLE OF USING CUSTOM SEEK ACTION
+     
+     func chiefsplayerForwardAction(_ willTriggerAction: Bool) -> SeekAction? {
+         if willTriggerAction {
+             present(alert(title: "hoho", body: nil, cancel: nil), animated: true, completion: nil)
+         }
+         return .custom(nil)
+     }
+     
+     */
     func chiefsplayerForwardAction(_ willTriggerAction: Bool) -> SeekAction? {
         return .seek(10)
     }
