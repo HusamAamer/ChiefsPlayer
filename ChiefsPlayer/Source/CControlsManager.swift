@@ -50,7 +50,7 @@ public class CControlsManager:NSObject {
     }
     
     
-    private var player : CAVQueuePlayer {return ChiefsPlayer.shared.player}
+    private var player : CAVQueuePlayer? {return ChiefsPlayer.shared.player}
     var delegates : [CControlsManagerDelegate?] = []
     
     override init() {
@@ -61,19 +61,21 @@ public class CControlsManager:NSObject {
     func startObserving () {
         // Add time observer
         timeObserverToken =
-            player.addPeriodicTimeObserver(
+            player?.addPeriodicTimeObserver(
                 forInterval: CMTimeMakeWithSeconds(1, preferredTimescale: 1),
                 queue: DispatchQueue.main,
                 using: { [weak self] (time) in
                     guard let `self` = self else {return}
                     
-                    let duration = AVCGlobalFuncs.timeFrom(seconds: self.player.currentTime())
-                    let remaining = AVCGlobalFuncs.playerItemTimeRemainingString()
-                    self.delegates.forEach({$0?.controlsTimeUpdated(to: duration, remaining: remaining, andPlayer: self.player.isPlaying)})
+                    if let player = self.player {
+                        let duration = AVCGlobalFuncs.timeFrom(seconds: player.currentTime())
+                        let remaining = AVCGlobalFuncs.playerItemTimeRemainingString()
+                        self.delegates.forEach({$0?.controlsTimeUpdated(to: duration, remaining: remaining, andPlayer: player.isPlaying)})
+                    }
             })
     }
     func endPlayerObserving () {
-        player.removeTimeObserver(timeObserverToken!)
+        player?.removeTimeObserver(timeObserverToken!)
     }
     func _deinit () {
         delegates.removeAll()
@@ -129,11 +131,11 @@ extension CControlsManager {
         } else {
             
             if ChiefsPlayer.shared.isPlayerError {return .Unknown}
-            if player.isPlaying {
-                player.pause()
+            if player?.isPlaying == true {
+                player?.pause()
                 out = .isPaused
             } else {
-                player.play()
+                player?.play()
                 out = .isPlaying
             }
         }
@@ -189,8 +191,9 @@ extension CControlsManager {
             CChromecastRemoteControlFunctions.seek(by: seconds)
             return
         }
-        let current = player.currentTime()
-        player.seek(to: current + CMTime.init(seconds: Double(seconds), preferredTimescale: 1))
+        if let current = player?.currentTime() {
+            player?.seek(to: current + CMTime.init(seconds: Double(seconds), preferredTimescale: 1))
+        }
     }
     func performAction (action:SeekAction) {
         switch action {
@@ -288,7 +291,9 @@ extension CControlsManager {
         
         observer.controlsPlayer(has: chiefsPlayer.selectedSource.resolutions)
         observer.controlsPlayerDidChangeResolution(to: chiefsPlayer.selectedSource.resolutions[chiefsPlayer._selectedResolutionIndex])
-        observer.controlsPlayPauseChanged(to: player.isPlaying)
+        if let isPlaying = player?.isPlaying {
+            observer.controlsPlayPauseChanged(to: isPlaying)
+        }
         checkSubtitlesAvailability()
     }
     ///Called when video is ready to play for the first time only
@@ -300,7 +305,7 @@ extension CControlsManager {
         }
         
         //From m3u8
-        if let subs = player.currentItem?
+        if let subs = player?.currentItem?
             .asset
             .mediaSelectionGroup(forMediaCharacteristic: .legible)
         {
@@ -309,7 +314,7 @@ extension CControlsManager {
             let options = subs.options.filter({$0.mediaType.rawValue != "clcp"})
             
             if options.count != 0 {
-                player.currentItem?.select(subs.options.first, in: subs) //Select first found subtitle
+                player?.currentItem?.select(subs.options.first, in: subs) //Select first found subtitle
                 delegates.forEach({$0?.controlsSubtitles(are: true)})
                 return
             }
@@ -377,19 +382,19 @@ extension CControlsManager {
         ////////////////////////////////////////////////
         /// #From m3u8
         ////////////////////////////////////////////////
-        if let subs = player.currentItem?
+        if let subs = player?.currentItem?
             .asset.mediaSelectionGroup(forMediaCharacteristic: .legible)
         {
             //            let filtered = AVMediaSelectionGroup.mediaSelectionOptions(from: subs.options, filteredAndSortedAccordingToPreferredLanguages: ["en","ar"])
             
-            let selected = player.currentItem?.selectedMediaOption(in: subs)
+            let selected = player?.currentItem?.selectedMediaOption(in: subs)
             var actions = [UIAlertAction]()
             
             //Disable captions action
             let noCaptionsAction = UIAlertAction(
                 title: localized("no_caption"),
                 style: .default) { (_) in
-                    self.player.currentItem?.select(nil, in: subs)
+                    self.player?.currentItem?.select(nil, in: subs)
                     CChromecastRemoteControlFunctions.subtitleDidChanged_m3u8()
             }
             if selected == nil {
@@ -403,7 +408,7 @@ extension CControlsManager {
                     title: sub.displayName(with: Locale.current),
                     style: .default) { (_) in
                         
-                        self.player.currentItem?.select(sub, in: subs)
+                        self.player?.currentItem?.select(sub, in: subs)
                         CChromecastRemoteControlFunctions.subtitleDidChanged_m3u8()
                 }
                 if sub == selected {

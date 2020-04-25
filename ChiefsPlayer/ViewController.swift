@@ -140,12 +140,12 @@ class ViewController: UIViewController {
     {
         //Playing another video without changing the details view
         if detailsView == nil {
-            ChiefsPlayer.shared.play(from: sources, with: nil)
+            ChiefsPlayer.shared.play(from: sources, with: nil, startWithResoultionAt: 100)
         } else {
             //let table = MovieVideoDetails(frame: .zero, style: .plain)
             let player = ChiefsPlayer.shared
             player.delegate = self
-            player.play(from: sources, with: detailsView)
+            player.play(from: sources, with: detailsView, startWithResoultionAt: 100)
             //player.bottomSafeArea = tabBar.frame.height - screenSafeInsets.bottom
             player.configs.controlsStyle = style
             player.configs.videoRatio = .widescreen

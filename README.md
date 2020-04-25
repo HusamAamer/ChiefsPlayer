@@ -4,6 +4,9 @@ Advanced floating player with streaming services.
 
 ### Changelog
 
+v1.3.1
+- Ignore playing presention if passed resolution index was empty, and use index = 0 if passed resolution index was out of range.    
+
 v1.3
 - Next, Prev, Forward and Backward separated buttons with all needed delegate methods.  
 - Automatically hides over player controls after 2 secs  

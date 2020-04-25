@@ -221,7 +221,13 @@ public class ChiefsPlayer {
         if _selectedSourceIndex <= (sources.count - 1),
             _selectedResolutionIndex > (sources[sourceIndex].resolutions.count - 1) {
             ChiefsPlayer.Log(event: "\(#function) - Index out of range")
-            return
+            if sources[sourceIndex].resolutions.first != nil {
+                _selectedResolutionIndex = 0
+                ChiefsPlayer.Log(event: "\(#function) - Will open resolution at index 0")
+            } else {
+                ChiefsPlayer.Log(event: "\(#function) - Player would not present because resolutions array is empty")
+                return
+            }
         }
         
         self.sources = sources
@@ -480,9 +486,14 @@ public class ChiefsPlayer {
     var vHLandscape:NSLayoutConstraint!
     public func present(on viewController:UIViewController) {
         if parentVC != nil {
-            print("Player is already presented")
+            ChiefsPlayer.Log(event: "Player is already presented")
             return
         }
+        if player == nil {
+            ChiefsPlayer.Log(event: "Please ensure calling `play(from:with:startWithSourceAt:startWithResoultionAt:startWithSubtitleAt:)` with valid indexes before trying presenting player")
+            return
+        }
+        
         parentVC = viewController
                 
         if Device.HAS_NOTCH {
@@ -688,7 +699,7 @@ public class ChiefsPlayer {
     ///
     /// - Parameter videoRect: Video layer frame inside videoView
     func updateViewsAccordingTo(videoRect:CGRect)
-    {   
+    {
         if videoRect.height == 0 {
             return
         }

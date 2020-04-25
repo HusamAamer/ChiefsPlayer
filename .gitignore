@@ -1,0 +1,8 @@
+## User settings
+xcuserdata/
+Pods
+Podfile.lock
+# IDEs
+*.xccheckout
+.idea/
+appDsyms/
