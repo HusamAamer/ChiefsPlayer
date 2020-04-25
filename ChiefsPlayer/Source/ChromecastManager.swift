@@ -374,7 +374,7 @@ extension ChromecastManager : GCKRequestDelegate {
         let playerIsPlaying = true
         let duration = AVCGlobalFuncs.timeFrom(seconds: streamPosition)
         let remaining = "-" + AVCGlobalFuncs.timeFrom(seconds: fullTime - streamPosition)
-        CControlsManager.shared?.delegates.forEach({$0?.controlsTimeUpdated(to: duration, remaining: remaining, andPlayer: playerIsPlaying)})
+        CControlsManager.shared.delegates.forEach({$0?.controlsTimeUpdated(to: duration, remaining: remaining, andPlayer: playerIsPlaying)})
         
     }
 }
@@ -393,10 +393,10 @@ extension ChromecastManager:GCKRemoteMediaClientListener {
         guard let state = mediaStatus?.playerState else {return}
         switch state {
         case GCKMediaPlayerState.playing:
-            CControlsManager.shared?.delegates.forEach({$0?.controlsPlayPauseChanged(to:true)})
+            CControlsManager.shared.delegates.forEach({$0?.controlsPlayPauseChanged(to:true)})
             break
         case GCKMediaPlayerState.paused:
-            CControlsManager.shared?.delegates.forEach({$0?.controlsPlayPauseChanged(to:false)})
+            CControlsManager.shared.delegates.forEach({$0?.controlsPlayPauseChanged(to:false)})
             break
         default:
             return

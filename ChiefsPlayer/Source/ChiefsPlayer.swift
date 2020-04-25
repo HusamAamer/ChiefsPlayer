@@ -258,7 +258,7 @@ public class ChiefsPlayer {
                         self.delegate?.chiefsplayerOrientationChanged(to: interfaceOrientaion)
                     }
                     
-                    guard let shouldShowControls = CControlsManager.shared?.shouldShowControlsAboveVideo(for: newOrientation) else {return}
+                    let shouldShowControls = CControlsManager.shared.shouldShowControlsAboveVideo(for: newOrientation)
                     switch newOrientation {
                     case .landscapeLeft, .landscapeRight:
                         print("landscape")
@@ -296,7 +296,7 @@ public class ChiefsPlayer {
             reinitPlayer(with: sourceUrl)
             
             maximize()
-            CControlsManager.shared?.updateAllControllers()
+            CControlsManager.shared.updateAllControllers()
         }
         
         // Add subtitles if playing locally only
@@ -432,7 +432,7 @@ public class ChiefsPlayer {
         
         removeCurrentSubtitles()
         videoView.endPlayerObserving()
-        CControlsManager.shared?.endPlayerObserving()
+        CControlsManager.shared.endPlayerObserving()
         
         player.replaceCurrentItem(with: nil)
         loadAsset(for: url)
@@ -440,7 +440,7 @@ public class ChiefsPlayer {
             
         videoView.loadingView.state = .isLoading
         videoView.startObservation()
-        CControlsManager.shared?.startObserving()
+        CControlsManager.shared.startObserving()
     }
     /// Remove current item then insert it again
     func reloadPlayer ()
@@ -480,14 +480,9 @@ public class ChiefsPlayer {
     var vHLandscape:NSLayoutConstraint!
     public func present(on viewController:UIViewController) {
         if parentVC != nil {
-            ChiefsPlayer.Log(event: "Player is already presented")
+            print("Player is already presented")
             return
         }
-        if player == nil {
-            ChiefsPlayer.Log(event: "Please ensure calling `play(from:with:startWithSourceAt:startWithResoultionAt:startWithSubtitleAt:)` with valide paramenters before trying presenting player")
-            return
-        }
-        
         parentVC = viewController
                 
         if Device.HAS_NOTCH {
@@ -598,7 +593,7 @@ public class ChiefsPlayer {
         controls  = controlsForCurrentStyle()
         
         
-        if CControlsManager.shared?.shouldShowControlsAboveVideo(for: UIDevice.current.orientation) == true {
+        if CControlsManager.shared.shouldShowControlsAboveVideo(for: UIDevice.current.orientation) {
             videoView.addOnVideoControls()
         } else {
             detailsStack.addArrangedSubview(controls)
@@ -654,7 +649,7 @@ public class ChiefsPlayer {
 
         //Stop Player
         videoView.endPlayerObserving()
-        CControlsManager.shared?.endPlayerObserving()
+        CControlsManager.shared.endPlayerObserving()
         
         /// # CRASH FIX:
         /// App crashes when dismiss happenes and AirPlay & Chromecast is Active
@@ -684,7 +679,7 @@ public class ChiefsPlayer {
         self.player = nil
         
         //Remove shared instance
-        CControlsManager.shared?._deinit()
+        CControlsManager.shared._deinit()
         ChiefsPlayer.Static.instance = nil
 
     }
