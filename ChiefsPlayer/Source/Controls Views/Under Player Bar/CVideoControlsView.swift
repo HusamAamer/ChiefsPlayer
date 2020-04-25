@@ -113,7 +113,7 @@ class CVideoControlsView: CBaseControlsView {
             fullscreenBtn.isHidden = true
         }
         
-        CControlsManager.shared.addDelegate(self)
+        CControlsManager.shared?.addDelegate(self)
     }
     
     override func didMoveToSuperview() {
@@ -130,27 +130,27 @@ class CVideoControlsView: CBaseControlsView {
                 //topAnchor.constraint(equalTo: sv.topAnchor).isActive = true
             }
         } else {
-            CControlsManager.shared.removeDelegate(self)
+            CControlsManager.shared?.removeDelegate(self)
         }
     }
     
     @IBAction func playBtn(_ sender: UIButton) {
-        let state = CControlsManager.shared.play()
+        let state = CControlsManager.shared?.play()
         if state != .Unknown {
             sender.isSelected = state == .isPaused
         }
     }
     @IBAction func nextBtn(_ sender: UIButton) {
-        CControlsManager.shared.nextBtnAction()
+        CControlsManager.shared?.nextBtnAction()
     }
     @IBAction func prevBtn(_ sender: UIButton) {
-        CControlsManager.shared.prevBtnAction()
+        CControlsManager.shared?.prevBtnAction()
     }
     @IBAction func forwardSeekBtn(_ sender: UIButton) {
-        CControlsManager.shared.forwardBtnAction()
+        CControlsManager.shared?.forwardBtnAction()
     }
     @IBAction func backwardSeekBtn(_ sender: UIButton) {
-        CControlsManager.shared.backwardBtnAction()
+        CControlsManager.shared?.backwardBtnAction()
     }
     
     
@@ -163,13 +163,13 @@ class CVideoControlsView: CBaseControlsView {
     //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     @IBOutlet weak var fullscreenBtn: UIButton!
     @IBAction func fullscreenBtn (_ sender:UIButton) {
-        CControlsManager.shared.fullscreenBtnAction()
+        CControlsManager.shared?.fullscreenBtnAction()
     }
     //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     @IBAction func subtitlesBtn (_ sender: UIButton)
     {
-        CControlsManager.shared.subtitleBtnAction(sender)
+        CControlsManager.shared?.subtitleBtnAction(sender)
     }
     
     //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

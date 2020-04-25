@@ -66,7 +66,7 @@ public class CBaseControlsView:UIView {
                     ChiefsPlayer.shared.delegate?
                         .chiefsplayerResolutionChanged(to: element, from: ChiefsPlayer.shared.selectedSource)
                     
-                    CControlsManager.shared.delegates.forEach({$0?.controlsPlayerDidChangeResolution(to: element)})
+                    CControlsManager.shared?.delegates.forEach({$0?.controlsPlayerDidChangeResolution(to: element)})
             })
 
             if ChiefsPlayer.shared._selectedResolutionIndex == resolutionSource.offset {

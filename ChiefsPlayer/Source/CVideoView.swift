@@ -259,7 +259,7 @@ public class CVideoView: UIView {
         }
         
         // Trigger delegates to tell onVideoControls that we have subtitles or not
-        CControlsManager.shared.reloadVidoInfo()
+        CControlsManager.shared?.reloadVidoInfo()
     }
     func removeOnVideoControls () {
         if let onVideoControls = onVideoControls {
@@ -333,7 +333,7 @@ extension CVideoView: CAVQueuePlayerDelegate {
         }
         
         // Trigger delegates to tell onVideoControls that we have subtitles or not
-        CControlsManager.shared.reloadVidoInfo()
+        CControlsManager.shared?.reloadVidoInfo()
     }
     
     public func cavqueueplayerReadyToPlay() {
@@ -346,7 +346,7 @@ extension CVideoView: CAVQueuePlayerDelegate {
         }
     }
     public func cavqueueplayerPlayingStatus(is playing: Bool) {
-        CControlsManager.shared.updateControlsPlayButton(to: playing)
+        CControlsManager.shared?.updateControlsPlayButton(to: playing)
     }
 }
 
@@ -374,7 +374,7 @@ extension CVideoView: CPlayerItemDelegate {
             chiefsplayerReadyToPlayTriggerred = true
         }
         loadingView.state = .isPlaying
-        CControlsManager.shared.updateControlsPlayButton(to: true)
+        CControlsManager.shared?.updateControlsPlayButton(to: true)
     }
     
     public func cplayerItemPlaybackLikelyToKeepUp() {
@@ -395,15 +395,15 @@ extension CVideoView: CPlayerItemDelegate {
         /// Handling error of player is fair enough
         updateLoadingUI(with: error.localizedDescription)
         endPlayerObserving()
-        CControlsManager.shared.updateControlsPlayButton(to: false)
+        CControlsManager.shared?.updateControlsPlayButton(to: false)
     }
     
     public func cplayerItemDidPlayToEndTime() {
         //If next action was not set then show retry button
-        if !CControlsManager.shared.nextBtnAction() {
+        if CControlsManager.shared?.nextBtnAction() == false {
             updateLoadingUI(with: "")
-            CControlsManager.shared.updateAllControllers()
-            CControlsManager.shared.updateControlsPlayButton(to: false)
+            CControlsManager.shared?.updateAllControllers()
+            CControlsManager.shared?.updateControlsPlayButton(to: false)
         }
     }
     

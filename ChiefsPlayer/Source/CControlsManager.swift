@@ -39,8 +39,13 @@ public class CControlsManager:NSObject {
         static var instance: CControlsManager?
     }
     
-    class public var shared: CControlsManager
+    class public var shared: CControlsManager?
     {
+        if (ChiefsPlayer.shared.player == nil) {
+            ChiefsPlayer.Log(event: "You can't access `CControlsManager` before initiating player")
+            return nil
+        }
+        
         if Static.instance == nil
         {
             Static.instance = CControlsManager()
@@ -160,6 +165,7 @@ extension CControlsManager {
 ////////////////////////////////////////////////////////////////
 
 extension CControlsManager {
+    @discardableResult
     func nextBtnAction () -> Bool {
         if let action = ChiefsPlayer.shared.delegate?.chiefsplayerNextAction(true) {
             performAction(action: action)

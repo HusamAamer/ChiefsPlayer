@@ -96,10 +96,10 @@ class ViewController: UIViewController {
         
         playVideo(with: sources, and: testV, with: .youtube)
         
-        CControlsManager.shared.leftButtons = {
+        CControlsManager.shared?.leftButtons = {
             return [UIButton(type: .contactAdd)]
         }
-        CControlsManager.shared.rightButtons = {
+        CControlsManager.shared?.rightButtons = {
             return [UIButton(type: .detailDisclosure)]
         }
     }
@@ -109,10 +109,10 @@ class ViewController: UIViewController {
         
         playVideo(with: sources, and: testV, with: .barStyle)
         
-        CControlsManager.shared.leftButtons = {
+        CControlsManager.shared?.leftButtons = {
             return [UIButton(type: .contactAdd)]
         }
-        CControlsManager.shared.rightButtons = {
+        CControlsManager.shared?.rightButtons = {
             return [UIButton(type: .detailDisclosure)]
         }
         
@@ -140,7 +140,7 @@ class ViewController: UIViewController {
     {
         //Playing another video without changing the details view
         if detailsView == nil {
-            ChiefsPlayer.shared.play(from: sources, with: nil)
+            ChiefsPlayer.shared.play(from: sources, with: nil, startWithResoultionAt: 100)
         } else {
             //let table = MovieVideoDetails(frame: .zero, style: .plain)
             let player = ChiefsPlayer.shared
