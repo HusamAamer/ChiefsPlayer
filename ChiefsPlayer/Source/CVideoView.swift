@@ -369,7 +369,7 @@ extension CVideoView: CPlayerItemDelegate {
             let selectedResolutionIndex = ChiefsPlayer.shared._selectedResolutionIndex
             let selectedSource = ChiefsPlayer.shared.selectedSource
             if selectedResolutionIndex < selectedSource.resolutions.count {
-                ChiefsPlayer.shared.delegate?.chiefsplayerReadyToPlay(selectedSource.resolutions[selectedResolutionIndex], from: selectedSource)
+                ChiefsPlayer.shared.delegate?.chiefsplayerReadyToPlay(item ,resolution: selectedSource.resolutions[selectedResolutionIndex], from: selectedSource)
             }
             chiefsplayerReadyToPlayTriggerred = true
         }

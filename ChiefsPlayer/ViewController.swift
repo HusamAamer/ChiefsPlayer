@@ -189,7 +189,9 @@ extension ViewController:ChiefsPlayerDelegate {
     func chiefsplayerBackwardAction(_ willTriggerAction: Bool) -> SeekAction? {
         return .seek(8)
     }
-    
+    func chiefsplayerReadyToPlay(_ item: CPlayerItem, resolution: CPlayerResolutionSource, from source: CPlayerSource) {
+        
+    }
     
     /**
      EXAMPLE OF USING CUSTOM SEEK ACTION

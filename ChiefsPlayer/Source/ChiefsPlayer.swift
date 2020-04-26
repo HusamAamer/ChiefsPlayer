@@ -14,12 +14,9 @@ public protocol ChiefsPlayerDelegate:class {
     ///Called whene player get maximized or fullscreen
     func chiefsplayerStatusBarShouldBe (hidden:Bool)
     
-    ///Called only once, when player state is ReadyToPlay for the first time
-    @available(*, deprecated, message: "Use chiefsplayerReadyToPlay(..) instead")
-    func chiefsplayerWillStart (playing item:CPlayerItem)
     
     ///Called only once, when player state is ReadyToPlay for the first time
-    func chiefsplayerReadyToPlay (_ resolution:CPlayerResolutionSource, from source:CPlayerSource)
+    func chiefsplayerReadyToPlay (_ item:CPlayerItem, resolution: CPlayerResolutionSource, from source:CPlayerSource)
     
     ///Called when user change resolution manually
     func chiefsplayerResolutionChanged (to resolution:CPlayerResolutionSource, from source:CPlayerSource)
@@ -71,7 +68,7 @@ public protocol ChiefsPlayerDelegate:class {
 public extension ChiefsPlayerDelegate {
     func chiefsplayerStatusBarShouldBe (hidden:Bool) {}
     func chiefsplayerWillStart (playing item:CPlayerItem) {}
-    func chiefsplayerReadyToPlay (_ resolution:CPlayerResolutionSource, from source:CPlayerSource) {}
+    func chiefsplayerReadyToPlay (_ item:CPlayerItem, resolution: CPlayerResolutionSource, from source:CPlayerSource) {}
     func chiefsplayerResolutionChanged (to resolution:CPlayerResolutionSource, from source:CPlayerSource) {}
     func chiefsplayerAttachedSubtitleChanged (to subtitle:CPlayerSubtitleSource?, from source:CPlayerSource) {}
     func chiefsplayerWillStop (playing item:CPlayerItem) {}

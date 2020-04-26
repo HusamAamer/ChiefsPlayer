@@ -6,6 +6,8 @@ Advanced floating player with streaming services.
 
 v1.3.1
 - Ignore playing presention if passed resolution index was empty, and use index = 0 if passed resolution index was out of range.    
+- replacing `func chiefsplayerReadyToPlay (_ resolution: CPlayerResolutionSource, from source:CPlayerSource)` with `func chiefsplayerReadyToPlay (_ item:CPlayerItem, resolution: CPlayerResolutionSource, from source:CPlayerSource)`
+- deprecating of `func chiefsplayerWillStart (playing item:CPlayerItem)`
 
 v1.3
 - Next, Prev, Forward and Backward separated buttons with all needed delegate methods.  
