@@ -4,6 +4,9 @@ Advanced floating player with streaming services.
 
 ### Changelog
 
+v1.3.2
+- Fix an issue where `CControlsManager.endPlayerObserving()` causes a crash.
+
 v1.3.1
 - Ignore playing presention if passed resolution index was empty, and use index = 0 if passed resolution index was out of range.    
 - replacing `func chiefsplayerReadyToPlay (_ resolution: CPlayerResolutionSource, from source:CPlayerSource)` with `func chiefsplayerReadyToPlay (_ item:CPlayerItem, resolution: CPlayerResolutionSource, from source:CPlayerSource)`

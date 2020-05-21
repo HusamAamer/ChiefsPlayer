@@ -75,7 +75,9 @@ public class CControlsManager:NSObject {
             })
     }
     func endPlayerObserving () {
-        player?.removeTimeObserver(timeObserverToken!)
+        if let observer = timeObserverToken {
+            player?.removeTimeObserver(observer)
+        }
     }
     func _deinit () {
         delegates.removeAll()
