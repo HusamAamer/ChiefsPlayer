@@ -359,7 +359,7 @@ public class ChiefsPlayer {
                 */
                 let message = localized("error.asset_not_playable.description")
                 DispatchQueue.main.async {
-                    self.videoView.loadingView.state = .Error(msg: message)
+                    self.videoView?.loadingView?.state = .Error(msg: message)
                 }
                 return
             }
