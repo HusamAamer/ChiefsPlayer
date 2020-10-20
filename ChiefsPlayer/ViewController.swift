@@ -208,13 +208,21 @@ extension ViewController:ChiefsPlayerDelegate {
         return .seek(10)
     }
     func chiefsplayerNextAction(_ willTriggerAction: Bool) -> SeekAction? {
-        return .play([CPlayerSource(resolutions: [resolutions.last!])])
+        return nil
+        //return .play([CPlayerSource(resolutions: [resolutions.last!])])
     }
     func chiefsplayerPrevAction(_ willTriggerAction: Bool) -> SeekAction? {
-        return .play([CPlayerSource(resolutions: [resolutions.last!])])
+        return nil
+        //return .play([CPlayerSource(resolutions: [resolutions.last!])])
     }
-//    func chiefsplayer(isCastingTo castingService: CastingService?) {
-//        let service = castingService == nil ? "Not casting" : "\(castingService!)"
+    func chiefsplayerWillStartCasting(from source: CPlayerSource) -> CPlayerSource? {
+        
+        return nil
+        
+    }
+    func chiefsplayer(isCastingTo castingService: CastingService?) {
+        let service = castingService == nil ? "Not casting" : "\(castingService!)"
+        
 //        FABLog(event: "Casting to : \(service)")
 //
 //        if castingService == .airplay {
@@ -222,7 +230,7 @@ extension ViewController:ChiefsPlayerDelegate {
 //        } else if castingService == .chromecast {
 //            FBSDKSet(userProperty: 1, name: .hasChromecast)
 //        }
-//    }
+    }
 //
 //    func chiefsplayerStatusBarShouldBe(hidden: Bool) {
 //        statusBarShouldBeHidden = hidden

@@ -80,7 +80,7 @@ class ChromecastManager: NSObject {
         }
         
         var subtitleTracks:[GCKMediaTrack]?
-        if let subs = selectedSource.subtitles {
+        if let subs = (modifiedSource ?? selectedSource).subtitles {
             subtitleTracks = []
             for (index,sub) in subs.enumerated() {
                 
@@ -102,9 +102,9 @@ class ChromecastManager: NSObject {
             }
         }
         
-        let media = mediaInfo(with: selectedResolution.source_m3u8 ?? selectedResolution.source_file!,
+        let media = mediaInfo(with: toPlayUrl,
                               and: subtitleTracks,
-                              and: modifiedSource?.metadata)
+                              and: modifiedSource?.metadata ?? selectedSource.metadata)
         load(media: media, byAppending: false)
         
         //Listen to controls
