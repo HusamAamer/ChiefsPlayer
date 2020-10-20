@@ -118,10 +118,10 @@ class COverPlayerControlsView: CBaseControlsView {
         CControlsManager.shared.backwardBtnAction()
     }
     @IBAction func nextBtn(_ sender: UIButton) {
-        CControlsManager.shared.nextBtnAction()
+        let _ = CControlsManager.shared.nextBtnAction()
     }
     @IBAction func prevBtn(_ sender: UIButton) {
-        CControlsManager.shared.prevBtnAction()
+        let _ = CControlsManager.shared.prevBtnAction()
     }
     
     
