@@ -7,4 +7,13 @@ target 'ChiefsPlayer' do
 
   # Pods for ChiefsPlayer
   pod 'google-cast-sdk', "~> 4.5"
+  
+  post_install do |pi|
+      pi.pods_project.targets.each do |t|
+        t.build_configurations.each do |config|
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '9.0'
+        end
+      end
+  end
+  
 end
