@@ -4,6 +4,9 @@ Advanced floating player with streaming services.
 
 ### Changelog
 
+v1.3.3
+- Fix modified chromecast source issue, where modiefied source captions was ignored. 
+
 v1.3.2
 - Fix an issue where `CControlsManager.endPlayerObserving()` causes a crash.
 
