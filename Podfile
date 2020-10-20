@@ -6,5 +6,5 @@ target 'ChiefsPlayer' do
   use_frameworks!
 
   # Pods for ChiefsPlayer
-  pod 'google-cast-sdk', "~> 4.4.6"
+  pod 'google-cast-sdk', "~> 4.5"
 end
