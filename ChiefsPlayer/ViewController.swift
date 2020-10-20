@@ -222,14 +222,6 @@ extension ViewController:ChiefsPlayerDelegate {
     }
     func chiefsplayer(isCastingTo castingService: CastingService?) {
         let service = castingService == nil ? "Not casting" : "\(castingService!)"
-        
-//        FABLog(event: "Casting to : \(service)")
-//
-//        if castingService == .airplay {
-//            FBSDKSet(userProperty: 1, name: .hasAppleTV)
-//        } else if castingService == .chromecast {
-//            FBSDKSet(userProperty: 1, name: .hasChromecast)
-//        }
     }
 //
 //    func chiefsplayerStatusBarShouldBe(hidden: Bool) {

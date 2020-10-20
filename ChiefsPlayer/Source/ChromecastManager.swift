@@ -88,13 +88,12 @@ class ChromecastManager: NSObject {
                 if sub.source.absoluteString.hasPrefix("file://") {
                     continue
                 }
-                
                 let track = GCKMediaTrack(
                     identifier: index + 1,
                     contentIdentifier: sub.source.absoluteString,
                     contentType: "text/vtt",
                     type: .text,
-                    textSubtype: .subtitles,
+                    textSubtype: .captions,
                     name: sub.title,
                     languageCode: "ar",
                     customData: nil)
@@ -327,11 +326,12 @@ extension ChromecastManager : GCKRequestDelegate {
             progressTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.updateProgressUI), userInfo: nil, repeats: true)
         }
         
-        guard let currentItem = sharedPlayer.player.currentItem else {return}
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //If m3u8
         ///////////////////////////////////////
-        if currentItem
+        if
+            let currentItem = sharedPlayer.player.currentItem,
+            currentItem
             .asset
             .mediaSelectionGroup(forMediaCharacteristic: .legible) != nil
         {
