@@ -212,6 +212,46 @@ extension CControlsManager {
     }
 }
 
+
+////////////////////////////////////////////////////////////////
+// MARK:- More Btn Action
+////////////////////////////////////////////////////////////////
+extension CControlsManager {
+    func moreBtnAction (_ sender:UIView) {
+        
+        let subtitleAction = UIAlertAction(title: localized("change_subtitle_btn"),
+                                           style: .default) { (alert) in
+            DispatchQueue.main.asyncAfter( deadline: .now() + 0.3) {
+                self.subtitleBtnAction(sender)
+            }
+        }
+        
+        let subtitleStyleAction = UIAlertAction(title: localized("change_subtitle_style_btn"),
+                                           style: .default) { (alert) in
+            DispatchQueue.main.asyncAfter( deadline: .now() + 0.3) {
+                self.changeSubtitleStyleBtnAction(sender)
+            }
+        }
+        
+        let alertSheet = alert(
+            title: nil,
+            body: nil,
+            cancel: localized("dismiss"),
+            actions: [
+                subtitleAction, subtitleStyleAction
+            ],
+            style: .actionSheet
+        )
+        if let presenter = alertSheet.popoverPresentationController {
+            presenter.sourceView = sender
+            presenter.sourceRect = sender.bounds
+        }
+        ChiefsPlayer.shared.parentVC.present(alertSheet,
+                                             animated: true,
+                                             completion: nil)
+    }
+}
+
 ////////////////////////////////////////////////////////////////
 // MARK:- Delegate adding and deleting
 ////////////////////////////////////////////////////////////////
@@ -298,6 +338,73 @@ extension CControlsManager {
         }
         checkSubtitlesAvailability()
     }
+}
+
+////////////////////////////////////////////////////////////////
+// MARK:- Subtitle action
+////////////////////////////////////////////////////////////////
+
+extension CControlsManager
+{
+    private func changeSubtitleStyleBtnAction (_ sender:UIView) {
+        
+        // If can't change subtitle styel, then show change captions alert
+        // else show two options (change style & change captions)
+        if !canChangeSubtitleStyle {
+            subtitleBtnAction(sender)
+            return
+        }
+        
+        
+        let sizes : [(String,CGFloat)] = [
+            ("subtitle_style.size.small" , 18),
+            ("subtitle_style.size.medium" , 22),
+            ("subtitle_style.size.large" , 24),
+            ("subtitle_style.size.xlarge" , 26),
+            ("subtitle_style.size.xxlarge" , 28)
+        ]
+        
+        var actions = [UIAlertAction]()
+        
+        let currentSize = Subtitles.getFont().pointSize
+        
+        for (title, size) in sizes {
+            let sizeAction = UIAlertAction(
+                title: localized(title),
+                style: .default) { (alert) in
+                
+                Subtitles.setFontSize(size)
+                
+            }
+            if currentSize == size {
+                sizeAction.setValue(true, forKey: "checked")
+            }
+            actions.append(sizeAction)
+        }
+        
+        let alertSheet = alert(
+            title: nil,
+            body: nil,
+            cancel: localized("dismiss"),
+            actions: actions,
+            style: .actionSheet
+        )
+        if let presenter = alertSheet.popoverPresentationController {
+            presenter.sourceView = sender
+            presenter.sourceRect = sender.bounds
+        }
+        ChiefsPlayer.shared.parentVC.present(alertSheet,
+                                             animated: true,
+                                             completion: nil)
+    }
+}
+
+////////////////////////////////////////////////////////////////
+// MARK:- Subtitle action
+////////////////////////////////////////////////////////////////
+
+extension CControlsManager
+{
     ///Called when video is ready to play for the first time only
     private func checkSubtitlesAvailability () {
         //From manual srt import
@@ -324,6 +431,17 @@ extension CControlsManager {
         
         delegates.forEach({$0?.controlsSubtitles(are: false)})
     }
+    
+    
+    var canChangeSubtitleStyle:Bool {
+        
+        // Only srt is styllable
+        if let subs = ChiefsPlayer.shared.selectedSource.subtitles , subs.count > 0 {
+            return true
+        }
+        return false
+    }
+    
     func subtitleBtnAction (_ sender:UIView) {
         
         ////////////////////////////////////////////////

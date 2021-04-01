@@ -11,7 +11,11 @@ import AVKit
 import AVFoundation
 
 protocol CVideoProgressViewDelegate:class {
+    
+    /// User Chaged Progress Manually Callback
+    /// - Parameter percent: Seek percent
     func progressChanged(to percent:CGFloat)
+    
     func progressChangingIsAllowed () -> Bool
 }
 class CVideoProgressView: UIView {
@@ -44,12 +48,11 @@ class CVideoProgressView: UIView {
             let time = CGFloat(CMTimeGetSeconds(elapsedTime))
             let newPercent = time / duration
             
-            if userJustPannedView {
+            if userJustSeekedFor {
                 /**
                   Don't update UI, This is an old value and I'm waiting for player to seek for the new value
-                    Neglect first value after pan
+                 userJustSeekedFor is set to false when item observed the call of `playbackLikelyToKeepUp`
                  */
-                userJustPannedView = false
                 return
             }
             
@@ -59,7 +62,7 @@ class CVideoProgressView: UIView {
             let bufferTime = CGFloat(item.currentBuffer())
             progressBar?.buffer = (bufferTime / duration) *  frame.width
             
-            //print("Progress Update => \(time / duration)%             \(elapsedTime.value)")
+            //print("Progress Update => \(newPercent)%        time:\(time)    eta:\(elapsedTime.value)")
         }
     }
     
@@ -98,7 +101,7 @@ class CVideoProgressView: UIView {
             }
         }
     }
-    var userJustPannedView = false
+    var userJustSeekedFor: Bool = false
     
     @objc func dragVideo (pan:UIPanGestureRecognizer) {
         guard let delegate = delegate else {return}
@@ -121,7 +124,7 @@ class CVideoProgressView: UIView {
         if pan.state == UIGestureRecognizer.State.ended {
             delegate.progressChanged(to: percent)
             
-            userJustPannedView = true
+            userJustSeekedFor = true
             isChangingCurrentTime = false
             progressBar.userIsPanning = false
         }

@@ -562,7 +562,10 @@ public class ChiefsPlayer {
         dY.isActive = true
         
         //Height
-        let spaceUnderVideo = screenHeight - screenWidth / configs.videoRatio.value
+        var spaceUnderVideo = screenHeight - screenWidth / configs.videoRatio.value
+        if #available(iOS 11.0, *) {
+            spaceUnderVideo -= parentVC.view.safeAreaInsets.top
+        }
         dH = detailsContainer.heightAnchor
             .constraint(equalToConstant: spaceUnderVideo)
         dH.priority = .defaultHigh
@@ -719,7 +722,10 @@ public class ChiefsPlayer {
         //Details container height
         //Details height should be calculated with real intrface dimentions
         let dimentions = [screenWidth,screenHeight]
-        let spaceUnderVideo = dimentions.max()! - dimentions.min()! / videoRatio
+        var spaceUnderVideo = dimentions.max()! - dimentions.min()! / videoRatio
+        if #available(iOS 11.0, *) {
+            spaceUnderVideo -= parentVC.view.safeAreaInsets.top
+        }
         dH.constant = spaceUnderVideo
         parentVC.view.layoutIfNeeded()
     }

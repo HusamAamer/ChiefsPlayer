@@ -207,6 +207,10 @@ public class CVideoView: UIView {
         if timeObserver != nil {
             endPlayerObserving()
         }
+        if hideTimer != nil {
+            hideTimer?.invalidate()
+            hideTimer = nil
+        }
     }
     
     
@@ -219,6 +223,7 @@ public class CVideoView: UIView {
     
     //MARK: FULLSCREEN Controls  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     var onVideoControls:CBaseControlsView!
+    var hideTimer:Timer?
     var isFullscreen : Bool = false {
         didSet {
             setupProgressViewLayout()
@@ -267,24 +272,42 @@ public class CVideoView: UIView {
             self.onVideoControls = nil
         }
     }
+
+    public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        
+        // Disable controls hiding while interacting with any subview
+        hideTimer?.invalidate()
+        screenTapped()
+        
+        return super.hitTest(point, with: event)
+    }
+    
     @objc func screenTapped () {
-        if onVideoControls != nil {
-            if frame.width == screenWidth { //if not minimized
-                controlsAreHidden = !controlsAreHidden
-                if controlsAreHidden == false {
-                    scheduleControlsHiding()
-                }
+        if onVideoControls == nil {
+            return
+        }
+        
+        if frame.width == screenWidth { //if not minimized
+            controlsAreHidden = !controlsAreHidden
+            if controlsAreHidden == false {
+                scheduleControlsHiding()
             }
         }
     }
     private func scheduleControlsHiding () {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {[weak self] in
-            if self?.progressView.isChangingCurrentTime == false {
-                if self?.controlsAreHidden == false {
-                    self?.controlsAreHidden = true
-                }
-            } else {
-                //Try again after delay, until user stops changing current time
+        hideTimer?.invalidate()
+        
+        hideTimer = Timer.gck_scheduledTimer(withTimeInterval: 2, weakTarget: self, selector: #selector(hideControls), userInfo: nil, repeats: false)
+    }
+    @objc private func hideControls () {
+        // For landscape mode the progress bar only appears with controls
+        if progressView.isChangingCurrentTime == false {
+            if controlsAreHidden == false {
+                controlsAreHidden = true
+            }
+        } else {
+            //Try again after delay, until user stops changing current time
+            DispatchQueue.main.async { [weak self] in
                 self?.scheduleControlsHiding()
             }
         }
@@ -379,6 +402,7 @@ extension CVideoView: CPlayerItemDelegate {
     
     public func cplayerItemPlaybackLikelyToKeepUp() {
         loadingView.state = .isPlaying
+        progressView.userJustSeekedFor = false
     }
     
     public func cplayerItemPlaybackBufferFull() {

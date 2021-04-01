@@ -41,7 +41,7 @@ class CVideoProgressBarView: UIView {
     lazy var bufferBar   : CAShapeLayer = CAShapeLayer()
     var orbSide          : CGFloat {
         get {
-            return userIsPanning ? 12 : 6
+            return userIsPanning ? 20 : 6
         }
         set{}
     }
@@ -129,10 +129,10 @@ class CVideoProgressBarView: UIView {
         
 
         self.heightConstraint.constant = userIsPanning ? ChiefsPlayer.shared.configs.progressBarStyle.panningHeight : ChiefsPlayer.shared.configs.progressBarStyle.defualtHeight
-        UIView.animate(withDuration: 0.5) {
-            self.orb.frame = newOrbFrame
-            self.superview?.layoutIfNeeded()
-        }
+        self.orb.frame = newOrbFrame
+//        UIView.animate(withDuration: 0.1) {
+//            //self.superview?.layoutIfNeeded()
+//        }
         
     }
     required init?(coder aDecoder: NSCoder) {

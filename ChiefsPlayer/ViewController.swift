@@ -50,7 +50,14 @@ class ViewController: UIViewController {
         
         let url4 = URL(string: "https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/hls/DesigningForGoogleCast.m3u8")!
         let resoultion4 = CPlayerResolutionSource(title: "Designing... m3u8", url4)
-        return [resoultion,resoultion_yt1,resoultion_yt2,resoultion4,resoultion1,resoultion2,resoultion3]
+        
+        
+        let url5 = URL(string: "https://cndw1.shabakaty.com/mp4-480/F0FE6644-F0DE-3820-CEF5-956AE1E8D50A_video.mp4?response-content-disposition=attachment%3B%20filename%3D%22Attack%20on%20Titan.mp4%22&AWSAccessKeyId=RNA4592845GSJIHHTO9T&Expires=1617052547&Signature=x%2FZltTaCZ6l%2FYAzVcQ8j1D7KuG8%3D")!
+        let cinemanaSource = CPlayerResolutionSource(title: "Cinemana mp4", url5)
+        
+        
+        
+        return [cinemanaSource,resoultion,resoultion_yt1,resoultion_yt2,resoultion4,resoultion1,resoultion2,resoultion3]
     }
     var metaData:CPlayerMetadata {
         let metaData = CPlayerMetadata(title: "Chiefs Player",
@@ -187,7 +194,7 @@ extension ViewController:ChiefsPlayerDelegate {
         //print(subtitle,source)
     }
     func chiefsplayerBackwardAction(_ willTriggerAction: Bool) -> SeekAction? {
-        return .seek(8)
+        return .seek(-8)
     }
     func chiefsplayerReadyToPlay(_ item: CPlayerItem, resolution: CPlayerResolutionSource, from source: CPlayerSource) {
         

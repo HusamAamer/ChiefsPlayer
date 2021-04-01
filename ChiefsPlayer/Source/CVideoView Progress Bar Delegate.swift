@@ -47,8 +47,12 @@ extension CVideoView:CVideoProgressViewDelegate {
         }
         var duration = CGFloat(playerDuration)
         if duration.isNaN || duration.isInfinite {duration = 0} //Happens when user is on error only
-        let selectedSeconds = Double(duration * percent)
-        let selectedTime = CMTime(seconds: Double(selectedSeconds), preferredTimescale: 1)
+        let targetTime = duration * percent
+        let selectedTime = CMTime(seconds: Double(targetTime), preferredTimescale: 1)
         ChiefsPlayer.shared.player.seek(to: selectedTime)
+
+        //print("Seeking to => ", targetTime)
+        
+        return
     }
 }

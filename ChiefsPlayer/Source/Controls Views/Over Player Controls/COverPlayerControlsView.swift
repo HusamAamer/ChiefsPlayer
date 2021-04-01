@@ -140,7 +140,7 @@ class COverPlayerControlsView: CBaseControlsView {
     //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     @IBAction func subtitlesBtn (_ sender: UIButton)
     {
-        CControlsManager.shared.subtitleBtnAction(sender)
+        CControlsManager.shared.moreBtnAction(sender)
     }
     
     //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

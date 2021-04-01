@@ -298,8 +298,40 @@ func localized (_ string:String) -> String {
     ],"error.asset_not_playable.description": [
         "ar" : "المحتوى قد يكون محمي او لا يمكن تشغيله",
         "en" : "Could not run, It isn't playable or has protected content"
-    ]]
+    ],
     
+    
+    "change_subtitle_btn": [
+        "ar":"تغيير الترجمة",
+        "en":"Change Captions"
+    ],
+    "change_subtitle_style_btn": [
+        "ar":"حجم الترجمة",
+        "en":"Caption Size"
+    ],
+    
+    
+    "subtitle_style.size.small": [
+        "ar":"صغير",
+        "en":"Small"
+    ],
+    "subtitle_style.size.medium": [
+        "ar":"متوسط",
+        "en":"Medium"
+    ],
+    "subtitle_style.size.large": [
+        "ar":"كبير",
+        "en":"Large"
+    ],
+    "subtitle_style.size.xlarge": [
+        "ar":"كبير جداً",
+        "en":"Very Large"
+    ],
+    "subtitle_style.size.xxlarge": [
+        "ar":"الأكبر",
+        "en":"Largest"
+    ]
+    ]
     
     var localeAbbrev:String = "en"
     
