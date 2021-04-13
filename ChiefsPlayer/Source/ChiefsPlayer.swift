@@ -119,6 +119,10 @@ public class ChiefsPlayer {
         return sources[_selectedSourceIndex]
     }
     
+    public var selectedResolution:CPlayerResolutionSource {
+        return selectedSource.resolutions[_selectedResolutionIndex]
+    }
+    
     public var videoView       :CVideoView!
     var parentVC        :UIViewController!
     public var userView        :UIView?

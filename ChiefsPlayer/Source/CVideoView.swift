@@ -405,7 +405,7 @@ extension CVideoView: CPlayerItemDelegate {
     
     public func cplayerItemPlaybackLikelyToKeepUp() {
         loadingView.state = .isPlaying
-        progressView.userJustSeekedFor = false
+        progressView.userJustSeeked = false
     }
     
     public func cplayerItemPlaybackBufferFull() {

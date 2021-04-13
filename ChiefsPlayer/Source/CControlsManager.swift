@@ -206,6 +206,7 @@ extension CControlsManager {
             ChiefsPlayer.shared.play(from: sourceArray, with: nil)
             break
         case .seek(let seconds):
+            // Cancel
             seek(seconds: seconds)
             break
         }

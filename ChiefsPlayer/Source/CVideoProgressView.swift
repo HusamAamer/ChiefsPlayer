@@ -48,12 +48,19 @@ class CVideoProgressView: UIView {
             let time = CGFloat(CMTimeGetSeconds(elapsedTime))
             let newPercent = time / duration
             
-            if userJustSeekedFor {
+            if userJustSeeked {
                 /**
                   Don't update UI, This is an old value and I'm waiting for player to seek for the new value
                  userJustSeekedFor is set to false when item observed the call of `playbackLikelyToKeepUp`
                  */
-                return
+                
+                if ChiefsPlayer.shared.selectedResolution.source_file?.isFileURL == true || ChiefsPlayer.shared.selectedResolution.source_m3u8?.isFileURL == true {
+                    
+                    userJustSeeked = false
+                    
+                } else {
+                    return
+                }
             }
             
             //Update UI
@@ -101,7 +108,7 @@ class CVideoProgressView: UIView {
             }
         }
     }
-    var userJustSeekedFor: Bool = false
+    var userJustSeeked: Bool = false
     
     @objc func dragVideo (pan:UIPanGestureRecognizer) {
         guard let delegate = delegate else {return}
@@ -124,7 +131,7 @@ class CVideoProgressView: UIView {
         if pan.state == UIGestureRecognizer.State.ended {
             delegate.progressChanged(to: percent)
             
-            userJustSeekedFor = true
+            userJustSeeked = true
             isChangingCurrentTime = false
             progressBar.userIsPanning = false
         }
