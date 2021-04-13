@@ -359,9 +359,9 @@ extension CControlsManager
         let sizes : [(String,CGFloat)] = [
             ("subtitle_style.size.small" , 18),
             ("subtitle_style.size.medium" , 22),
-            ("subtitle_style.size.large" , 24),
-            ("subtitle_style.size.xlarge" , 26),
-            ("subtitle_style.size.xxlarge" , 28)
+            ("subtitle_style.size.large" , 25),
+            ("subtitle_style.size.xlarge" , 29),
+            ("subtitle_style.size.xxlarge" , 33)
         ]
         
         var actions = [UIAlertAction]()

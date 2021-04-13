@@ -4,6 +4,10 @@ Advanced floating player with streaming services.
 
 ### Changelog
 
+v1.4
+- New subtitle resize options for srt subtitles
+- Improved seeking by progress bar  
+
 v1.3.3
 - Fix modified chromecast source issue, where modiefied source captions was ignored. 
 

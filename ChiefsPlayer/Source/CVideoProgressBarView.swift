@@ -94,6 +94,7 @@ class CVideoProgressBarView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         gradient.frame = bounds
+        
         bufferBar.frame = CGRect(x: bufferBar.frame.origin.x, y: 0, width: bufferBar.frame.width, height: bounds.height)
             
         updateBarFrame()
@@ -127,12 +128,8 @@ class CVideoProgressBarView: UIView {
                             width: orbSide,
                             height: orbSide)
         
-
         self.heightConstraint.constant = userIsPanning ? ChiefsPlayer.shared.configs.progressBarStyle.panningHeight : ChiefsPlayer.shared.configs.progressBarStyle.defualtHeight
         self.orb.frame = newOrbFrame
-//        UIView.animate(withDuration: 0.1) {
-//            //self.superview?.layoutIfNeeded()
-//        }
         
     }
     required init?(coder aDecoder: NSCoder) {

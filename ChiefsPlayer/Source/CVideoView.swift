@@ -36,6 +36,7 @@ public class CVideoView: UIView {
         loadingView.sizeAchor(equalsTo: self)
         
         progressView = CVideoProgressView()
+        progressView.isHidden = true
         progressView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(progressView)
         progressView.delegate = self
@@ -191,6 +192,7 @@ public class CVideoView: UIView {
             player.removeTimeObserver(timeObserver)
             self.timeObserver = nil
             chiefsplayerReadyToPlayTriggerred = false
+            progressView.isHidden = true
         }
     }
     func updateLoadingUI (with error:String)
@@ -394,6 +396,7 @@ extension CVideoView: CPlayerItemDelegate {
             if selectedResolutionIndex < selectedSource.resolutions.count {
                 ChiefsPlayer.shared.delegate?.chiefsplayerReadyToPlay(item ,resolution: selectedSource.resolutions[selectedResolutionIndex], from: selectedSource)
             }
+            progressView.isHidden = false
             chiefsplayerReadyToPlayTriggerred = true
         }
         loadingView.state = .isPlaying
