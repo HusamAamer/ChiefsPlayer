@@ -18,7 +18,7 @@ class ViewController: UIViewController {
     
     
     var resolutions : [CPlayerResolutionSource] {
-        let localVideo = Bundle.main.path(forResource: "ful hd (portrite)", ofType: "mp4")
+        let localVideo = Bundle.main.path(forResource: "sample", ofType: "mp4")
         let localVideoURL = URL(fileURLWithPath: localVideo!)
         let resoultion = CPlayerResolutionSource(title: "Local file", localVideoURL)
         
