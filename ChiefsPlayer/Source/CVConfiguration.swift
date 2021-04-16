@@ -74,6 +74,9 @@ public struct CVConfiguration {
     /// Space under player on minimized status
     public var onMinimizedAdditionalBottomSafeArea : CGFloat?
     
+    /// Alerts tint color
+    public var tintColor : UIColor?
+    
     // Initialization
     
     init() {

@@ -236,6 +236,9 @@ func alert(title:String?, body:String?, cancel:String?,actions:[UIAlertAction]? 
     
     let a = UIAlertController(title: title, message: body, preferredStyle: style)
     
+    // Change tint color
+    a.view.tintColor = ChiefsPlayer.shared.configs.tintColor
+    
     let appearance = ChiefsPlayer.shared.configs.appearance
     if #available(iOS 13.0, *) {
         if appearance == .dark {

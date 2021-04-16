@@ -938,6 +938,11 @@ public class ChiefsPlayer {
     }
     public func minimize () {
         acvStyle = .minimized
+        
+        if onMaxFrame == .zero {
+            onMaxFrame = videoView.bounds
+        }
+        
         videoView.progressView.isUserInteractionEnabled = false
         let y = parentVC.view.bounds.height - bottomSafeArea - topSafeArea - onMaxFrame.height * configs.onMinimizedMinimumScale
         UIView.animate(

@@ -109,6 +109,10 @@ class ViewController: UIViewController {
         CControlsManager.shared.rightButtons = {
             return [UIButton(type: .detailDisclosure)]
         }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            ChiefsPlayer.shared.minimize()
+        }
     }
     @IBAction func barStylePlayer(_ sender: Any) {
         let testV = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight))
@@ -158,6 +162,7 @@ class ViewController: UIViewController {
             player.configs.videoRatio = .widescreen
             player.configs.onMinimizedAdditionalBottomSafeArea = 20
             player.configs.progressBarStyle.showsLivePanDuration = true
+            player.configs.tintColor = .red
             
 //            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 ChiefsPlayer.shared.present(on: self.navigationController!)
