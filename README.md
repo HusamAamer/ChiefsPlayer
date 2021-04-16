@@ -7,6 +7,8 @@ Advanced floating player with streaming services.
 v1.4
 - New subtitle resize options for srt subtitles
 - Improved seeking by progress bar  
+- New `tintColor` in configuration
+- Fix minimze action when called programmatically
 
 v1.3.3
 - Fix modified chromecast source issue, where modiefied source captions was ignored. 
