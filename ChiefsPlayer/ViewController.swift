@@ -32,8 +32,8 @@ class ViewController: UIViewController {
         
         
         
-        let urlyt1 = URL(string: "https://r1---sn-x5guiapo3uxax-cbfll.googlevideo.com/videoplayback?expire=1582148344&ei=mFZNXpCtF8qAx_APgdaIwAQ&ip=37.237.70.32&id=o-ACznmjJ0mp9Qj9i82NmAPa1-ERcAXrnhTAds-JhBN0Sj&itag=18&source=youtube&requiressl=yes&mm=31,29&mn=sn-x5guiapo3uxax-cbfll,sn-4g5edne7&ms=au,rdu&mv=m&mvi=0&pl=24&initcwndbps=297500&vprv=1&mime=video/mp4&gir=yes&clen=371030&ratebypass=yes&dur=17.577&lmt=1390196296263010&mt=1582126684&fvip=1&fexp=23842630&c=WEB&sparams=expire,ei,ip,id,itag,source,requiressl,vprv,mime,gir,clen,ratebypass,dur,lmt&sig=ALgxI2wwRgIhAMUS8MbPA4p0ZWKzqO7wijhb9D7cH0OnkLn5dzBYE4yXAiEAk42m_kF5zdT_NzWAzUrCdAYfqjDy6Yh8EIsO4NbRhQA=&lsparams=mm,mn,ms,mv,mvi,pl,initcwndbps&lsig=AHylml4wRgIhAJJseIhlg1C2f8RFJFaQQDgrCHPhvbhSfaiTljW5kT9uAiEA-37qMjGiEtQCmRY8JEFYj8duJKuHzmOwWGsKuajZ6e8=")!
-        let resoultion_yt1 = CPlayerResolutionSource(title: "HD 1080", urlyt1)
+        let urlyt1 = URL(string: "https://cinema.shoofnetwork.net:8099/ad4962a3-0bd6-4a8b-a3cb-e29e66ab6e5b/PWIZCBbQttBP8Mu/PWIZCBbQttBP8Mu_1080.mp4")!
+        let shoof = CPlayerResolutionSource(title: "Shoof Movie", urlyt1)
         
         let urlyt2 = URL(string: "https://r1---sn-x5guiapo3uxax-cbfe7.googlevideo.com/videoplayback?expire=1582147998&ei=PlVNXr21C9Ok8gPIm7voBg&ip=37.237.70.32&id=o-ADMfJS7GP1d1zHkYdCYecspWqCxFOK04uudo6qrI5TWW&itag=18&source=youtube&requiressl=yes&mm=31,29&mn=sn-x5guiapo3uxax-cbfe7,sn-4g5ednsz&ms=au,rdu&mv=m&mvi=0&pl=24&initcwndbps=316250&vprv=1&mime=video/mp4&gir=yes&clen=234454050&ratebypass=yes&dur=4319.143&lmt=1540295945090483&mt=1582126270&fvip=1&fexp=23842630&c=WEB&txp=5531432&sparams=expire,ei,ip,id,itag,source,requiressl,vprv,mime,gir,clen,ratebypass,dur,lmt&lsparams=mm,mn,ms,mv,mvi,pl,initcwndbps&lsig=AHylml4wRQIgfQDWGgdm2pdLQxdKvbH2pWudGIDErttetvW42CFRwqQCIQDXm94QMH2UPezBrypOjuDODmASg4FaQ-ozJvHrezvXfg==&sig=ALgxI2wwRQIhAOBYp0w2hmUWmQBDtAQtoSPOR6sSns7t1tPXAcmlGXd0AiAC4Z4TQgeowt81p61zTdqlFYh2SXzfrGHA0e8b_hkGxg==")!
         let resoultion_yt2 = CPlayerResolutionSource(title: "720", urlyt2)
@@ -57,7 +57,7 @@ class ViewController: UIViewController {
         
         
         
-        return [cinemanaSource,resoultion,resoultion_yt1,resoultion_yt2,resoultion4,resoultion1,resoultion2,resoultion3]
+        return [shoof,cinemanaSource,resoultion,resoultion_yt2,resoultion4,resoultion1,resoultion2,resoultion3]
     }
     var metaData:CPlayerMetadata {
         let metaData = CPlayerMetadata(title: "Chiefs Player",
@@ -109,10 +109,6 @@ class ViewController: UIViewController {
         CControlsManager.shared.rightButtons = {
             return [UIButton(type: .detailDisclosure)]
         }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            ChiefsPlayer.shared.minimize()
-        }
     }
     @IBAction func barStylePlayer(_ sender: Any) {
         let testV = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight))
@@ -121,14 +117,17 @@ class ViewController: UIViewController {
         playVideo(with: sources, and: testV, with: .barStyle)
         
         CControlsManager.shared.leftButtons = {
-            return [UIButton(type: .contactAdd)]
+            let btn = UIButton(type: .contactAdd)
+            return [
+                btn
+            ]
         }
         CControlsManager.shared.rightButtons = {
             return [UIButton(type: .detailDisclosure)]
         }
         
     }
-
+    
     @IBAction func withLocalSubtitleAction(_ sender: Any) {
         let testV = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight))
         testV.backgroundColor = .green
@@ -220,12 +219,12 @@ extension ViewController:ChiefsPlayerDelegate {
         return .seek(10)
     }
     func chiefsplayerNextAction(_ willTriggerAction: Bool) -> SeekAction? {
-        return nil
-        //return .play([CPlayerSource(resolutions: [resolutions.last!])])
+        //return nil
+        return .play([CPlayerSource(resolutions: [resolutions.last!])])
     }
     func chiefsplayerPrevAction(_ willTriggerAction: Bool) -> SeekAction? {
-        return nil
-        //return .play([CPlayerSource(resolutions: [resolutions.last!])])
+        //return nil
+        return .play([CPlayerSource(resolutions: [resolutions.last!])])
     }
     func chiefsplayerWillStartCasting(from source: CPlayerSource) -> CPlayerSource? {
         

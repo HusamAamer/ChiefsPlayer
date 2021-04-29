@@ -55,6 +55,8 @@ public class CVideoView: UIView {
         progressView.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
         startObservation()
+        
+        addResizeGesture()
     }
     var bar_width : NSLayoutConstraint!
     var bar_left : NSLayoutConstraint!
@@ -109,7 +111,20 @@ public class CVideoView: UIView {
     }
     
     
-    
+    //MARK: Resize Video Gesture xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    /// Pinch Video in or out to change video gravity between aspect fit and fill
+    private func addResizeGesture () {
+        let pinch = UIPinchGestureRecognizer(target: self, action: #selector(resizeGestureAction(_:)))
+        addGestureRecognizer(pinch)
+    }
+    @objc
+    private func resizeGestureAction (_ gesture:UIPinchGestureRecognizer) {
+        if gesture.scale > 1.2 , vLayer?.videoGravity != .resizeAspectFill {
+            vLayer?.videoGravity = .resizeAspectFill
+        } else if gesture.scale < 0.8, vLayer?.videoGravity != .resizeAspect {
+            vLayer?.videoGravity = .resizeAspect
+        }
+    }
     
     
     

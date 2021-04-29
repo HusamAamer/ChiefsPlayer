@@ -4,6 +4,10 @@ Advanced floating player with streaming services.
 
 ### Changelog
 
+v1.4.1
+- New Feature: Resize Video Gesture with pinch in and out
+- Fix a bug where next/prev btn are off screen in small devices for youtube style
+
 v1.4
 - New subtitle resize options for srt subtitles
 - Improved seeking by progress bar  
