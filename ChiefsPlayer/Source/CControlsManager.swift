@@ -585,3 +585,10 @@ extension CControlsManager {
         checkSubtitlesAvailability()
     }
 }
+
+extension CControlsManager {
+    func toggleVideoAspect () {
+        ChiefsPlayer.shared.toggleVideoAspect()
+    }
+    
+}

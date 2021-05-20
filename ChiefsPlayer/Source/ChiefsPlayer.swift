@@ -137,7 +137,7 @@ public class ChiefsPlayer {
     var isPlayerError   :Bool {return videoView.loadingView.state.isError}
     var orientationToken:Any?
     var airplayToken    :Any?
-    
+    let dimensions = [screenWidth,screenHeight]
     var chromecastManager     :ChromecastManager?
     var _currentCasting :CastingService?
     var isCastingTo     :CastingService? {
@@ -264,7 +264,6 @@ public class ChiefsPlayer {
                     if let interfaceOrientaion = self.interfaceOrientation(for: newOrientation) {
                         self.delegate?.chiefsplayerOrientationChanged(to: interfaceOrientaion)
                     }
-                    
                     let shouldShowControls = CControlsManager.shared.shouldShowControlsAboveVideo(for: newOrientation)
                     switch newOrientation {
                     case .landscapeLeft, .landscapeRight:
@@ -515,11 +514,6 @@ public class ChiefsPlayer {
         
         addGestures()
                 
-        //Constraints
-        //Assuming that always height is larger than width
-        let dimensions = [parentVC.view.frame.width,parentVC.view.frame.height]
-        let screenWidth = dimensions.min()!
-        let screenHeight = dimensions.max()!
         videoContainer.translatesAutoresizingMaskIntoConstraints = false
         detailsContainer.translatesAutoresizingMaskIntoConstraints = false
         
@@ -566,7 +560,7 @@ public class ChiefsPlayer {
         dY.isActive = true
         
         //Height
-        var spaceUnderVideo = screenHeight - screenWidth / configs.videoRatio.value
+        var spaceUnderVideo = dimensions.max()! - dimensions.min()! / configs.videoRatio.value
         if #available(iOS 11.0, *) {
             spaceUnderVideo -= parentVC.view.safeAreaInsets.top
         }
@@ -584,10 +578,29 @@ public class ChiefsPlayer {
         vHPortrait.priority = .defaultLow
         vHPortrait.isActive = true
         
+        
+        
+        // MARK: - LANDSCAPE HEIGHT
+        var landscapeHeight = dimensions.min()!
+        if #available(iOS 13.0, *) {
+            if Device.IS_IPAD {
+                let window = UIApplication.shared.windows[0]
+                let topPadding = window.safeAreaInsets.top
+                let bottomPadding = window.safeAreaInsets.bottom
+                landscapeHeight -= topPadding
+                landscapeHeight -= 10
+            }
+        }
         vHLandscape = videoContainer.heightAnchor
-            .constraint(equalToConstant: screenWidth)
-        vHLandscape.priority = .defaultHigh
-        vHLandscape.isActive = false
+            .constraint(equalToConstant: landscapeHeight)
+        vHLandscape.priority = .required
+        if screenWidth > screenHeight {
+            vHLandscape.isActive = true
+            self.videoView.isFullscreen = true
+        } else {
+            vHLandscape.isActive = false
+        }
+        
         
         //Add subviews to containers
         videoContainer.addSubview(videoView)
@@ -789,6 +802,8 @@ public class ChiefsPlayer {
     var onMaxFrame:CGRect  = .zero
     var onTouchBeganFrame:CGRect  = .zero
     @objc func dragVideo (pan:UIPanGestureRecognizer) {
+        
+        
         if videoView.isFullscreen {
             return
         }
@@ -801,6 +816,7 @@ public class ChiefsPlayer {
         }
         
         if pan.state == UIGestureRecognizer.State.ended {
+            
             if case ACVStyle.dismissing(let percent) = acvStyle {
                 if percent > 0.3 {
                     dismiss()
@@ -920,6 +936,7 @@ public class ChiefsPlayer {
     }
     
     func maximize () {
+        
         acvStyle = .maximized
         videoView.progressView.isUserInteractionEnabled = true
         let newdY:CGFloat = 0//isLandscape ? -ChiefsPlayer.shared.controls.frame.height : 0
@@ -959,5 +976,15 @@ public class ChiefsPlayer {
         }
         
         delegate?.chiefsplayerMinimized()
+    }
+    
+    func toggleVideoAspect () {
+        let vLayer = videoView.vLayer
+
+        if vLayer?.videoGravity == .resizeAspectFill {
+            vLayer?.videoGravity = .resizeAspect
+        } else {
+            vLayer?.videoGravity = .resizeAspectFill
+        }
     }
 }

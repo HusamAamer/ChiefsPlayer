@@ -24,6 +24,7 @@ class COverPlayerControlsView: CBaseControlsView {
     @IBOutlet weak var subtitlesBtn: UIButton!
     @IBOutlet weak var duration: UILabel!
     @IBOutlet weak var currentTime: UILabel!
+    @IBOutlet weak var scaleButton : UIButton!
     var separator:UIView!
     
     @IBOutlet weak var resolutionBtn: UIButton!
@@ -37,6 +38,8 @@ class COverPlayerControlsView: CBaseControlsView {
         super.init(coder: aDecoder)
         backgroundColor = UIColor(red:0.13, green:0.16, blue:0.24, alpha:1.00)
         separator = UIView()
+        
+        
         
     }
     
@@ -83,12 +86,17 @@ class COverPlayerControlsView: CBaseControlsView {
             castButton.alpha = 0.6
             rightStack.insertArrangedSubview(castButton, at: 0)
         }
-        
-        
+
+        if UIDevice.current.orientation == .landscapeLeft ||
+            UIDevice.current.orientation == .landscapeRight {
+            self.scaleButton.isHidden = false
+        } else {
+            self.scaleButton.isHidden = true
+        }
+
         if Device.IS_IPAD {
             fullscreenBtn.isHidden = true
         }
-        
         CControlsManager.shared.addDelegate(self)
     }
     
@@ -127,8 +135,9 @@ class COverPlayerControlsView: CBaseControlsView {
     
     
     
-    
-    
+    @IBAction func scaleVideoTapped(_ sender : UIButton ) {
+        CControlsManager.shared.toggleVideoAspect()
+    }
     
     
     //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -269,6 +278,12 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
         self.playButton.isSelected = !isPlaying
     }
     func controlsShouldAppearAboveVideo(in deviceOrientation: UIDeviceOrientation) -> Bool {
+        if UIDevice.current.orientation == .landscapeLeft ||
+            UIDevice.current.orientation == .landscapeRight {
+            self.scaleButton.isHidden = false
+        } else {
+            self.scaleButton.isHidden = true
+        }
         return true // Always on video
     }
     func controlsPlayPauseChanged(to isPlaying: Bool) {

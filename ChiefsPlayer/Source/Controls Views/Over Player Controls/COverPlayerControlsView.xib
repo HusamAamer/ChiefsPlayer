@@ -105,7 +105,7 @@
                     </constraints>
                 </view>
                 <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="QuO-X6-NrU">
-                    <rect key="frame" x="296" y="12" width="73" height="25"/>
+                    <rect key="frame" x="264.5" y="12" width="104.5" height="25"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pWj-Gh-ZiK">
                             <rect key="frame" x="0.0" y="0.0" width="35" height="25"/>
@@ -115,8 +115,15 @@
                                 <constraint firstAttribute="width" constant="35" id="vXc-4y-Yht"/>
                             </constraints>
                         </view>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1ZX-Un-VRa">
+                            <rect key="frame" x="43" y="0.0" width="23.5" height="25"/>
+                            <state key="normal" image="ic-player-aspect"/>
+                            <connections>
+                                <action selector="scaleVideoTapped:" destination="iN0-l3-epB" eventType="touchUpInside" id="Mc8-1o-qQY"/>
+                            </connections>
+                        </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NxY-rk-jsc">
-                            <rect key="frame" x="43" y="0.0" width="30" height="25"/>
+                            <rect key="frame" x="74.5" y="0.0" width="30" height="25"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="30" id="2hW-xk-RUh"/>
                                 <constraint firstAttribute="height" constant="25" id="da8-TM-tbh"/>
@@ -211,6 +218,7 @@
                 <outlet property="prevButton" destination="Xfi-p1-Tpg" id="u4O-dL-Hmo"/>
                 <outlet property="resolutionBtn" destination="Aec-R0-arB" id="XQW-en-lZ0"/>
                 <outlet property="rightStack" destination="QuO-X6-NrU" id="WaD-Od-3bE"/>
+                <outlet property="scaleButton" destination="1ZX-Un-VRa" id="qSr-zJ-EjC"/>
                 <outlet property="subtitlesBtn" destination="o8W-wJ-htn" id="s1t-Mf-PiC"/>
             </connections>
             <point key="canvasLocation" x="-14.4" y="304.04797601199402"/>
@@ -222,6 +230,7 @@
         <image name="NextTrack" width="30" height="26"/>
         <image name="NextTrack2" width="29" height="24"/>
         <image name="fullscreen" width="24" height="21"/>
+        <image name="ic-player-aspect" width="23.5" height="17.5"/>
         <image name="pause" width="36" height="41"/>
         <image name="play" width="33" height="41"/>
         <image name="subtitles" width="27" height="21"/>
