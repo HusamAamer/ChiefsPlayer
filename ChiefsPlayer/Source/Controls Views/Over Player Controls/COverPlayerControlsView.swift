@@ -201,13 +201,13 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
             forwardSeekButton.isHidden = false
             switch action {
             case .custom(let icon):
-                forwardSeekButton.setImage(icon ?? UIImage.make(name: "NextTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                forwardSeekButton.setImage(icon ?? UIImage.make(name: "NextTrack"), for: .normal)
                 break
             case .play(_):
-                forwardSeekButton.setImage(UIImage.make(name: "NextTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                forwardSeekButton.setImage(UIImage.make(name: "NextTrack"), for: .normal)
                 break
             case .seek(_):
-                forwardSeekButton.setImage(UIImage.make(name: "NextTrack2")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                forwardSeekButton.setImage(UIImage.make(name: "NextTrack2"), for: .normal)
                 break
             }
         } else {
@@ -220,13 +220,13 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
             backwardSeekButton.isHidden = false
             switch action {
             case .custom(let icon):
-                backwardSeekButton.setImage(icon ?? UIImage.make(name: "BackTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                backwardSeekButton.setImage(icon ?? UIImage.make(name: "BackTrack"), for: .normal)
                 break
             case .play(_):
-                backwardSeekButton.setImage(UIImage.make(name: "BackTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                backwardSeekButton.setImage(UIImage.make(name: "BackTrack"), for: .normal)
                 break
             case .seek(_):
-                backwardSeekButton.setImage(UIImage.make(name: "BackTrack2")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                backwardSeekButton.setImage(UIImage.make(name: "BackTrack2"), for: .normal)
             }
         } else {
             backwardSeekButton.isHidden = true
@@ -237,13 +237,13 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
             nextButton.isHidden = false
             switch action {
             case .custom(let icon):
-                nextButton.setImage(icon ?? UIImage.make(name: "NextTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                nextButton.setImage(icon ?? UIImage.make(name: "NextTrack"), for: .normal)
                 break
             case .play(_):
-                nextButton.setImage(UIImage.make(name: "NextTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                nextButton.setImage(UIImage.make(name: "NextTrack"), for: .normal)
                 break
             case .seek(_):
-                nextButton.setImage(UIImage.make(name: "NextTrack2")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                nextButton.setImage(UIImage.make(name: "NextTrack2"), for: .normal)
                 break
             }
         } else {
@@ -255,13 +255,13 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
             prevButton.isHidden = false
             switch action {
             case .custom(let icon):
-                prevButton.setImage(icon ?? UIImage.make(name: "BackTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                prevButton.setImage(icon ?? UIImage.make(name: "BackTrack"), for: .normal)
                 break
             case .play(_):
-                prevButton.setImage(UIImage.make(name: "BackTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                prevButton.setImage(UIImage.make(name: "BackTrack"), for: .normal)
                 break
             case .seek(_):
-                prevButton.setImage(UIImage.make(name: "BackTrack2")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
+                prevButton.setImage(UIImage.make(name: "BackTrack2"), for: .normal)
                 break
             }
         } else {

@@ -4,6 +4,9 @@ Advanced floating player with streaming services.
 
 ### Changelog
 
+v1.4.2
+- Moved from flipping icons for RTL programmatically to the asset attribute option called `Direction` 
+
 v1.4.1
 - New Feature: Resize Video Gesture with pinch in and out
 - Fix a bug where next/prev btn are off screen in small devices for youtube style
