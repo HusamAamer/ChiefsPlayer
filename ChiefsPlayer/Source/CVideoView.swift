@@ -266,12 +266,6 @@ public class CVideoView: UIView {
         guard let onVideoControls = onVideoControls else {
             return
         }
-        insertSubview(onVideoControls, belowSubview: progressView)
-        
-        onVideoControls.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        let tap = UITapGestureRecognizer(target: self, action: #selector(screenTapped))
-        addGestureRecognizer(tap)
-        
         
         if controlsAreHidden {
             onVideoControls.alpha = 0
@@ -279,6 +273,19 @@ public class CVideoView: UIView {
                 progressView.alpha = 0
             }
         }
+
+        onVideoControls.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        insertSubview(onVideoControls, belowSubview: progressView)
+        onVideoControls.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            onVideoControls.leadingAnchor.constraint(equalTo: leadingAnchor),
+            onVideoControls.trailingAnchor.constraint(equalTo: trailingAnchor),
+            //onVideoControls.topAnchor.constraint(equalTo: topAnchor),
+            onVideoControls.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ])
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(screenTapped))
+        addGestureRecognizer(tap)
         
         // Trigger delegates to tell onVideoControls that we have subtitles or not
         CControlsManager.shared.reloadVidoInfo()
