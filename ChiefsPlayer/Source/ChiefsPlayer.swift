@@ -10,7 +10,7 @@ import UIKit
 import AVKit
 import AVFoundation
 
-public protocol ChiefsPlayerDelegate:class {
+public protocol ChiefsPlayerDelegate:AnyObject {
     ///Called whene player get maximized or fullscreen
     func chiefsplayerStatusBarShouldBe (hidden:Bool)
     
@@ -137,7 +137,11 @@ public class ChiefsPlayer {
     var isPlayerError   :Bool {return videoView.loadingView.state.isError}
     var orientationToken:Any?
     var airplayToken    :Any?
-    let dimensions = [screenWidth,screenHeight]
+    
+    private let dimensions = [screenWidth,screenHeight]
+    private var frameHeight: CGFloat!
+    private var frameWidth: CGFloat!
+    
     var chromecastManager     :ChromecastManager?
     var _currentCasting :CastingService?
     var isCastingTo     :CastingService? {
@@ -258,8 +262,30 @@ public class ChiefsPlayer {
                 object: nil,queue: .main,using: { [weak self] notification in
                     guard let `self` = self else {return}
                     
-                    if self.acvStyle == .minimized {return}
                     let newOrientation = UIDevice.current.orientation
+                    
+                    if self.acvStyle == .minimized {
+                        if Device.IS_IPAD {
+                            switch newOrientation {
+                                case .landscapeLeft, .landscapeRight:
+                                    self.frameWidth = self.dimensions.max()!
+                                    self.frameHeight = self.dimensions.min()!
+                                    break
+                                case .portrait,.portraitUpsideDown:
+                                    self.frameWidth = self.dimensions.min()!
+                                    self.frameHeight = self.dimensions.max()!
+                                break
+                            default:
+                                break
+                            }
+                            
+                            self.updateOnMaxFrame()
+                            
+                            self.minimize()
+                        }
+                        return
+                    }
+                    
                     
                     if let interfaceOrientaion = self.interfaceOrientation(for: newOrientation) {
                         self.delegate?.chiefsplayerOrientationChanged(to: interfaceOrientaion)
@@ -274,7 +300,7 @@ public class ChiefsPlayer {
                             self.videoView.addOnVideoControls()
                         }
                         break
-                    case .portrait:
+                    case .portrait, .portraitUpsideDown:
                         print("Portrait")
                         self.vHLandscape.isActive = false
                         self.videoView.isFullscreen = false
@@ -495,7 +521,10 @@ public class ChiefsPlayer {
         }
         
         parentVC = viewController
-                
+        
+        frameHeight = parentVC.view.bounds.height
+        frameWidth = parentVC.view.bounds.width
+        
         if Device.HAS_NOTCH {
             let notchFrame = CGRect(x: 0, y: 0,
                                     width: parentVC.view.bounds.width,
@@ -546,7 +575,7 @@ public class ChiefsPlayer {
         
         // Y
         
-        if #available(iOS 11.0, *) {
+        if #available(iOS 11.0, *), Device.HAS_NOTCH {
             //For notch devices
             vY = videoContainer.topAnchor
                 .constraint(equalTo: parentVC.view.safeAreaLayoutGuide.topAnchor)
@@ -560,10 +589,7 @@ public class ChiefsPlayer {
         dY.isActive = true
         
         //Height
-        var spaceUnderVideo = dimensions.max()! - dimensions.min()! / configs.videoRatio.value
-        if #available(iOS 11.0, *) {
-            spaceUnderVideo -= parentVC.view.safeAreaInsets.top
-        }
+        let spaceUnderVideo = frameHeight - frameWidth / configs.videoRatio.value - topSafeArea
         dH = detailsContainer.heightAnchor
             .constraint(equalToConstant: spaceUnderVideo)
         dH.priority = .defaultHigh
@@ -581,18 +607,8 @@ public class ChiefsPlayer {
         
         
         // MARK: - LANDSCAPE HEIGHT
-        var landscapeHeight = dimensions.min()!
-        if #available(iOS 13.0, *) {
-            if Device.IS_IPAD {
-                let window = UIApplication.shared.windows[0]
-                let topPadding = window.safeAreaInsets.top
-                let bottomPadding = window.safeAreaInsets.bottom
-                landscapeHeight -= topPadding
-                landscapeHeight -= 10
-            }
-        }
         vHLandscape = videoContainer.heightAnchor
-            .constraint(equalToConstant: landscapeHeight)
+            .constraint(equalToConstant: [frameHeight, frameWidth].min()!)
         vHLandscape.priority = .required
         if screenWidth > screenHeight {
             vHLandscape.isActive = true
@@ -721,6 +737,9 @@ public class ChiefsPlayer {
             return
         }
         var videoRatio = videoRect.width / videoRect.height
+        
+        configs.videoRatio = .custom(videoRatio)
+        
         //Set minimum video ratio
         if videoRatio > 2 {videoRatio = 2}
         //Disable current height constraint
@@ -738,8 +757,7 @@ public class ChiefsPlayer {
         
         //Details container height
         //Details height should be calculated with real intrface dimentions
-        let dimentions = [screenWidth,screenHeight]
-        var spaceUnderVideo = dimentions.max()! - dimentions.min()! / videoRatio
+        var spaceUnderVideo = frameHeight - frameWidth / videoRatio
         if #available(iOS 11.0, *) {
             spaceUnderVideo -= parentVC.view.safeAreaInsets.top
         }
@@ -779,7 +797,7 @@ public class ChiefsPlayer {
     }
     
     private var topSafeArea:CGFloat {
-        if #available(iOS 11.0, *) {
+        if #available(iOS 11.0, *), Device.HAS_NOTCH {
             return UIApplication.shared.keyWindow?.safeAreaInsets.top ?? 0
         }
         return 0
@@ -800,6 +818,12 @@ public class ChiefsPlayer {
     }
     
     var onMaxFrame:CGRect  = .zero
+    
+    private func updateOnMaxFrame () {
+        let videoHeight = frameWidth / configs.videoRatio.value
+        onMaxFrame = CGRect(x: 0, y: 0, width: frameWidth, height: videoHeight)
+    }
+    
     var onTouchBeganFrame:CGRect  = .zero
     @objc func dragVideo (pan:UIPanGestureRecognizer) {
         
@@ -810,7 +834,7 @@ public class ChiefsPlayer {
         
         if pan.state == UIGestureRecognizer.State.began {
             if acvStyle == .maximized {
-                onMaxFrame = pan.view!.bounds
+                updateOnMaxFrame()
             }
             onTouchBeganFrame = pan.view!.frame.insetBy(dx: 0, dy: -topSafeArea)
         }
@@ -904,17 +928,20 @@ public class ChiefsPlayer {
     }
     func setViewsScale () {
         if !Device.HAS_NOTCH {
-            let statusBarHeight = UIApplication.shared.statusBarFrame.height
-            if vY.constant <= statusBarHeight {
-                delegate?.chiefsplayerStatusBarShouldBe(hidden: true)
-            } else {
-                delegate?.chiefsplayerStatusBarShouldBe(hidden: false)
+            let statusBarOriginalHeight = CGFloat(20)
+            let statusBarHeight         = UIApplication.shared.statusBarFrame.height
+            let statusBarIsHidden       = statusBarHeight == 0
+            if !statusBarIsHidden , vY.constant <= statusBarOriginalHeight {
+                delegate?.chiefsplayerStatusBarShouldBe(hidden : true)
+            } else if statusBarIsHidden, vY.constant > statusBarOriginalHeight {
+                delegate?.chiefsplayerStatusBarShouldBe(hidden : false)
             }
         }
-        let lastY = (parentVC.view.frame.height - bottomSafeArea) - configs.onMinimizedMinimumScale * onMaxFrame.height
+        
+        let lastY = (frameHeight - bottomSafeArea) - configs.onMinimizedMinimumScale * onMaxFrame.height
         let movePercent = abs(vY.constant / lastY)
         let newScale = 1 - (movePercent * (1 - configs.onMinimizedMinimumScale))
-        vW.constant = parentVC.view.frame.width * newScale
+        vW.constant = frameWidth * newScale
         dY.constant = bottomSafeArea * movePercent
         if newScale == 1, !vWFullScale.isActive {
             vWFullScale.isActive = true
@@ -961,7 +988,8 @@ public class ChiefsPlayer {
         }
         
         videoView.progressView.isUserInteractionEnabled = false
-        let y = parentVC.view.bounds.height - bottomSafeArea - topSafeArea - onMaxFrame.height * configs.onMinimizedMinimumScale
+        
+        let y = frameHeight - bottomSafeArea - topSafeArea - onMaxFrame.height * configs.onMinimizedMinimumScale
         UIView.animate(
             withDuration: 0.15, delay: 0, options: [.curveEaseOut,.allowAnimatedContent,.allowUserInteraction],
             animations: {

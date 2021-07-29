@@ -293,8 +293,7 @@ public class CVideoView: UIView {
     public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         
         // Disable controls hiding while interacting with any subview
-        hideTimer?.invalidate()
-        screenTapped()
+        scheduleControlsHiding()
         
         return super.hitTest(point, with: event)
     }
@@ -311,6 +310,7 @@ public class CVideoView: UIView {
             }
         }
     }
+    
     private func scheduleControlsHiding () {
         hideTimer?.invalidate()
         

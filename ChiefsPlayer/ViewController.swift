@@ -176,6 +176,17 @@ class ViewController: UIViewController {
 //        ChiefsPlayer.shared.controls.play.setBackgroundImage(UIImage.init(named: "PlayButtonBackground"), for: .normal)
 //        ChiefsPlayer.shared.controls.play.gradientColors = []
     }
+    
+    var statusBarShouldBeHidden = false {
+        didSet {
+            UIView.animate(withDuration: 0.4) {
+                self.setNeedsStatusBarAppearanceUpdate()
+            }
+        }
+    }
+    override var prefersStatusBarHidden: Bool {
+        return statusBarShouldBeHidden
+    }
 }
 
 extension ViewController:ChiefsPlayerDelegate {
@@ -234,10 +245,10 @@ extension ViewController:ChiefsPlayerDelegate {
     func chiefsplayer(isCastingTo castingService: CastingService?) {
         let service = castingService == nil ? "Not casting" : "\(castingService!)"
     }
-//
-//    func chiefsplayerStatusBarShouldBe(hidden: Bool) {
-//        statusBarShouldBeHidden = hidden
-//    }
+    
+    func chiefsplayerStatusBarShouldBe(hidden: Bool) {
+        statusBarShouldBeHidden = hidden
+    }
 //    func chiefsplayerWillStop(playing item: AVPlayerItem) {
 //        //guard
 //        //    let left = item.currentTime().asFloat,
