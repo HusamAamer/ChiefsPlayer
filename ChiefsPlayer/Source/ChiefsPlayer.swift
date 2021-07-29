@@ -264,25 +264,25 @@ public class ChiefsPlayer {
                     
                     let newOrientation = UIDevice.current.orientation
                     
-                    if self.acvStyle == .minimized {
-                        if Device.IS_IPAD {
-                            switch newOrientation {
-                                case .landscapeLeft, .landscapeRight:
-                                    self.frameWidth = self.dimensions.max()!
-                                    self.frameHeight = self.dimensions.min()!
-                                    break
-                                case .portrait,.portraitUpsideDown:
-                                    self.frameWidth = self.dimensions.min()!
-                                    self.frameHeight = self.dimensions.max()!
+                    if Device.IS_IPAD {
+                        switch newOrientation {
+                            case .landscapeLeft, .landscapeRight:
+                                self.frameWidth = self.dimensions.max()!
+                                self.frameHeight = self.dimensions.min()!
                                 break
-                            default:
-                                break
-                            }
-                            
-                            self.updateOnMaxFrame()
-                            
-                            self.minimize()
+                            case .portrait,.portraitUpsideDown:
+                                self.frameWidth = self.dimensions.min()!
+                                self.frameHeight = self.dimensions.max()!
+                            break
+                        default:
+                            break
                         }
+                        self.updateOnMaxFrame()
+                        
+                    }
+                    
+                    if self.acvStyle == .minimized {
+                        self.minimize()
                         return
                     }
                     
@@ -299,6 +299,7 @@ public class ChiefsPlayer {
                         if shouldShowControls {
                             self.videoView.addOnVideoControls()
                         }
+                        self.recalculateConstraints()
                         break
                     case .portrait, .portraitUpsideDown:
                         print("Portrait")
@@ -307,6 +308,7 @@ public class ChiefsPlayer {
                         if !shouldShowControls {
                             self.videoView.removeOnVideoControls()
                         }
+                        self.recalculateConstraints()
                         break
                     default:
                         print("other")
@@ -556,7 +558,7 @@ public class ChiefsPlayer {
         
         // Width - where scale != 1
         vW = videoContainer.widthAnchor
-            .constraint(equalToConstant: parentVC.view.frame.width)
+            .constraint(equalToConstant: frameWidth)
         vW.priority = .required
         vW.isActive = false
         // Width - where scale == 1
@@ -636,8 +638,11 @@ public class ChiefsPlayer {
         //Finally, We can init controls after user set the style
         controls  = controlsForCurrentStyle()
         
+        if UIDevice.current.orientation == .landscapeLeft || UIDevice.current.orientation == .landscapeRight {
+            videoView.addOnVideoControls()
+        }
         
-        if CControlsManager.shared.shouldShowControlsAboveVideo(for: UIDevice.current.orientation) {
+        if CControlsManager.shared.shouldShowControlsAboveVideo(for: .portrait) {
             videoView.addOnVideoControls()
         } else {
             detailsStack.addArrangedSubview(controls)
@@ -755,12 +760,14 @@ public class ChiefsPlayer {
         vHPortrait.priority = .defaultLow
         vHPortrait.isActive = true
         
+        recalculateConstraints()
+    }
+    
+    func recalculateConstraints () {
+        
         //Details container height
         //Details height should be calculated with real intrface dimentions
-        var spaceUnderVideo = frameHeight - frameWidth / videoRatio
-        if #available(iOS 11.0, *) {
-            spaceUnderVideo -= parentVC.view.safeAreaInsets.top
-        }
+        let spaceUnderVideo = frameHeight - onMaxFrame.height - topSafeArea
         dH.constant = spaceUnderVideo
         parentVC.view.layoutIfNeeded()
     }
@@ -828,9 +835,9 @@ public class ChiefsPlayer {
     @objc func dragVideo (pan:UIPanGestureRecognizer) {
         
         
-        if videoView.isFullscreen {
-            return
-        }
+//        if videoView.isFullscreen {
+//            return
+//        }
         
         if pan.state == UIGestureRecognizer.State.began {
             if acvStyle == .maximized {
@@ -915,14 +922,14 @@ public class ChiefsPlayer {
         //Scale
         setViewsScale()
         
-        let movePercent = abs(vY.constant / (parentVC.view.frame.height - bottomSafeArea))
+        let movePercent = abs(vY.constant / (frameHeight - bottomSafeArea))
         acvStyle = .moving(movePercent)
     }
     func dismissView (with xTranslation:CGFloat){
         let x = onTouchBeganFrame.minX + xTranslation
         vX.constant = x
 
-        let movePercent = abs(vX.constant / parentVC.view.frame.width)
+        let movePercent = abs(vX.constant / frameWidth)
         videoContainer.alpha = 1 - movePercent
         acvStyle = .dismissing(movePercent)
     }
