@@ -294,21 +294,19 @@ public class ChiefsPlayer {
                     switch newOrientation {
                     case .landscapeLeft, .landscapeRight:
                         print("landscape")
-                        self.vHLandscape.isActive = true
                         self.videoView.isFullscreen = true
                         if shouldShowControls {
                             self.videoView.addOnVideoControls()
                         }
-                        self.recalculateConstraints()
+                        self.setViewsScale()
                         break
                     case .portrait, .portraitUpsideDown:
                         print("Portrait")
-                        self.vHLandscape.isActive = false
                         self.videoView.isFullscreen = false
                         if !shouldShowControls {
                             self.videoView.removeOnVideoControls()
                         }
-                        self.recalculateConstraints()
+                        self.setViewsScale()
                         break
                     default:
                         print("other")
@@ -507,11 +505,10 @@ public class ChiefsPlayer {
     var vY:NSLayoutConstraint!
     var vX:NSLayoutConstraint!
     var vW:NSLayoutConstraint!
-    var vWFullScale:NSLayoutConstraint!
     var dY:NSLayoutConstraint!
     var dH:NSLayoutConstraint!
     var vHPortrait:NSLayoutConstraint!
-    var vHLandscape:NSLayoutConstraint!
+    
     public func present(on viewController:UIViewController) {
         if parentVC != nil {
             ChiefsPlayer.Log(event: "Player is already presented")
@@ -560,15 +557,7 @@ public class ChiefsPlayer {
         vW = videoContainer.widthAnchor
             .constraint(equalToConstant: frameWidth)
         vW.priority = .required
-        vW.isActive = false
-        // Width - where scale == 1
-        /// This only used when video scale = 1
-        /// Sometimes parentVC.view.frame.width not get updated as fast as needed when device rotated
-        /// So I'm installing this constraint
-        vWFullScale = videoContainer.widthAnchor
-            .constraint(equalTo: parentVC.view.widthAnchor, multiplier: 1)
-        vWFullScale.priority = .required
-        vWFullScale.isActive = true
+        vW.isActive = true
         
         let dW = detailsContainer.widthAnchor
             .constraint(equalTo: parentVC.view.widthAnchor, multiplier: 1)
@@ -600,25 +589,9 @@ public class ChiefsPlayer {
         
         // Ratios
         vHPortrait = videoContainer.heightAnchor
-            .constraint(equalTo: videoContainer.widthAnchor,
-                        multiplier: 1/configs.videoRatio.value,
-                        constant: 1)
-        vHPortrait.priority = .defaultLow
+            .constraint(equalToConstant: frameWidth / configs.videoRatio.value)
+        vHPortrait.priority = .required
         vHPortrait.isActive = true
-        
-        
-        
-        // MARK: - LANDSCAPE HEIGHT
-        vHLandscape = videoContainer.heightAnchor
-            .constraint(equalToConstant: [frameHeight, frameWidth].min()!)
-        vHLandscape.priority = .required
-        if screenWidth > screenHeight {
-            vHLandscape.isActive = true
-            self.videoView.isFullscreen = true
-        } else {
-            vHLandscape.isActive = false
-        }
-        
         
         //Add subviews to containers
         videoContainer.addSubview(videoView)
@@ -747,32 +720,9 @@ public class ChiefsPlayer {
         
         //Set minimum video ratio
         if videoRatio > 2 {videoRatio = 2}
-        //Disable current height constraint
-        vHPortrait.isActive = false
-        videoContainer.removeConstraint(vHPortrait)
         
-        //Create new height constraint with new multiplier value
-        vHPortrait = videoContainer.heightAnchor
-            .constraint(
-                equalTo: videoContainer.widthAnchor,
-                multiplier: 1/videoRatio,
-                constant: 1)
-        vHPortrait.priority = .defaultLow
-        vHPortrait.isActive = true
-        
-        recalculateConstraints()
+        setViewsScale()
     }
-    
-    func recalculateConstraints () {
-        
-        //Details container height
-        //Details height should be calculated with real intrface dimentions
-        let spaceUnderVideo = frameHeight - onMaxFrame.height - topSafeArea
-        dH.constant = spaceUnderVideo
-        parentVC.view.layoutIfNeeded()
-    }
-    
-    
     
     
     
@@ -949,14 +899,15 @@ public class ChiefsPlayer {
         let movePercent = abs(vY.constant / lastY)
         let newScale = 1 - (movePercent * (1 - configs.onMinimizedMinimumScale))
         vW.constant = frameWidth * newScale
+        
+        let maxHeight:CGFloat = videoView.isFullscreen ? frameHeight : onMaxFrame.height
+        let minHeight = onMaxFrame.height * configs.onMinimizedMinimumScale
+        vHPortrait.constant = minHeight + (maxHeight - minHeight) *  (1 - movePercent)
+        
         dY.constant = bottomSafeArea * movePercent
-        if newScale == 1, !vWFullScale.isActive {
-            vWFullScale.isActive = true
-            vW.isActive = false
-        } else if newScale != 1, vWFullScale.isActive {
-            vWFullScale.isActive = false
-            vW.isActive = true
-        }
+        
+        let spaceUnderVideo = frameHeight - onMaxFrame.height - topSafeArea
+        dH.constant = spaceUnderVideo
         
         videoView.loadingView.setMinimize(with: movePercent)
         videoView.streamingView?.setMinimize(with: movePercent)
