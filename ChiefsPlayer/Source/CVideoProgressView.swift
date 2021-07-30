@@ -10,7 +10,7 @@ import UIKit
 import AVKit
 import AVFoundation
 
-protocol CVideoProgressViewDelegate:class {
+protocol CVideoProgressViewDelegate:AnyObject {
     
     /// User Chaged Progress Manually Callback
     /// - Parameter percent: Seek percent

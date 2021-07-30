@@ -243,7 +243,7 @@ public class CVideoView: UIView {
     var hideTimer:Timer?
     private var isFullscreen : Bool {
         get {
-            return ChiefsPlayer.shared.acvStyle.isFullscreen
+            return ChiefsPlayer.shared.acvFullscreen.isActive
         }
     }
     

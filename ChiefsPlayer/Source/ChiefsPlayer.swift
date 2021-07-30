@@ -108,6 +108,7 @@ public class ChiefsPlayer {
     var mediaQueue      = [CMediaInfo]()
     public var delegate        :ChiefsPlayerDelegate?
     public var acvStyle        :ACVStyle        = .maximized
+    public var acvFullscreen   :ACVFullscreen   = .none
     public var configs         :CVConfiguration = CVConfiguration()
     public var player          :CAVQueuePlayer!
     public var sources         :[CPlayerSource] = []
@@ -308,7 +309,7 @@ public class ChiefsPlayer {
                         
                         print("Portrait")
                         
-                        if self.acvStyle != .fullscreenLocked {
+                        if self.acvFullscreen.isNotLocked {
                             self.endFullscreen()
                         } else {
                             self.startFullscreen()
@@ -346,7 +347,7 @@ public class ChiefsPlayer {
     //**//**//**//**//**//**//**//**//**//**//**//**//**//**
     
     private func startFullscreen () {
-        setFullscreenState(true, locked: acvStyle == .fullscreenLocked)
+        setFullscreenState(true, locked: acvFullscreen.isLocked)
     }
     
     private func endFullscreen () {
@@ -355,7 +356,7 @@ public class ChiefsPlayer {
     
     /// Used for iPad to force full screen even in portrait mode
     public func toggleFullscreenWithLock () {
-        setFullscreenState(!acvStyle.isFullscreen, locked: true)
+        setFullscreenState(acvFullscreen.isNotActive, locked: true)
     }
     
     public func toggleFullScreenWithOrientation () {
@@ -365,7 +366,7 @@ public class ChiefsPlayer {
         
         
         // Toggle to full screen value
-        if !acvStyle.isFullscreen {
+        if acvFullscreen.isNotActive {
             
             let isLandscapeNow = UIDevice.current.orientation == .landscapeRight || UIDevice.current.orientation == .landscapeLeft
             
@@ -388,10 +389,10 @@ public class ChiefsPlayer {
         
         let shouldShowControls = CControlsManager.shared.shouldShowControlsAboveVideo(for: orientation)
         
-        let toStyle:ACVStyle = isFullscreen
-            ? (locked ? ACVStyle.fullscreenLocked : .fullscreen)
-            : .maximized
-        acvStyle = toStyle
+        let toStyle:ACVFullscreen = isFullscreen
+            ? (locked ? .activatedLock : .activated)
+            : .none
+        acvFullscreen = toStyle
         
         videoView.fullscreenStateUpdated()
         if shouldShowControls {
@@ -854,7 +855,7 @@ public class ChiefsPlayer {
         
         // Allow dragging always on iPad
         // Prevent dragging in iPhone on fullscreen
-        if !Device.IS_IPAD, acvStyle.isFullscreen {
+        if !Device.IS_IPAD, acvFullscreen.isActive {
             return
         }
         
@@ -969,7 +970,7 @@ public class ChiefsPlayer {
         let newScale = 1 - (movePercent * (1 - configs.onMinimizedMinimumScale))
         vW.constant = frameWidth * newScale
         
-        let maxHeight:CGFloat = acvStyle.isFullscreen ? frameHeight : onMaxFrame.height
+        let maxHeight:CGFloat = acvFullscreen.isActive ? frameHeight : onMaxFrame.height
         let minHeight = onMaxFrame.height * configs.onMinimizedMinimumScale
         vH.constant = minHeight + (maxHeight - minHeight) *  (1 - movePercent)
         

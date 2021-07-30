@@ -140,7 +140,7 @@ public class CPlayerItem: AVPlayerItem {
     }
 }
 
-public protocol CPlayerItemDelegate:class {
+public protocol CPlayerItemDelegate:AnyObject {
     func cplayerItemReadyToPlay(_ item:CPlayerItem)
     func cplayerItemPlaybackLikelyToKeepUp()
     func cplayerItemPlaybackBufferFull()

@@ -243,7 +243,7 @@ extension ViewController:ChiefsPlayerDelegate {
         
     }
     func chiefsplayer(isCastingTo castingService: CastingService?) {
-        let service = castingService == nil ? "Not casting" : "\(castingService!)"
+        //let service = castingService == nil ? "Not casting" : "\(castingService!)"
     }
     
     func chiefsplayerStatusBarShouldBe(hidden: Bool) {

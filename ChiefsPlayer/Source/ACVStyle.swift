@@ -13,13 +13,7 @@ public enum ACVStyle:Comparable {
     case minimized,
          maximized,
          moving(CGFloat),
-         dismissing(CGFloat),
-         fullscreen,
-         fullscreenLocked
-    
-    var isFullscreen:Bool {
-        return self == .fullscreen || self == .fullscreenLocked
-    }
+         dismissing(CGFloat)
     
     public static func < (lhs: ACVStyle, rhs: ACVStyle) -> Bool {
         switch lhs {
@@ -36,5 +30,25 @@ public enum ACVStyle:Comparable {
         default:
             return false
         }
+    }
+}
+
+public enum ACVFullscreen {
+    case none, activated, activatedLock
+    
+    var isActive:Bool {
+        return self == .activated || self == .activatedLock
+    }
+    
+    var isNotActive:Bool {
+        return self == .none
+    }
+    
+    var isNotLocked:Bool {
+        return self != .activatedLock
+    }
+    
+    var isLocked:Bool {
+        return self != .activatedLock
     }
 }

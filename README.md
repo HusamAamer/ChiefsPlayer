@@ -4,6 +4,10 @@ Advanced floating player with streaming services.
 
 ### Changelog
 
+v1.5
+- Better fullscreen support for iPad
+- Update code to Swift 5
+
 v1.4.2
 - Moved from flipping icons for RTL programmatically to the asset attribute option called `Direction` 
 

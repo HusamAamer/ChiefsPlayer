@@ -89,7 +89,7 @@ public class CAVQueuePlayer: AVQueuePlayer {
     }
 }
 
-public protocol CAVQueuePlayerDelegate:class {
+public protocol CAVQueuePlayerDelegate:AnyObject {
     func cavqueueplayerReadyToPlay ()
     func cavqueueplayerFailed()
     func cavqueueplayerItemReplaced(with item:AVPlayerItem?)
