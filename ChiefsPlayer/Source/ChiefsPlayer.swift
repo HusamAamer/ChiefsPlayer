@@ -264,24 +264,27 @@ public class ChiefsPlayer {
                     
                     let newOrientation = UIDevice.current.orientation
                     
-                    if Device.IS_IPAD {
-                        switch newOrientation {
-                            case .landscapeLeft, .landscapeRight:
-                                self.frameWidth = self.dimensions.max()!
-                                self.frameHeight = self.dimensions.min()!
-                                break
-                            case .portrait,.portraitUpsideDown:
-                                self.frameWidth = self.dimensions.min()!
-                                self.frameHeight = self.dimensions.max()!
-                            break
-                        default:
-                            break
-                        }
-                        self.updateOnMaxFrame()
-                        
+                    let isMinimized = self.acvStyle == .minimized
+                    
+                    if Device.IS_IPHONE, isMinimized {
+                        return
                     }
                     
-                    if self.acvStyle == .minimized {
+                    switch newOrientation {
+                        case .landscapeLeft, .landscapeRight:
+                            self.frameWidth = self.dimensions.max()!
+                            self.frameHeight = self.dimensions.min()!
+                            break
+                        case .portrait,.portraitUpsideDown:
+                            self.frameWidth = self.dimensions.min()!
+                            self.frameHeight = self.dimensions.max()!
+                        break
+                    default:
+                        break
+                    }
+                    self.updateOnMaxFrame()
+                    
+                    if isMinimized {
                         self.minimize()
                         return
                     }
@@ -290,23 +293,26 @@ public class ChiefsPlayer {
                     if let interfaceOrientaion = self.interfaceOrientation(for: newOrientation) {
                         self.delegate?.chiefsplayerOrientationChanged(to: interfaceOrientaion)
                     }
-                    let shouldShowControls = CControlsManager.shared.shouldShowControlsAboveVideo(for: newOrientation)
+                    
                     switch newOrientation {
                     case .landscapeLeft, .landscapeRight:
                         print("landscape")
-                        self.videoView.isFullscreen = true
-                        if shouldShowControls {
-                            self.videoView.addOnVideoControls()
-                        }
-                        self.setViewsScale()
+                        self.startFullscreen()
                         break
                     case .portrait, .portraitUpsideDown:
-                        print("Portrait")
-                        self.videoView.isFullscreen = false
-                        if !shouldShowControls {
-                            self.videoView.removeOnVideoControls()
+                        
+                        // iPhone: Don't change UI in upside down
+                        if newOrientation == .portraitUpsideDown && Device.IS_IPHONE {
+                            return
                         }
-                        self.setViewsScale()
+                        
+                        print("Portrait")
+                        
+                        if self.acvStyle != .fullscreenLocked {
+                            self.endFullscreen()
+                        } else {
+                            self.startFullscreen()
+                        }
                         break
                     default:
                         print("other")
@@ -337,6 +343,67 @@ public class ChiefsPlayer {
         }
     }
     
+    //**//**//**//**//**//**//**//**//**//**//**//**//**//**
+    
+    private func startFullscreen () {
+        setFullscreenState(true, locked: acvStyle == .fullscreenLocked)
+    }
+    
+    private func endFullscreen () {
+        setFullscreenState(false)
+    }
+    
+    /// Used for iPad to force full screen even in portrait mode
+    public func toggleFullscreenWithLock () {
+        setFullscreenState(!acvStyle.isFullscreen, locked: true)
+    }
+    
+    public func toggleFullScreenWithOrientation () {
+        
+        // Toggle to portrait value
+        var toOrientation = UIInterfaceOrientation.portrait.rawValue
+        
+        
+        // Toggle to full screen value
+        if !acvStyle.isFullscreen {
+            
+            let isLandscapeNow = UIDevice.current.orientation == .landscapeRight || UIDevice.current.orientation == .landscapeLeft
+            
+            toOrientation = isLandscapeNow
+                ? UIDevice.current.orientation.rawValue
+                : UIInterfaceOrientation.landscapeRight.rawValue
+        }
+        
+        UIDevice.current.setValue(toOrientation, forKey: "orientation")
+        
+        NotificationCenter.default.post(name: UIDevice.orientationDidChangeNotification, object: nil)
+
+    }
+    
+    private func setFullscreenState (_ isFullscreen:Bool, locked:Bool = false) {
+        
+        // landscapeRight refers to fullscreen
+        // portrait refers to not full screen (maximized player)
+        let orientation: UIDeviceOrientation = isFullscreen ? .landscapeRight : .portrait
+        
+        let shouldShowControls = CControlsManager.shared.shouldShowControlsAboveVideo(for: orientation)
+        
+        let toStyle:ACVStyle = isFullscreen
+            ? (locked ? ACVStyle.fullscreenLocked : .fullscreen)
+            : .maximized
+        acvStyle = toStyle
+        
+        videoView.fullscreenStateUpdated()
+        if shouldShowControls {
+            videoView.addOnVideoControls()
+        } else {
+            videoView.removeOnVideoControls()
+        }
+        setViewsScale(animated: true)
+    }
+    
+    
+    //**//**//**//**//**//**//**//**//**//**//**//**//**//**
     let assetKeysRequiredToPlay = [
         "playable"
     ]
@@ -507,7 +574,7 @@ public class ChiefsPlayer {
     var vW:NSLayoutConstraint!
     var dY:NSLayoutConstraint!
     var dH:NSLayoutConstraint!
-    var vHPortrait:NSLayoutConstraint!
+    var vH:NSLayoutConstraint!
     
     public func present(on viewController:UIViewController) {
         if parentVC != nil {
@@ -523,6 +590,7 @@ public class ChiefsPlayer {
         
         frameHeight = parentVC.view.bounds.height
         frameWidth = parentVC.view.bounds.width
+        updateOnMaxFrame()
         
         if Device.HAS_NOTCH {
             let notchFrame = CGRect(x: 0, y: 0,
@@ -588,10 +656,10 @@ public class ChiefsPlayer {
         detailsContainer.setContentHuggingPriority(.defaultHigh, for: .vertical)
         
         // Ratios
-        vHPortrait = videoContainer.heightAnchor
+        vH = videoContainer.heightAnchor
             .constraint(equalToConstant: frameWidth / configs.videoRatio.value)
-        vHPortrait.priority = .required
-        vHPortrait.isActive = true
+        vH.priority = .required
+        vH.isActive = true
         
         //Add subviews to containers
         videoContainer.addSubview(videoView)
@@ -784,10 +852,11 @@ public class ChiefsPlayer {
     var onTouchBeganFrame:CGRect  = .zero
     @objc func dragVideo (pan:UIPanGestureRecognizer) {
         
-        
-//        if videoView.isFullscreen {
-//            return
-//        }
+        // Allow dragging always on iPad
+        // Prevent dragging in iPhone on fullscreen
+        if !Device.IS_IPAD, acvStyle.isFullscreen {
+            return
+        }
         
         if pan.state == UIGestureRecognizer.State.began {
             if acvStyle == .maximized {
@@ -883,7 +952,7 @@ public class ChiefsPlayer {
         videoContainer.alpha = 1 - movePercent
         acvStyle = .dismissing(movePercent)
     }
-    func setViewsScale () {
+    func setViewsScale (animated:Bool = false) {
         if !Device.HAS_NOTCH {
             let statusBarOriginalHeight = CGFloat(20)
             let statusBarHeight         = UIApplication.shared.statusBarFrame.height
@@ -900,9 +969,9 @@ public class ChiefsPlayer {
         let newScale = 1 - (movePercent * (1 - configs.onMinimizedMinimumScale))
         vW.constant = frameWidth * newScale
         
-        let maxHeight:CGFloat = videoView.isFullscreen ? frameHeight : onMaxFrame.height
+        let maxHeight:CGFloat = acvStyle.isFullscreen ? frameHeight : onMaxFrame.height
         let minHeight = onMaxFrame.height * configs.onMinimizedMinimumScale
-        vHPortrait.constant = minHeight + (maxHeight - minHeight) *  (1 - movePercent)
+        vH.constant = minHeight + (maxHeight - minHeight) *  (1 - movePercent)
         
         dY.constant = bottomSafeArea * movePercent
         
@@ -915,9 +984,13 @@ public class ChiefsPlayer {
         
         notchBackground?.alpha = 1 - movePercent * 6
         
-        
-        //parentVC.view.setNeedsLayout()
-        parentVC.view.layoutIfNeeded()
+        if animated {
+            UIView.animate(withDuration: 0.3) {
+                self.parentVC.view.layoutIfNeeded()
+            }
+        } else {
+            parentVC.view.layoutIfNeeded()
+        }
     }
     
     func maximize () {

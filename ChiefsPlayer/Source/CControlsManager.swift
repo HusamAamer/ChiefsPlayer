@@ -555,25 +555,17 @@ extension CControlsManager
 ////////////////////////////////////////////////////////////////
 extension CControlsManager {
     func fullscreenBtnAction () {
-        print(screenWidth,screenHeight)
-        if isPortraitInterface {
-            forcelandscapeRight()
+        if Device.IS_IPHONE {
+            ChiefsPlayer.shared.toggleFullScreenWithOrientation()
         } else {
-            setPortrait()
+            ChiefsPlayer.shared.toggleFullscreenWithLock()
         }
-        NotificationCenter.default.post(name: UIDevice.orientationDidChangeNotification, object: nil)
+        
     }
     var isPortraitInterface : Bool {
         return screenHeight > screenWidth
     }
-    func forcelandscapeRight() {
-        let value:Int = UIInterfaceOrientation.landscapeRight.rawValue
-        UIDevice.current.setValue(value, forKey: "orientation")
-    }
-    func setPortrait() {
-        let value = UIInterfaceOrientation.portrait.rawValue
-        UIDevice.current.setValue(value, forKey: "orientation")
-    }
+    
 }
 
 

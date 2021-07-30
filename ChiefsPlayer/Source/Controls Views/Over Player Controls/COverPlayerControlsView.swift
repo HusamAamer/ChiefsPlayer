@@ -93,10 +93,7 @@ class COverPlayerControlsView: CBaseControlsView {
         } else {
             self.scaleButton.isHidden = true
         }
-
-        if Device.IS_IPAD {
-            fullscreenBtn.isHidden = true
-        }
+        
         CControlsManager.shared.addDelegate(self)
     }
     

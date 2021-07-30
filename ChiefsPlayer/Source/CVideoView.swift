@@ -241,12 +241,18 @@ public class CVideoView: UIView {
     //MARK: FULLSCREEN Controls  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     var onVideoControls:CBaseControlsView!
     var hideTimer:Timer?
-    var isFullscreen : Bool = false {
-        didSet {
-            setupProgressViewLayout()
-            progressView.alpha = self.controlsAreHidden && isFullscreen ? 0 : 1
+    private var isFullscreen : Bool {
+        get {
+            return ChiefsPlayer.shared.acvStyle.isFullscreen
         }
     }
+    
+    /// Call after fullscreen update
+    func fullscreenStateUpdated () {
+        setupProgressViewLayout()
+        progressView.alpha = self.controlsAreHidden && isFullscreen ? 0 : 1
+    }
+    
     private var controlsHeight : CGFloat {
         var value = CGFloat(60)
         if #available(iOS 11.0, *) {

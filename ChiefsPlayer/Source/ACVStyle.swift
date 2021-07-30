@@ -10,7 +10,16 @@ import UIKit
 import AVFoundation
 
 public enum ACVStyle:Comparable {
-    case minimized, maximized,moving(CGFloat),dismissing(CGFloat)
+    case minimized,
+         maximized,
+         moving(CGFloat),
+         dismissing(CGFloat),
+         fullscreen,
+         fullscreenLocked
+    
+    var isFullscreen:Bool {
+        return self == .fullscreen || self == .fullscreenLocked
+    }
     
     public static func < (lhs: ACVStyle, rhs: ACVStyle) -> Bool {
         switch lhs {

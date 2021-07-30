@@ -109,10 +109,6 @@ class CVideoControlsView: CBaseControlsView {
             rightStack.insertArrangedSubview(castButton, at: 0)
         }
         
-        if Device.IS_IPAD {
-            fullscreenBtn.isHidden = true
-        }
-        
         CControlsManager.shared.addDelegate(self)
     }
     
