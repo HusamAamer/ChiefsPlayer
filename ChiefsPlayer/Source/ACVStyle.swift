@@ -37,7 +37,7 @@ public enum ACVFullscreen {
     case none, activated, activatedLock
     
     var isActive:Bool {
-        return self == .activated || self == .activatedLock
+        return self != .none
     }
     
     var isNotActive:Bool {
@@ -49,6 +49,6 @@ public enum ACVFullscreen {
     }
     
     var isLocked:Bool {
-        return self != .activatedLock
+        return self == .activatedLock
     }
 }

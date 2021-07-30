@@ -164,10 +164,12 @@ extension CControlsManager {
 ////////////////////////////////////////////////////////////////
 
 extension CControlsManager {
-    func nextBtnAction () {
+    @discardableResult
+    func nextBtnAction () -> Bool {
         if let action = ChiefsPlayer.shared.delegate?.chiefsplayerNextAction(true) {
             performAction(action: action)
         }
+        return false
     }
     func prevBtnAction () {
         if let action = ChiefsPlayer.shared.delegate?.chiefsplayerPrevAction(true) {
