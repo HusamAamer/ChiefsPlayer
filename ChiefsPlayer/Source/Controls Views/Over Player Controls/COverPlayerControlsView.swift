@@ -25,6 +25,7 @@ class COverPlayerControlsView: CBaseControlsView {
     @IBOutlet weak var duration: UILabel!
     @IBOutlet weak var currentTime: UILabel!
     @IBOutlet weak var scaleButton : UIButton!
+    var pipButton: UIButton!
     var separator:UIView!
     
     @IBOutlet weak var resolutionBtn: UIButton!
@@ -38,8 +39,6 @@ class COverPlayerControlsView: CBaseControlsView {
         super.init(coder: aDecoder)
         backgroundColor = UIColor(red:0.13, green:0.16, blue:0.24, alpha:1.00)
         separator = UIView()
-        
-        
         
     }
     
@@ -87,6 +86,23 @@ class COverPlayerControlsView: CBaseControlsView {
             rightStack.insertArrangedSubview(castButton, at: 0)
         }
 
+        // Pip Button
+        if #available(iOS 13.0, *) {
+            pipButton = UIButton(type: .custom)
+            pipButton.addTarget(CControlsManager.shared,
+                                action: #selector(CControlsManager.shared.togglePictureInPictureMode(_:)),
+                                for: .touchUpInside)
+            let startImage = AVPictureInPictureController.pictureInPictureButtonStartImage(compatibleWith: .current)
+            let stopImage = AVPictureInPictureController.pictureInPictureButtonStopImage(compatibleWith: .current)
+            
+            pipButton.setImage(startImage, for: .normal)
+            pipButton.setImage(stopImage, for: .selected)
+            
+            rightStack.addArrangedSubview(pipButton)
+        }
+        
+        
+        // Scale Button
         if UIDevice.current.orientation == .landscapeLeft ||
             UIDevice.current.orientation == .landscapeRight {
             self.scaleButton.isHidden = false
@@ -155,12 +171,14 @@ class COverPlayerControlsView: CBaseControlsView {
     }
     
     //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    
     deinit {
         print("CVideoControlsView deinit")
     }
 }
 
 extension COverPlayerControlsView : CControlsManagerDelegate {
+    
     func controlsLeftAccessoryViewsDidChange(to newViews: [UIView]?) {
         
         //Remove old views
@@ -295,4 +313,9 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
     func controlsProgressBarBottomPositionValueForLandscape() -> CGFloat {
         return 30
     }
+    
+    func controlsPictureInPictureState(is possible: Bool) {
+        pipButton.isHidden = !possible
+    }
+    
 }

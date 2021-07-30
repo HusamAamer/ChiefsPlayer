@@ -180,6 +180,7 @@ class CVideoControlsView: CBaseControlsView {
 }
 
 extension CVideoControlsView : CControlsManagerDelegate {
+    
     func controlsLeftAccessoryViewsDidChange(to newViews: [UIView]?) {
         
         //Remove old views
@@ -314,5 +315,9 @@ extension CVideoControlsView : CControlsManagerDelegate {
     }
     func controlsProgressBarBottomPositionValueForLandscape() -> CGFloat {
         return frame.height
+    }
+    
+    func controlsPictureInPictureState(is possible: Bool) {
+        
     }
 }

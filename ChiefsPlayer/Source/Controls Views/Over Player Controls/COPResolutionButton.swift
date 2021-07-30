@@ -9,7 +9,15 @@
 import UIKit
 
 class COPResolutionButton: UIButton {
-
+//    override init(frame: CGRect) {
+//        <#code#>
+//    }
+//    required init?(coder: NSCoder) {
+//        <#code#>
+//    }
+//    func commonInit () {
+//        contentEdgeInsets = UIEdgeInsets(top: <#T##CGFloat#>, left: <#T##CGFloat#>, bottom: <#T##CGFloat#>, right: <#T##CGFloat#>)
+//    }
     override var isEnabled: Bool {
         didSet {
             if isEnabled {

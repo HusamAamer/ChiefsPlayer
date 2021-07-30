@@ -52,9 +52,13 @@ public class CControlsManager:NSObject {
     
     private var player : CAVQueuePlayer? {return ChiefsPlayer.shared.player}
     var delegates : [CControlsManagerDelegate?] = []
+    var pipController : AVPictureInPictureController?
+    var pipPossibleObservation : NSObject?
     
     override init() {
         super.init()
+        
+        setupPictureInPicture()
         startObserving()
     }
     var timeObserverToken:Any?
@@ -578,9 +582,51 @@ extension CControlsManager {
     }
 }
 
+////////////////////////////////////////////////////////////////
+// MARK:- Toggle Aspect btn
+////////////////////////////////////////////////////////////////
 extension CControlsManager {
     func toggleVideoAspect () {
         ChiefsPlayer.shared.toggleVideoAspect()
     }
     
 }
+
+////////////////////////////////////////////////////////////////
+// MARK:- Picture In Picture Btn
+////////////////////////////////////////////////////////////////
+extension CControlsManager: AVPictureInPictureControllerDelegate {
+    func setupPictureInPicture() {
+        
+        if ChiefsPlayer.shared.delegate?.chiefsplayerPictureInPictureEnabled() != true {
+            return
+        }
+        
+        // Ensure PiP is supported by current device.
+        if AVPictureInPictureController.isPictureInPictureSupported() {
+            
+            // Create a new controller, passing the reference to the AVPlayerLayer.
+            pipController = AVPictureInPictureController(playerLayer: ChiefsPlayer.shared.videoView.vLayer!)
+            pipController?.delegate = self
+            
+            pipPossibleObservation =
+                pipController?.observe(\AVPictureInPictureController.isPictureInPicturePossible,
+                                                                        options: [.initial, .new]) { [weak self] _, change in
+                // Update the PiP button's enabled state.
+                self?.delegates.forEach({$0?.controlsPictureInPictureState(is: change.newValue ?? false)})
+            }
+        } else {
+            // PiP isn't supported by the current device. Disable the PiP button.
+            delegates.forEach({$0?.controlsPictureInPictureState(is: false)})
+        }
+    }
+    
+    @objc func togglePictureInPictureMode(_ sender: UIButton) {
+        if pipController?.isPictureInPictureActive == true {
+            pipController?.stopPictureInPicture()
+        } else {
+            pipController?.startPictureInPicture()
+        }
+    }
+}
+

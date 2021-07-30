@@ -75,4 +75,6 @@ public protocol CControlsManagerDelegate : NSObjectProtocol {
     func controlsPlayer (has resolutions:[CPlayerResolutionSource])
     func controlsPlayerDidChangeResolution (to resolution:CPlayerResolutionSource)
     func controlsProgressBarBottomPositionValueForLandscape () -> CGFloat
+    
+    func controlsPictureInPictureState (is possible:Bool)
 }

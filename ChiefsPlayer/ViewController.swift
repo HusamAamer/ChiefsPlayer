@@ -249,6 +249,11 @@ extension ViewController:ChiefsPlayerDelegate {
     func chiefsplayerStatusBarShouldBe(hidden: Bool) {
         statusBarShouldBeHidden = hidden
     }
+    
+    func chiefsplayerPictureInPictureEnabled() -> Bool {
+        return true
+    }
+    
 //    func chiefsplayerWillStop(playing item: AVPlayerItem) {
 //        //guard
 //        //    let left = item.currentTime().asFloat,
