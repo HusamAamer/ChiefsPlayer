@@ -87,6 +87,7 @@ class COverPlayerControlsView: CBaseControlsView {
         }
 
         // Pip Button
+        /*
         if #available(iOS 13.0, *) {
             if CControlsManager.shared.pipEnabled {
                 pipButton = UIButton(type: .custom)
@@ -101,7 +102,7 @@ class COverPlayerControlsView: CBaseControlsView {
                 
                 rightStack.addArrangedSubview(pipButton!)
             }
-        }
+        }*/
         
         
         // Scale Button

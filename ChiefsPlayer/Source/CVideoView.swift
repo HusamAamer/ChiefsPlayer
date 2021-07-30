@@ -43,14 +43,17 @@ public class CVideoView: UIView {
         
         
         bar_bottom = progressView.lastBaselineAnchor.constraint(equalTo: lastBaselineAnchor, constant: 0)
-        //bar_bottom.priority = .defaultLow //To give the high priority for on video controls (in landscape)
         bar_bottom.isActive = true
         
-        bar_left = progressView.leftAnchor.constraint(equalTo: leftAnchor, constant: 0)
-        bar_left.isActive = true
         
-        bar_width = progressView.widthAnchor.constraint(equalToConstant: screenWidth)
-        bar_width.isActive = true
+        if #available(iOS 11.0, *) {
+            progressView.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 0).isActive = true
+            
+            progressView.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor).isActive = true
+        } else {
+            progressView.rightAnchor.constraint(equalTo: leftAnchor).isActive = true
+            progressView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+        }
         
         progressView.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
@@ -58,26 +61,20 @@ public class CVideoView: UIView {
         
         addResizeGesture()
     }
-    var bar_width : NSLayoutConstraint!
-    var bar_left : NSLayoutConstraint!
+    
     var bar_bottom : NSLayoutConstraint!
     
     func setupProgressViewLayout () {
-//        progressView.constraints.forEach({progressView.removeConstraint($0)})
         if isFullscreen {
             let safe = screenSafeInsets
             print(safe)
-            bar_width.constant = [screenWidth,screenHeight].max()! - 40 - safe.right
-            bar_left.constant = 20 + safe.left
-            
+
             if ChiefsPlayer.shared.configs.controlsStyle == .youtube {
                 bar_bottom.constant = -30 - safe.bottom
             } else {
                 bar_bottom.constant = -114 - safe.bottom
             }
         } else {
-            bar_width.constant = screenWidth
-            bar_left.constant = 0
             bar_bottom.constant = 0
         }
         layoutIfNeeded()

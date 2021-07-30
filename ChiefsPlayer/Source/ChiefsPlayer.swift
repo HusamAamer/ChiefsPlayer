@@ -313,18 +313,20 @@ public class ChiefsPlayer {
         
         let shouldShowControls = CControlsManager.shared.shouldShowControlsAboveVideo(for: orientation)
         
-        let toStyle:ACVFullscreen = isFullscreen
+        let toMode:ACVFullscreen = isFullscreen
             ? (locked ? .activatedLock : .activated)
             : .none
-        acvFullscreen = toStyle
+        acvFullscreen = toMode
         
-        videoView.fullscreenStateUpdated()
         if shouldShowControls {
             videoView.addOnVideoControls()
         } else {
             videoView.removeOnVideoControls()
         }
+        
         setViewsScale(animated: true)
+        
+        videoView.fullscreenStateUpdated()
     }
     
     
