@@ -596,9 +596,12 @@ extension CControlsManager {
 // MARK:- Picture In Picture Btn
 ////////////////////////////////////////////////////////////////
 extension CControlsManager: AVPictureInPictureControllerDelegate {
+    var pipEnabled:Bool {
+        return ChiefsPlayer.shared.delegate?.chiefsplayerPictureInPictureEnabled() == true
+    }
     func setupPictureInPicture() {
         
-        if ChiefsPlayer.shared.delegate?.chiefsplayerPictureInPictureEnabled() != true {
+        if !pipEnabled {
             return
         }
         

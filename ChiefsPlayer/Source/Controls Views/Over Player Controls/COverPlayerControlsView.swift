@@ -25,7 +25,7 @@ class COverPlayerControlsView: CBaseControlsView {
     @IBOutlet weak var duration: UILabel!
     @IBOutlet weak var currentTime: UILabel!
     @IBOutlet weak var scaleButton : UIButton!
-    var pipButton: UIButton!
+    var pipButton: UIButton?
     var separator:UIView!
     
     @IBOutlet weak var resolutionBtn: UIButton!
@@ -88,17 +88,19 @@ class COverPlayerControlsView: CBaseControlsView {
 
         // Pip Button
         if #available(iOS 13.0, *) {
-            pipButton = UIButton(type: .custom)
-            pipButton.addTarget(CControlsManager.shared,
-                                action: #selector(CControlsManager.shared.togglePictureInPictureMode(_:)),
-                                for: .touchUpInside)
-            let startImage = AVPictureInPictureController.pictureInPictureButtonStartImage(compatibleWith: .current)
-            let stopImage = AVPictureInPictureController.pictureInPictureButtonStopImage(compatibleWith: .current)
-            
-            pipButton.setImage(startImage, for: .normal)
-            pipButton.setImage(stopImage, for: .selected)
-            
-            rightStack.addArrangedSubview(pipButton)
+            if CControlsManager.shared.pipEnabled {
+                pipButton = UIButton(type: .custom)
+                pipButton?.addTarget(CControlsManager.shared,
+                                    action: #selector(CControlsManager.shared.togglePictureInPictureMode(_:)),
+                                    for: .touchUpInside)
+                let startImage = AVPictureInPictureController.pictureInPictureButtonStartImage(compatibleWith: .current)
+                let stopImage = AVPictureInPictureController.pictureInPictureButtonStopImage(compatibleWith: .current)
+                
+                pipButton?.setImage(startImage, for: .normal)
+                pipButton?.setImage(stopImage, for: .selected)
+                
+                rightStack.addArrangedSubview(pipButton!)
+            }
         }
         
         
@@ -315,7 +317,7 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
     }
     
     func controlsPictureInPictureState(is possible: Bool) {
-        pipButton.isHidden = !possible
+        pipButton?.isHidden = !possible
     }
     
 }
