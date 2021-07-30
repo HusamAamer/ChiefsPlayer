@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <device id="ipad9_7" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
@@ -172,16 +172,22 @@
                     </subviews>
                 </stackView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="12:03" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PZH-yq-jdp">
-                    <rect key="frame" x="341" y="296" width="28" height="12"/>
+                    <rect key="frame" x="318" y="272.5" width="42" height="19.5"/>
                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="10"/>
                     <color key="textColor" red="0.63388324873096447" green="0.63388324873096447" blue="0.63388324873096447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
+                    <variation key="heightClass=regular-widthClass=regular">
+                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
+                    </variation>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3:00" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Sc-Qv-e4A">
-                    <rect key="frame" x="15" y="296" width="23.5" height="12"/>
+                    <rect key="frame" x="24" y="272.5" width="35" height="19.5"/>
                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="10"/>
                     <color key="textColor" red="0.63388324873096447" green="0.63388324873096447" blue="0.63388324873096447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
+                    <variation key="heightClass=regular-widthClass=regular">
+                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
+                    </variation>
                 </label>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
@@ -190,16 +196,24 @@
                 <constraint firstItem="CWg-Gd-dh8" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="17f-yu-GHh"/>
                 <constraint firstItem="bxt-Uc-2gt" firstAttribute="centerY" secondItem="xXH-Bc-xRv" secondAttribute="centerY" id="3eb-YX-U6m"/>
                 <constraint firstItem="xXH-Bc-xRv" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" constant="12" id="48z-r1-cyE"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="PZH-yq-jdp" secondAttribute="bottom" constant="8" id="4Ze-lj-Kfe"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="PZH-yq-jdp" secondAttribute="bottom" constant="8" id="4Ze-lj-Kfe">
+                    <variation key="heightClass=regular-widthClass=regular" constant="24"/>
+                </constraint>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="QuO-X6-NrU" secondAttribute="trailing" constant="15" id="6Wb-fU-GbU"/>
                 <constraint firstItem="CWg-Gd-dh8" firstAttribute="centerY" secondItem="xXH-Bc-xRv" secondAttribute="centerY" id="8oh-iE-kJ8"/>
                 <constraint firstItem="xXH-Bc-xRv" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Ahd-bW-Nyk"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="5Sc-Qv-e4A" secondAttribute="bottom" constant="8" id="Sew-Wo-pAh"/>
-                <constraint firstItem="5Sc-Qv-e4A" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="15" id="ei9-ls-liK"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="5Sc-Qv-e4A" secondAttribute="bottom" constant="8" id="Sew-Wo-pAh">
+                    <variation key="heightClass=regular-widthClass=regular" constant="24"/>
+                </constraint>
+                <constraint firstItem="5Sc-Qv-e4A" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="15" id="ei9-ls-liK">
+                    <variation key="heightClass=regular-widthClass=regular" constant="24"/>
+                </constraint>
                 <constraint firstItem="xXH-Bc-xRv" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" multiplier="0.2" id="frb-z2-Tlo"/>
                 <constraint firstItem="xXH-Bc-xRv" firstAttribute="leading" secondItem="bxt-Uc-2gt" secondAttribute="trailing" id="gAq-Kb-axY"/>
                 <constraint firstItem="TEK-n7-L7P" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="15" id="iTO-5x-brh"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="PZH-yq-jdp" secondAttribute="trailing" constant="15" id="jFS-UF-BdE"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="PZH-yq-jdp" secondAttribute="trailing" constant="15" id="jFS-UF-BdE">
+                    <variation key="heightClass=regular-widthClass=regular" constant="24"/>
+                </constraint>
                 <constraint firstItem="QuO-X6-NrU" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="12" id="kC0-k3-Jpz"/>
                 <constraint firstItem="TEK-n7-L7P" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="12" id="n7u-wL-Nwb"/>
                 <constraint firstItem="bxt-Uc-2gt" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="vcr-6d-n2R"/>

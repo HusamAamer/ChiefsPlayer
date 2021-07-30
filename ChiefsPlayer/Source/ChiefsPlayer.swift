@@ -519,13 +519,19 @@ public class ChiefsPlayer {
         frameWidth = parentVC.view.bounds.width
         updateOnMaxFrame()
         
-        if Device.HAS_NOTCH {
-            let notchFrame = CGRect(x: 0, y: 0,
-                                    width: parentVC.view.bounds.width,
-                                    height: screenSafeInsets.top)
-            notchBackground = UIView(frame: notchFrame)
-            notchBackground?.backgroundColor = .black
-            parentVC.view.addSubview(notchBackground!)
+        if #available(iOS 11.0, *) {
+            if Device.HAS_NOTCH {
+                notchBackground = UIView()
+                notchBackground?.backgroundColor = .black
+                parentVC.view.addSubview(notchBackground!)
+                notchBackground?.translatesAutoresizingMaskIntoConstraints = false
+                NSLayoutConstraint.activate([
+                    notchBackground!.leadingAnchor.constraint(equalTo: parentVC.view.leadingAnchor),
+                    notchBackground!.trailingAnchor.constraint(equalTo: parentVC.view.trailingAnchor),
+                    notchBackground!.topAnchor.constraint(equalTo: parentVC.view.topAnchor),
+                    notchBackground!.bottomAnchor.constraint(equalTo: parentVC.view.safeAreaLayoutGuide.topAnchor)
+                ])
+            }
         }
 
         detailsContainer.backgroundColor = .white

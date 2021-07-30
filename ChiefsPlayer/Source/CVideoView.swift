@@ -42,18 +42,26 @@ public class CVideoView: UIView {
         progressView.delegate = self
         
         
-        bar_bottom = progressView.lastBaselineAnchor.constraint(equalTo: lastBaselineAnchor, constant: 0)
-        bar_bottom.isActive = true
+        
         
         
         if #available(iOS 11.0, *) {
-            progressView.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 0).isActive = true
+            bar_bottom = progressView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 0)
             
-            progressView.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor).isActive = true
+            bar_left = progressView.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 0)
+            
+            bar_right = progressView.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor)
         } else {
-            progressView.rightAnchor.constraint(equalTo: leftAnchor).isActive = true
-            progressView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+            bar_bottom = progressView.bottomAnchor.constraint(equalTo: lastBaselineAnchor, constant: 0)
+            
+            bar_left = progressView.rightAnchor.constraint(equalTo: leftAnchor)
+            
+            bar_right = progressView.rightAnchor.constraint(equalTo: rightAnchor)
         }
+        
+        bar_bottom.isActive = true
+        bar_left.isActive = true
+        bar_right.isActive = true
         
         progressView.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
@@ -62,6 +70,8 @@ public class CVideoView: UIView {
         addResizeGesture()
     }
     
+    var bar_left : NSLayoutConstraint!
+    var bar_right : NSLayoutConstraint!
     var bar_bottom : NSLayoutConstraint!
     
     func setupProgressViewLayout () {
@@ -70,12 +80,16 @@ public class CVideoView: UIView {
             print(safe)
 
             if ChiefsPlayer.shared.configs.controlsStyle == .youtube {
-                bar_bottom.constant = -30 - safe.bottom
+                bar_bottom.constant = Device.IS_IPAD ? -54 : -30
+                bar_left.constant = 24
+                bar_right.constant = -24
             } else {
-                bar_bottom.constant = -114 - safe.bottom
+                bar_bottom.constant = -114
             }
         } else {
             bar_bottom.constant = 0
+            bar_left.constant = 0
+            bar_right.constant = 0
         }
         layoutIfNeeded()
     }
