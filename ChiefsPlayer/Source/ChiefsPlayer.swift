@@ -581,7 +581,7 @@ public class ChiefsPlayer {
         dY.isActive = true
         
         //Height
-        let spaceUnderVideo = frameHeight - frameWidth / configs.videoRatio.value - topSafeArea
+        let spaceUnderVideo = frameHeight - onMaxFrame.height - topSafeArea
         dH = detailsContainer.heightAnchor
             .constraint(equalToConstant: spaceUnderVideo)
         dH.priority = .defaultHigh
@@ -590,7 +590,7 @@ public class ChiefsPlayer {
         
         // Ratios
         vH = videoContainer.heightAnchor
-            .constraint(equalToConstant: frameWidth / configs.videoRatio.value)
+            .constraint(equalToConstant: onMaxFrame.height)
         vH.priority = .required
         vH.isActive = true
         
@@ -776,10 +776,20 @@ public class ChiefsPlayer {
     }
     
     var onMaxFrame:CGRect  = .zero
+    var onMinFrame:CGRect  = .zero
     
     private func updateOnMaxFrame () {
         let videoHeight = frameWidth / configs.videoRatio.value
-        onMaxFrame = CGRect(x: 0, y: 0, width: frameWidth, height: videoHeight)
+        
+        // Max Frame should not be higher than half of screen
+        let maxVideoHeight = min(frameHeight / 2, videoHeight)
+        
+        onMaxFrame = CGRect(x: 0, y: 0, width: frameWidth, height: maxVideoHeight)
+        
+        let minWidth = frameWidth * configs.onMinimizedMinimumScale
+        onMinFrame = CGRect(x: 0, y: 0,
+                             width: minWidth,
+                             height: minWidth/(configs.videoRatio.value))
     }
     
     var onTouchBeganFrame:CGRect  = .zero
@@ -810,7 +820,7 @@ public class ChiefsPlayer {
             }
             
             let yFinger      = pan.location(in: parentVC.view).y
-            let height       = parentVC.view.bounds.height
+            let height       = frameHeight!
             
             let dir = pan.direction(in: parentVC.view)
             let isUp = dir.contains(.Up)
@@ -897,13 +907,16 @@ public class ChiefsPlayer {
             }
         }
         
-        let lastY = (frameHeight - bottomSafeArea) - configs.onMinimizedMinimumScale * onMaxFrame.height
+        
+        let lastY = (frameHeight - bottomSafeArea) - onMinFrame.height
         let movePercent = abs(vY.constant / lastY)
         let newScale = 1 - (movePercent * (1 - configs.onMinimizedMinimumScale))
-        vW.constant = frameWidth * newScale
+        vW.constant = onMinFrame.width + (1 - movePercent) * (onMaxFrame.width - onMinFrame.width)//frameWidth * newScale
+        print(onMinFrame)
+        print(movePercent,vW.constant)
         
         let maxHeight:CGFloat = acvFullscreen.isActive ? frameHeight : onMaxFrame.height
-        let minHeight = onMaxFrame.height * configs.onMinimizedMinimumScale
+        let minHeight = onMinFrame.height //onMaxFrame.height * configs.onMinimizedMinimumScale
         vH.constant = minHeight + (maxHeight - minHeight) *  (1 - movePercent)
         
         dY.constant = bottomSafeArea * movePercent
@@ -953,7 +966,7 @@ public class ChiefsPlayer {
         
         videoView.progressView.isUserInteractionEnabled = false
         
-        let y = frameHeight - bottomSafeArea - topSafeArea - onMaxFrame.height * configs.onMinimizedMinimumScale
+        let y = frameHeight - bottomSafeArea - onMinFrame.height
         UIView.animate(
             withDuration: 0.15, delay: 0, options: [.curveEaseOut,.allowAnimatedContent,.allowUserInteraction],
             animations: {
