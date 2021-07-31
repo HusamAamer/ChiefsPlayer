@@ -338,12 +338,7 @@ public class ChiefsPlayer {
         
         acvFullscreen = toMode
         
-        
-        // landscapeRight refers to fullscreen
-        // portrait refers to not full screen (maximized player)
-        let orientation: UIDeviceOrientation = isFullscreen ? .landscapeRight : .portrait
-        
-        let shouldShowControls = CControlsManager.shared.shouldShowControlsAboveVideo(for: orientation)
+        let shouldShowControls = CControlsManager.shared.shouldShowControlsAboveVideo(in: acvFullscreen)
         
         if shouldShowControls {
             videoView.addOnVideoControls()
@@ -353,7 +348,15 @@ public class ChiefsPlayer {
         
         setViewsScale(animated: true)
         
-        videoView.fullscreenStateUpdated()
+        let duration = configs.fullscreenAnimationDuration
+        UIView.animate(withDuration: duration,
+                       delay: 0,
+                       options: [.curveEaseOut, .allowAnimatedContent, .allowUserInteraction],
+                       animations: {
+                        self.videoView.fullscreenStateUpdated()
+                       }, completion: nil)
+        
+        
     }
     
     
@@ -639,11 +642,7 @@ public class ChiefsPlayer {
         //Finally, We can init controls after user set the style
         controls  = controlsForCurrentStyle()
         
-        if UIDevice.current.orientation == .landscapeLeft || UIDevice.current.orientation == .landscapeRight {
-            videoView.addOnVideoControls()
-        }
-        
-        if CControlsManager.shared.shouldShowControlsAboveVideo(for: .portrait) {
+        if CControlsManager.shared.shouldShowControlsAboveVideo(in: acvFullscreen) {
             videoView.addOnVideoControls()
         } else {
             detailsStack.addArrangedSubview(controls)
@@ -958,9 +957,14 @@ public class ChiefsPlayer {
         notchBackground?.alpha = 1 - movePercent * 6
         
         if animated {
-            UIView.animate(withDuration: 0.3) {
-                self.parentVC.view.layoutIfNeeded()
-            }
+            let duration = configs.fullscreenAnimationDuration
+            UIView.animate(withDuration: duration,
+                           delay: 0,
+                           options: [.curveEaseOut, .allowAnimatedContent, .allowUserInteraction],
+                           animations: {
+                            self.parentVC.view.layoutIfNeeded()
+                            self.videoView.animateVideoLayer(with: duration)
+                           }, completion: nil)
         } else {
             parentVC.view.layoutIfNeeded()
         }
@@ -971,13 +975,15 @@ public class ChiefsPlayer {
         acvStyle = .maximized
         videoView.progressView.isUserInteractionEnabled = true
         let newdY:CGFloat = 0//isLandscape ? -ChiefsPlayer.shared.controls.frame.height : 0
+        let duration = 0.15
         UIView.animate(
-            withDuration: 0.15, delay: 0, options: [.curveEaseOut,.allowAnimatedContent,.allowUserInteraction],
+            withDuration: duration, delay: 0, options: [.curveEaseOut,.allowAnimatedContent,.allowUserInteraction],
             animations: {
                 self.vY.constant = 0
                 self.setViewsScale()
                 self.parentVC.view.layoutIfNeeded()
                 self.dY.constant = newdY
+                self.videoView.animateVideoLayer(with: duration)
         }) { (done) in
             
         }
@@ -994,8 +1000,9 @@ public class ChiefsPlayer {
         videoView.progressView.isUserInteractionEnabled = false
         
         let y = frameHeight - bottomSafeArea - onMinFrame.height
+        let duration = 0.15
         UIView.animate(
-            withDuration: 0.15, delay: 0, options: [.curveEaseOut,.allowAnimatedContent,.allowUserInteraction],
+            withDuration: duration, delay: 0, options: [.curveEaseOut,.allowAnimatedContent,.allowUserInteraction],
             animations: {
                 self.vX.constant = 0
                 self.videoContainer.alpha = 1
@@ -1003,6 +1010,7 @@ public class ChiefsPlayer {
                 self.dY.constant = self.bottomSafeArea
                 self.setViewsScale()
                 self.parentVC.view.layoutIfNeeded()
+                self.videoView.animateVideoLayer(with: duration)
         }) { (done) in
             
         }

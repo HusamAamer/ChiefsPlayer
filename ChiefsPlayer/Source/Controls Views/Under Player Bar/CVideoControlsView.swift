@@ -294,15 +294,8 @@ extension CVideoControlsView : CControlsManagerDelegate {
         self.currentTime.text = remaining   == "" ? "" : remaining
         //Update play button according to current playing state
     }
-    func controlsShouldAppearAboveVideo(in deviceOrientation: UIDeviceOrientation) -> Bool {
-        switch deviceOrientation {
-        case .landscapeLeft, .landscapeRight:
-            return true
-        case .portrait:
-            return false
-        default:
-            return false
-        }
+    func controlsShouldAppearAboveVideo(in fullscreenMode:ACVFullscreen) -> Bool {
+        return fullscreenMode.isActive
     }
     func controlsPlayPauseChanged(to isPlaying: Bool) {
         play.isSelected = !isPlaying

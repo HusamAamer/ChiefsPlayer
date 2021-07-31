@@ -70,7 +70,7 @@ public protocol CControlsManagerDelegate : NSObjectProtocol {
     func controlsPrevActionDidChange (to newAction:SeekAction?)
     func controlsSubtitles(are available:Bool)
     func controlsTimeUpdated (to currentTime:String, remaining:String,andPlayer isPlaying:Bool)
-    func controlsShouldAppearAboveVideo (in deviceOrientation:UIDeviceOrientation) -> Bool
+    func controlsShouldAppearAboveVideo (in fullscreenMode:ACVFullscreen) -> Bool
     func controlsPlayPauseChanged (to isPlaying:Bool)
     func controlsPlayer (has resolutions:[CPlayerResolutionSource])
     func controlsPlayerDidChangeResolution (to resolution:CPlayerResolutionSource)

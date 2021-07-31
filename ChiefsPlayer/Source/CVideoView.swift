@@ -111,16 +111,18 @@ public class CVideoView: UIView {
             vLayer?.frame = bounds
             CATransaction.commit()
         default:
-            //Make animation with same view duration and timing
-            CATransaction.begin()
-            CATransaction.setAnimationDuration(0.15)
-            CATransaction
-                .setAnimationTimingFunction(CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut))
-            vLayer?.frame = bounds
-            CATransaction.commit()
+            break
         }
     }
     
+    public func animateVideoLayer (with duration:TimeInterval) {
+        CATransaction.begin()
+        CATransaction.setAnimationDuration(duration)
+        CATransaction
+            .setAnimationTimingFunction(CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut))
+        vLayer?.frame = bounds
+        CATransaction.commit()
+    }
     
     //MARK: Resize Video Gesture xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     /// Pinch Video in or out to change video gravity between aspect fit and fill
@@ -267,6 +269,8 @@ public class CVideoView: UIView {
     func fullscreenStateUpdated () {
         setupProgressViewLayout()
         progressView.alpha = self.controlsAreHidden && isFullscreen ? 0 : 1
+        
+        
     }
     
     private var controlsHeight : CGFloat {
@@ -310,7 +314,7 @@ public class CVideoView: UIView {
         addGestureRecognizer(tap)
         
         // Trigger delegates to tell onVideoControls that we have subtitles or not
-        CControlsManager.shared.reloadVidoInfo()
+        CControlsManager.shared.reloadVideoInfo()
     }
     func removeOnVideoControls () {
         if let onVideoControls = onVideoControls {
@@ -404,7 +408,7 @@ extension CVideoView: CAVQueuePlayerDelegate {
         }
         
         // Trigger delegates to tell onVideoControls that we have subtitles or not
-        CControlsManager.shared.reloadVidoInfo()
+        CControlsManager.shared.reloadVideoInfo()
     }
     
     public func cavqueueplayerReadyToPlay() {

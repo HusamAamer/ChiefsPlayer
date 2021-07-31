@@ -77,6 +77,8 @@ public struct CVConfiguration {
     /// Alerts tint color
     public var tintColor : UIColor?
     
+    public var fullscreenAnimationDuration: TimeInterval = 0.3
+    
     // Initialization
     
     init() {

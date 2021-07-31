@@ -294,7 +294,7 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
         //Update play button according to current playing state
         self.playButton.isSelected = !isPlaying
     }
-    func controlsShouldAppearAboveVideo(in deviceOrientation: UIDeviceOrientation) -> Bool {
+    func controlsShouldAppearAboveVideo(in fullscreenMode:ACVFullscreen) -> Bool {
         return true // Always on video
     }
     func controlsPlayPauseChanged(to isPlaying: Bool) {

@@ -99,8 +99,8 @@ public class CControlsManager:NSObject {
     ////////////////////////////////////////////////////////////////
     // MARK:- Should show above video
     ////////////////////////////////////////////////////////////////
-    func shouldShowControlsAboveVideo(for deviceOrientation:UIDeviceOrientation) -> Bool {
-        return delegates.first??.controlsShouldAppearAboveVideo(in: deviceOrientation) ?? true
+    func shouldShowControlsAboveVideo(in fullscreenMode:ACVFullscreen) -> Bool {
+        return delegates.first??.controlsShouldAppearAboveVideo(in: fullscreenMode) ?? true
     }
 
     ////////////////////////////////////////////////////////////////
@@ -572,7 +572,7 @@ extension CControlsManager {
 // MARK:- Play/Pause btn
 ////////////////////////////////////////////////////////////////
 extension CControlsManager {
-    func reloadVidoInfo () {
+    func reloadVideoInfo () {
         checkSubtitlesAvailability()
     }
 }
