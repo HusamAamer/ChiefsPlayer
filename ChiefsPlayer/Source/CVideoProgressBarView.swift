@@ -96,10 +96,13 @@ class CVideoProgressBarView: UIView {
         gradient.frame = bounds
         
         bufferBar.frame = CGRect(x: bufferBar.frame.origin.x, y: 0, width: bufferBar.frame.width, height: bounds.height)
-            
+        
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
         updateBarFrame()
         updateBufferFrame()
         updateOrbFrame()
+        CATransaction.commit()
     }
     func updateBarFrame () {
         let newWidth = abs(progress) * frame.width

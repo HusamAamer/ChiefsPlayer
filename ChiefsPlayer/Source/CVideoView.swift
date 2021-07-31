@@ -102,14 +102,19 @@ public class CVideoView: UIView {
             player.play()
         }
     }
+    var isFirstLayout = true
     override public func layoutSubviews() {
         super.layoutSubviews()
+        
+        if isFirstLayout {
+            updateVideoLayerFrame()
+            isFirstLayout = false
+            return
+        }
+        
         switch ChiefsPlayer.shared.acvStyle {
         case .moving(_):
-            CATransaction.begin()
-            CATransaction.setAnimationDuration(0)
-            vLayer?.frame = bounds
-            CATransaction.commit()
+            updateVideoLayerFrame()
         default:
             break
         }
@@ -120,6 +125,13 @@ public class CVideoView: UIView {
         CATransaction.setAnimationDuration(duration)
         CATransaction
             .setAnimationTimingFunction(CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut))
+        vLayer?.frame = bounds
+        CATransaction.commit()
+    }
+    
+    public func updateVideoLayerFrame () {
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
         vLayer?.frame = bounds
         CATransaction.commit()
     }
@@ -299,7 +311,7 @@ public class CVideoView: UIView {
                 progressView.alpha = 0
             }
         }
-
+        
         onVideoControls.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         insertSubview(onVideoControls, belowSubview: progressView)
         onVideoControls.translatesAutoresizingMaskIntoConstraints = false
@@ -307,8 +319,14 @@ public class CVideoView: UIView {
             onVideoControls.leadingAnchor.constraint(equalTo: leadingAnchor),
             onVideoControls.trailingAnchor.constraint(equalTo: trailingAnchor),
             //onVideoControls.topAnchor.constraint(equalTo: topAnchor),
-            onVideoControls.bottomAnchor.constraint(equalTo: bottomAnchor),
+            onVideoControls.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+        
+        // Disable animation
+        UIView.animate(withDuration: 0) { [self] in
+            setNeedsLayout()
+            layoutIfNeeded()
+        }
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(screenTapped))
         addGestureRecognizer(tap)
@@ -347,7 +365,7 @@ public class CVideoView: UIView {
     private func scheduleControlsHiding () {
         hideTimer?.invalidate()
         
-        hideTimer = Timer.gck_scheduledTimer(withTimeInterval: 2, weakTarget: self, selector: #selector(hideControls), userInfo: nil, repeats: false)
+        hideTimer = Timer.gck_scheduledTimer(withTimeInterval: 3, weakTarget: self, selector: #selector(hideControls), userInfo: nil, repeats: false)
     }
     @objc private func hideControls () {
         // For landscape mode the progress bar only appears with controls
@@ -366,7 +384,7 @@ public class CVideoView: UIView {
         didSet {
             
             UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseOut,.allowAnimatedContent,.allowUserInteraction,.beginFromCurrentState], animations: { [weak self] in
-                
+
                 guard let `self` = self else {return}
                 
                 self.onVideoControls?.alpha = self.controlsAreHidden ? 0 : 1
@@ -375,7 +393,7 @@ public class CVideoView: UIView {
                 }
                 
             }) { (_) in
-                
+
             }
         }
     }

@@ -57,7 +57,7 @@ class ViewController: UIViewController {
         
         
         
-        return [shoof,cinemanaSource,resoultion,resoultion_yt2,resoultion4,resoultion1,resoultion2,resoultion3]
+        return [resoultion, shoof,cinemanaSource,resoultion_yt2,resoultion4,resoultion1,resoultion2,resoultion3]
     }
     var metaData:CPlayerMetadata {
         let metaData = CPlayerMetadata(title: "Chiefs Player",
