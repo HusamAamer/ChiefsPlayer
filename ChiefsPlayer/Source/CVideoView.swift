@@ -130,10 +130,12 @@ public class CVideoView: UIView {
     }
     @objc
     private func resizeGestureAction (_ gesture:UIPinchGestureRecognizer) {
-        if gesture.scale > 1.2 , vLayer?.videoGravity != .resizeAspectFill {
-            vLayer?.videoGravity = .resizeAspectFill
-        } else if gesture.scale < 0.8, vLayer?.videoGravity != .resizeAspect {
-            vLayer?.videoGravity = .resizeAspect
+        if gesture.scale > 1.2 {
+            ChiefsPlayer.shared.startFullscreen()
+            //vLayer?.videoGravity = .resizeAspectFill
+        } else if gesture.scale < 0.8 {
+            ChiefsPlayer.shared.endFullscreen()
+            //vLayer?.videoGravity = .resizeAspect
         }
     }
     

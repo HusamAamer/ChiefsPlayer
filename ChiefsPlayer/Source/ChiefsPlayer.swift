@@ -32,7 +32,11 @@ public class ChiefsPlayer {
     var mediaQueue      = [CMediaInfo]()
     public var delegate        :ChiefsPlayerDelegate?
     public var acvStyle        :ACVStyle        = .maximized
-    public var acvFullscreen   :ACVFullscreen   = .none
+    public var acvFullscreen   :ACVFullscreen   = .none {
+        didSet {
+            CControlsManager.shared.delegates.forEach({$0?.controlsPlayerFullscreenState(changedTo: acvFullscreen)})
+        }
+    }
     public var configs         :CVConfiguration = CVConfiguration()
     public var player          :CAVQueuePlayer!
     public var sources         :[CPlayerSource] = []
@@ -222,7 +226,14 @@ public class ChiefsPlayer {
                     switch newOrientation {
                     case .landscapeLeft, .landscapeRight:
                         print("landscape")
-                        self.startFullscreen()
+                        
+                        // iPad full screen activated only by gestures or btn
+                        if Device.IS_IPAD {
+                            self.setViewsScale(animated: true)
+                        } else {
+                            self.startFullscreen()
+                        }
+                        
                         break
                     case .portrait, .portraitUpsideDown:
                         
@@ -270,11 +281,11 @@ public class ChiefsPlayer {
     
     //**//**//**//**//**//**//**//**//**//**//**//**//**//**
     
-    private func startFullscreen () {
+    public func startFullscreen () {
         setFullscreenState(true, locked: acvFullscreen.isLocked)
     }
     
-    private func endFullscreen () {
+    public func endFullscreen () {
         setFullscreenState(false)
     }
     
@@ -307,16 +318,18 @@ public class ChiefsPlayer {
     
     private func setFullscreenState (_ isFullscreen:Bool, locked:Bool = false) {
         
+        let toMode:ACVFullscreen = isFullscreen
+            ? (locked ? .activatedLock : .activated)
+            : .none
+        
+        acvFullscreen = toMode
+        
+        
         // landscapeRight refers to fullscreen
         // portrait refers to not full screen (maximized player)
         let orientation: UIDeviceOrientation = isFullscreen ? .landscapeRight : .portrait
         
         let shouldShowControls = CControlsManager.shared.shouldShowControlsAboveVideo(for: orientation)
-        
-        let toMode:ACVFullscreen = isFullscreen
-            ? (locked ? .activatedLock : .activated)
-            : .none
-        acvFullscreen = toMode
         
         if shouldShowControls {
             videoView.addOnVideoControls()

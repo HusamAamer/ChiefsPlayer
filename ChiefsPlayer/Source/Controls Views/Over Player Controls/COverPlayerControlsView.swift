@@ -106,8 +106,7 @@ class COverPlayerControlsView: CBaseControlsView {
         
         
         // Scale Button
-        if UIDevice.current.orientation == .landscapeLeft ||
-            UIDevice.current.orientation == .landscapeRight {
+        if ChiefsPlayer.shared.acvFullscreen.isActive {
             self.scaleButton.isHidden = false
         } else {
             self.scaleButton.isHidden = true
@@ -296,12 +295,6 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
         self.playButton.isSelected = !isPlaying
     }
     func controlsShouldAppearAboveVideo(in deviceOrientation: UIDeviceOrientation) -> Bool {
-        if UIDevice.current.orientation == .landscapeLeft ||
-            UIDevice.current.orientation == .landscapeRight {
-            self.scaleButton.isHidden = false
-        } else {
-            self.scaleButton.isHidden = true
-        }
         return true // Always on video
     }
     func controlsPlayPauseChanged(to isPlaying: Bool) {
@@ -321,4 +314,7 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
         pipButton?.isHidden = !possible
     }
     
+    func controlsPlayerFullscreenState(changedTo fullscreenState: ACVFullscreen) {
+        scaleButton.isHidden = fullscreenState.isNotActive
+    }
 }

@@ -77,4 +77,5 @@ public protocol CControlsManagerDelegate : NSObjectProtocol {
     func controlsProgressBarBottomPositionValueForLandscape () -> CGFloat
     
     func controlsPictureInPictureState (is possible:Bool)
+    func controlsPlayerFullscreenState (changedTo fullscreenState:ACVFullscreen)
 }

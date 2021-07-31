@@ -320,4 +320,8 @@ extension CVideoControlsView : CControlsManagerDelegate {
     func controlsPictureInPictureState(is possible: Bool) {
         
     }
+    
+    func controlsPlayerFullscreenState(changedTo fullscreenState: ACVFullscreen) {
+        
+    }
 }
