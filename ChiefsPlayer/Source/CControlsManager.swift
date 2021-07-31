@@ -559,12 +559,7 @@ extension CControlsManager
 ////////////////////////////////////////////////////////////////
 extension CControlsManager {
     func fullscreenBtnAction () {
-        if Device.IS_IPHONE {
-            ChiefsPlayer.shared.toggleFullScreenWithOrientation()
-        } else {
-            ChiefsPlayer.shared.toggleFullscreenWithLock()
-        }
-        
+        ChiefsPlayer.shared.toggleFullscreen()
     }
     var isPortraitInterface : Bool {
         return screenHeight > screenWidth

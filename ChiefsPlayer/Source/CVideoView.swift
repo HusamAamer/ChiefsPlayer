@@ -130,12 +130,15 @@ public class CVideoView: UIView {
     }
     @objc
     private func resizeGestureAction (_ gesture:UIPinchGestureRecognizer) {
+        print(gesture.scale)
         if gesture.scale > 1.2 {
-            ChiefsPlayer.shared.startFullscreen()
-            //vLayer?.videoGravity = .resizeAspectFill
+            ChiefsPlayer.shared.setFullscreen(on: true)
+            gesture.isEnabled = false
+            gesture.isEnabled = true
         } else if gesture.scale < 0.8 {
-            ChiefsPlayer.shared.endFullscreen()
-            //vLayer?.videoGravity = .resizeAspect
+            ChiefsPlayer.shared.setFullscreen(on: false)
+            gesture.isEnabled = false
+            gesture.isEnabled = true
         }
     }
     
@@ -381,7 +384,9 @@ public class CVideoView: UIView {
         if !controlsAreHidden {
             onVideoControls?.alpha = newAlpha
         }
-        progressView.alpha = newAlpha
+        if (isFullscreen && !controlsAreHidden) || !isFullscreen {
+            progressView.alpha = newAlpha
+        }
     }
 }
 

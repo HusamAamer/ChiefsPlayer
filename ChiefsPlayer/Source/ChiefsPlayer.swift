@@ -281,27 +281,34 @@ public class ChiefsPlayer {
     
     //**//**//**//**//**//**//**//**//**//**//**//**//**//**
     
-    public func startFullscreen () {
-        setFullscreenState(true, locked: acvFullscreen.isLocked)
+    @discardableResult
+    public func toggleFullscreen () -> ACVFullscreen {
+        setFullscreen(on: acvFullscreen.isNotActive)
+        return acvFullscreen
     }
     
-    public func endFullscreen () {
-        setFullscreenState(false)
+    public func setFullscreen (on:Bool) {
+        if Device.IS_IPAD {
+            setFullscreenWithLock(on: on)
+        } else {
+            setFullscreenWithOrientation(on: on)
+        }
     }
     
     /// Used for iPad to force full screen even in portrait mode
-    public func toggleFullscreenWithLock () {
-        setFullscreenState(acvFullscreen.isNotActive, locked: true)
+    private func setFullscreenWithLock (on:Bool) {
+        setFullscreenState(on, locked: true)
     }
     
-    public func toggleFullScreenWithOrientation () {
+    /// For iPhone only
+    private func setFullscreenWithOrientation (on:Bool) {
         
         // Toggle to portrait value
         var toOrientation = UIInterfaceOrientation.portrait.rawValue
         
         
         // Toggle to full screen value
-        if acvFullscreen.isNotActive {
+        if on {
             
             let isLandscapeNow = UIDevice.current.orientation == .landscapeRight || UIDevice.current.orientation == .landscapeLeft
             
@@ -316,6 +323,13 @@ public class ChiefsPlayer {
 
     }
     
+    private func startFullscreen () {
+        setFullscreenState(true, locked: acvFullscreen.isLocked)
+    }
+    
+    private func endFullscreen () {
+        setFullscreenState(false)
+    }
     private func setFullscreenState (_ isFullscreen:Bool, locked:Bool = false) {
         
         let toMode:ACVFullscreen = isFullscreen
