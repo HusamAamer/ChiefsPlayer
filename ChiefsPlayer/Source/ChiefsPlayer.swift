@@ -29,10 +29,10 @@ public class ChiefsPlayer {
     deinit {
         print("ChiefsPlayer deinit")
     }
-    var mediaQueue      = [CMediaInfo]()
+    lazy var mediaQueue      = [CMediaInfo]()
     public var delegate        :ChiefsPlayerDelegate?
-    public var acvStyle        :ACVStyle        = .maximized
-    public var acvFullscreen   :ACVFullscreen   = .none {
+    public lazy var acvStyle        :ACVStyle        = .maximized
+    public lazy var acvFullscreen   :ACVFullscreen   = .none {
         didSet {
             CControlsManager.shared.delegates.forEach({$0?.controlsPlayerFullscreenState(changedTo: acvFullscreen)})
         }
@@ -67,7 +67,7 @@ public class ChiefsPlayer {
     var orientationToken:Any?
     var airplayToken    :Any?
     
-    private let dimensions = [screenWidth,screenHeight]
+    private lazy var dimensions = [screenWidth,screenHeight]
     private var frameHeight: CGFloat!
     private var frameWidth: CGFloat!
     
@@ -561,6 +561,18 @@ public class ChiefsPlayer {
                     notchBackground!.topAnchor.constraint(equalTo: parentVC.view.topAnchor),
                     notchBackground!.bottomAnchor.constraint(equalTo: parentVC.view.safeAreaLayoutGuide.topAnchor)
                 ])
+                
+                let notchBackground = UIView()
+                notchBackground.backgroundColor = .black
+                parentVC.view.addSubview(notchBackground)
+                notchBackground.translatesAutoresizingMaskIntoConstraints = false
+                NSLayoutConstraint.activate([
+                    notchBackground.leadingAnchor.constraint(equalTo: parentVC.view.leadingAnchor),
+                    notchBackground.trailingAnchor.constraint(equalTo: parentVC.view.trailingAnchor),
+                    notchBackground.topAnchor.constraint(equalTo: parentVC.view.safeAreaLayoutGuide.bottomAnchor),
+                    notchBackground.bottomAnchor.constraint(equalTo: parentVC.view.bottomAnchor)
+                ])
+
             }
         }
 
@@ -801,33 +813,37 @@ public class ChiefsPlayer {
         }
     }
     
-    var onMaxFrame:CGRect  = .zero
-    var onMinFrame:CGRect  = .zero
+    lazy var onMaxFrame:CGRect  = .zero
+    lazy var onMinFrame:CGRect  = .zero
+    lazy var onTouchBeganFrame:CGRect  = .zero
+    lazy var max_vY : CGFloat = 0
+    lazy var maxEnlargeTravel : CGFloat = 34
     
     private func updateOnMaxFrame () {
         let videoHeight = frameWidth / configs.videoRatio.value
         
         // Max Frame should not be higher than half of screen
-        let maxVideoHeight = min(frameHeight / 2, videoHeight)
+        let maxVideoHeight = round(min(frameHeight / 2, videoHeight))
         
         onMaxFrame = CGRect(x: 0, y: 0, width: frameWidth, height: maxVideoHeight)
         
-        let minWidth = frameWidth * configs.onMinimizedMinimumScale
+        let minWidth = round(frameWidth * configs.onMinimizedMinimumScale)
         onMinFrame = CGRect(x: 0, y: 0,
                              width: minWidth,
                              height: minWidth/(configs.videoRatio.value))
+        
+        max_vY = (frameHeight - bottomSafeArea) - topSafeArea - onMinFrame.height
     }
     
-    var onTouchBeganFrame:CGRect  = .zero
+    
     @objc func dragVideo (pan:UIPanGestureRecognizer) {
         
         // Allow dragging always on iPad
         // Prevent dragging in iPhone on fullscreen
-        if !Device.IS_IPAD, acvFullscreen.isActive {
-            return
-        }
+        let canDismissAndMinimize = !(!Device.IS_IPAD && acvFullscreen.isActive)
         
         if pan.state == UIGestureRecognizer.State.began {
+            
             if acvStyle == .maximized {
                 updateOnMaxFrame()
             }
@@ -835,6 +851,20 @@ public class ChiefsPlayer {
         }
         
         if pan.state == UIGestureRecognizer.State.ended {
+                        
+            if case ACVStyle.enlarging(let yTravel) = acvStyle {
+                if yTravel >= maxEnlargeTravel {
+                    toggleFullscreen()
+                }
+                acvStyle = .maximized // Finish enlarging
+                if let vLayer = videoView.vLayer {
+                    vLayer.frame = CGRect(x: vLayer.frame.minX,
+                                          y: 0,
+                                          width: vLayer.frame.width,
+                                          height: vLayer.frame.height)
+                }
+                return
+            }
             
             if case ACVStyle.dismissing(let percent) = acvStyle {
                 if percent > 0.3 {
@@ -845,25 +875,27 @@ public class ChiefsPlayer {
                 return
             }
             
-            let yFinger      = pan.location(in: parentVC.view).y
-            let height       = frameHeight!
-            
-            let dir = pan.direction(in: parentVC.view)
-            let isUp = dir.contains(.Up)
-            let isDown = dir.contains(.Down)
-            let velocity = abs(pan.velocity(in: parentVC.view).y)
-            
-            if velocity > 900 {
-                if isDown {
-                    minimize()
-                } else if isUp {
-                    maximize()
-                }
-            } else {
-                if abs(yFinger) < height / 2 {
-                    maximize()
+            if canDismissAndMinimize {
+                let yFinger      = pan.location(in: parentVC.view).y
+                let height       = frameHeight!
+                
+                let dir = pan.direction(in: parentVC.view)
+                let isUp = dir.contains(.Up)
+                let isDown = dir.contains(.Down)
+                let velocity = abs(pan.velocity(in: parentVC.view).y)
+                
+                if velocity > 900 {
+                    if isDown {
+                        minimize()
+                    } else if isUp {
+                        maximize()
+                    }
                 } else {
-                    minimize()
+                    if abs(yFinger) < height / 2 {
+                        maximize()
+                    } else {
+                        minimize()
+                    }
                 }
             }
         }
@@ -885,16 +917,55 @@ public class ChiefsPlayer {
                 isDismissing = true
             }
             
-            if isDismissing || dismissingWillStart
-            {
-                let xTranslation = pan.translation(in: parentVC.view).x
-                dismissView(with: xTranslation)
-            } else {
+            var isChangingFullscreen = false
+            let trans = pan.translation(in: parentVC.view)
+            
+            if acvStyle == .maximized && dir.contains(.Up) {
+                isChangingFullscreen = true
+            }
+            if case ACVStyle.enlarging = acvStyle {
+                isChangingFullscreen = true
+            }
+            
+            if isChangingFullscreen {
+                
                 let yTranslation = pan.translation(in: parentVC.view).y
-                minimizeView(with: yTranslation)
+                enlargeView(with: yTranslation)
+                
+            } else if canDismissAndMinimize{
+                if isDismissing || dismissingWillStart {
+                    
+                    let xTranslation = pan.translation(in: parentVC.view).x
+                    dismissView(with: xTranslation)
+                } else {
+                    
+                    let yTranslation = pan.translation(in: parentVC.view).y
+                    minimizeView(with: yTranslation)
+                }
             }
         } else {
             // or something when its not moving
+        }
+    }
+    func enlargeView (with yTranslation:CGFloat){
+        var y = self.onTouchBeganFrame.minY + yTranslation
+        
+        //don't move videoView off of the screen
+        if y > 0 {
+            y = 0
+        } else if -y > maxEnlargeTravel {
+            y = -maxEnlargeTravel
+        }
+        
+        if let vLayer = videoView.vLayer {
+            CATransaction.begin()
+            CATransaction.setDisableActions(true)
+            vLayer.frame = CGRect(x: vLayer.frame.minX,
+                                  y: y,
+                                  width: vLayer.frame.width,
+                                  height: vLayer.frame.height)
+            CATransaction.commit()
+            acvStyle = .enlarging(-y)// -y = travel
         }
     }
     func minimizeView (with yTranslation:CGFloat){
@@ -907,11 +978,11 @@ public class ChiefsPlayer {
         
         vY.constant = y
         
+        let movePercent = abs(vY.constant / max_vY)
+        acvStyle = .moving(movePercent)
+        
         //Scale
         setViewsScale()
-        
-        let movePercent = abs(vY.constant / (frameHeight - bottomSafeArea))
-        acvStyle = .moving(movePercent)
     }
     func dismissView (with xTranslation:CGFloat){
         let x = onTouchBeganFrame.minX + xTranslation
@@ -934,9 +1005,8 @@ public class ChiefsPlayer {
         }
         
         
-        let lastY = (frameHeight - bottomSafeArea) - onMinFrame.height
-        let movePercent = abs(vY.constant / lastY)
-        let newScale = 1 - (movePercent * (1 - configs.onMinimizedMinimumScale))
+        let movePercent = abs(vY.constant / max_vY)
+        //let newScale = 1 - (movePercent * (1 - configs.onMinimizedMinimumScale))
         vW.constant = onMinFrame.width + (1 - movePercent) * (onMaxFrame.width - onMinFrame.width)//frameWidth * newScale
         print(onMinFrame)
         print(movePercent,vW.constant)
@@ -999,14 +1069,13 @@ public class ChiefsPlayer {
         
         videoView.progressView.isUserInteractionEnabled = false
         
-        let y = frameHeight - bottomSafeArea - onMinFrame.height
         let duration = 0.15
         UIView.animate(
             withDuration: duration, delay: 0, options: [.curveEaseOut,.allowAnimatedContent,.allowUserInteraction],
             animations: {
                 self.vX.constant = 0
                 self.videoContainer.alpha = 1
-                self.vY.constant = y
+                self.vY.constant = self.max_vY
                 self.dY.constant = self.bottomSafeArea
                 self.setViewsScale()
                 self.parentVC.view.layoutIfNeeded()

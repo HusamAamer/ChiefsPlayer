@@ -28,7 +28,8 @@ public class CVideoView: UIView {
         
         self.vLayer = AVPlayerLayer(player: self.player)
         self.vLayer?.videoGravity = .resizeAspect
-        self.vLayer?.backgroundColor = UIColor.black.cgColor
+        self.vLayer?.backgroundColor = ChiefsPlayer.shared.configs.maximizedBackgroundColor.cgColor
+        //self.backgroundColor = ChiefsPlayer.shared.configs.maximizedBackgroundColor
         self.layer.insertSublayer(self.vLayer!, at: 0)
         
         loadingView = CLoadingView(frame: .zero)
@@ -144,7 +145,15 @@ public class CVideoView: UIView {
     }
     @objc
     private func resizeGestureAction (_ gesture:UIPinchGestureRecognizer) {
-        print(gesture.scale)
+        if gesture.scale > 1.2 , vLayer?.videoGravity != .resizeAspectFill {
+            vLayer?.videoGravity = .resizeAspectFill
+        } else if gesture.scale < 0.8, vLayer?.videoGravity != .resizeAspect {
+            vLayer?.videoGravity = .resizeAspect
+        }
+        
+        // Code for toggling fullscreen on pinch
+        // Deprecated by pan-up gesture
+        /*
         if gesture.scale > 1.2 {
             ChiefsPlayer.shared.setFullscreen(on: true)
             gesture.isEnabled = false
@@ -153,7 +162,7 @@ public class CVideoView: UIView {
             ChiefsPlayer.shared.setFullscreen(on: false)
             gesture.isEnabled = false
             gesture.isEnabled = true
-        }
+        }*/
     }
     
     
@@ -402,6 +411,17 @@ public class CVideoView: UIView {
     /// - Parameter percent: y translation percent to the last state
     func setMinimize (with percent:CGFloat)
     {
+        if let vLayer = vLayer {
+            let toColor = percent > 0.6
+                ? ChiefsPlayer.shared.configs.minimizeBackgroundColor.cgColor
+                : ChiefsPlayer.shared.configs.maximizedBackgroundColor.cgColor
+            
+            if vLayer.backgroundColor != toColor {
+                vLayer.backgroundColor  = toColor
+            }
+        }
+        
+        
         let newAlpha = 1 - (percent * 5)// Set alpha 0 at 5th of reached move
         if !controlsAreHidden {
             onVideoControls?.alpha = newAlpha

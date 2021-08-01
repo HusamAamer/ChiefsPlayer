@@ -13,7 +13,8 @@ public enum ACVStyle:Comparable {
     case minimized,
          maximized,
          moving(CGFloat),
-         dismissing(CGFloat)
+         dismissing(CGFloat),
+         enlarging(CGFloat) // with y axis travel
     
     public static func < (lhs: ACVStyle, rhs: ACVStyle) -> Bool {
         switch lhs {

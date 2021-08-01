@@ -79,6 +79,12 @@ public struct CVConfiguration {
     
     public var fullscreenAnimationDuration: TimeInterval = 0.3
     
+    /// Background color of player when player is minimized
+    public var minimizeBackgroundColor: UIColor = UIColor.darkGray
+    
+    /// Background color of player when player is minimized
+    public var maximizedBackgroundColor: UIColor = UIColor.black
+    
     // Initialization
     
     init() {

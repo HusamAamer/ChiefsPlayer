@@ -57,7 +57,7 @@ class ViewController: UIViewController {
         
         
         
-        return [resoultion, shoof,cinemanaSource,resoultion_yt2,resoultion4,resoultion1,resoultion2,resoultion3]
+        return [resoultion, shoof ,cinemanaSource,resoultion_yt2,resoultion4,resoultion1,resoultion2,resoultion3]
     }
     var metaData:CPlayerMetadata {
         let metaData = CPlayerMetadata(title: "Chiefs Player",
@@ -154,14 +154,18 @@ class ViewController: UIViewController {
         } else {
             //let table = MovieVideoDetails(frame: .zero, style: .plain)
             let player = ChiefsPlayer.shared
+            
             player.delegate = self
-            player.play(from: sources, with: detailsView, startWithResoultionAt: 100)
-            //player.bottomSafeArea = tabBar.frame.height - screenSafeInsets.bottom
             player.configs.controlsStyle = style
             player.configs.videoRatio = .widescreen
-            player.configs.onMinimizedAdditionalBottomSafeArea = 20
             player.configs.progressBarStyle.showsLivePanDuration = true
             player.configs.tintColor = .red
+            //player.configs.minimizeBackgroundColor = .black
+            //player.configs.maximizedBackgroundColor = .darkGray
+            //player.configs.onMinimizedAdditionalBottomSafeArea = 20
+            //player.bottomSafeArea = tabBar.frame.height - screenSafeInsets.bottom
+            
+            player.play(from: sources, with: detailsView, startWithResoultionAt: 100)
             
 //            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 ChiefsPlayer.shared.present(on: self.navigationController!)
