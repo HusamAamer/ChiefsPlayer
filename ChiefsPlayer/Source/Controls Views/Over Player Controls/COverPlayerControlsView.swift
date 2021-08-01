@@ -28,6 +28,9 @@ class COverPlayerControlsView: CBaseControlsView {
     var pipButton: UIButton?
     var separator:UIView!
     
+    /// This layer added above this view to hide video view when get panned up for fullscreen toggling
+    lazy var topGL:CAGradientLayer = CAGradientLayer()
+    
     @IBOutlet weak var resolutionBtn: UIButton!
     @IBOutlet weak var airViewContainer: UIView!
     
@@ -35,9 +38,13 @@ class COverPlayerControlsView: CBaseControlsView {
         return super.instanceFromNib(with: "COverPlayerControlsView")
     }
     
+    var bgColor: UIColor {
+        return UIColor(white: 0, alpha:0.50) // final color alpha is also controlled by cvideoview
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        backgroundColor = UIColor(red:0.13, green:0.16, blue:0.24, alpha:1.00)
+        backgroundColor = bgColor
         separator = UIView()
         
     }
@@ -113,6 +120,26 @@ class COverPlayerControlsView: CBaseControlsView {
         }
         
         CControlsManager.shared.addDelegate(self)
+        
+        topGL.colors = [bgColor.withAlphaComponent(0).cgColor, bgColor.cgColor]
+        layer.addSublayer(topGL)
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        if case ACVStyle.enlarging = ChiefsPlayer.shared.acvStyle {
+            topGL.isHidden = false
+        } else if case ACVStyle.maximized = ChiefsPlayer.shared.acvStyle {
+            topGL.isHidden = false
+        } else {
+            topGL.isHidden = true
+        }
+        let glHeight:CGFloat = 100
+        topGL.frame = CGRect(x: 0, y: -glHeight, width: bounds.width, height: glHeight)
+        CATransaction.commit()
     }
     
     override func didMoveToSuperview() {
