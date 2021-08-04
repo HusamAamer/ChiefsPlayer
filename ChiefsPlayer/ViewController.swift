@@ -56,6 +56,7 @@ class ViewController: UIViewController {
         let cinemanaSource = CPlayerResolutionSource(title: "Cinemana mp4", url5)
         
         
+        return [resoultion,resoultion,resoultion,resoultion,resoultion,resoultion,resoultion,resoultion]
         
         return [resoultion, shoof ,cinemanaSource,resoultion_yt2,resoultion4,resoultion1,resoultion2,resoultion3]
     }
@@ -205,6 +206,20 @@ extension ViewController:ChiefsPlayerDelegate {
     }
     func chiefsplayerMaximized() {
         AppUtility.lockOrientation(.all)
+    }
+    func chiefsplayerOrientationChanged(to newOrientation: UIInterfaceOrientation, shouldLock: Bool, isMaximized:Bool) {
+        
+        if shouldLock {
+            let mask = UIInterfaceOrientationMask.landscape
+            AppUtility.lockOrientation(mask)
+            print("OO","landscape")
+        } else if isMaximized {
+            print("OO","all")
+            AppUtility.lockOrientation(.all)
+        } else {
+            print("OO","portrait")
+            AppUtility.lockOrientation(.portrait)
+        }
     }
     func chiefsplayerResolutionChanged(to resolution: CPlayerResolutionSource, from source: CPlayerSource) {
         //print(resolution,source)

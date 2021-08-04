@@ -185,9 +185,24 @@ extension ChiefsPlayer {
         
         switch deviceOrientation {
         case .landscapeLeft:
-            return .landscapeLeft
-        case .landscapeRight:
             return .landscapeRight
+        case .landscapeRight:
+            return .landscapeLeft
+        case .portraitUpsideDown:
+            return .portraitUpsideDown
+        case .portrait:
+            return .portrait
+        default:
+            return nil
+        }
+    }
+    func interfaceOrientationMask (for deviceOrientation:UIDeviceOrientation) -> UIInterfaceOrientationMask? {
+        
+        switch deviceOrientation {
+        case .landscapeLeft:
+            return .landscapeRight
+        case .landscapeRight:
+            return .landscapeLeft
         case .portraitUpsideDown:
             return .portraitUpsideDown
         case .portrait:

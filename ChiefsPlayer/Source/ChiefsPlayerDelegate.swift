@@ -36,7 +36,7 @@ public protocol ChiefsPlayerDelegate:AnyObject {
     func chiefsplayerMinimized()
     
     ///Called when video needs to be oriented
-    func chiefsplayerOrientationChanged (to newOrientation:UIInterfaceOrientation)
+    func chiefsplayerOrientationChanged (to newOrientation:UIInterfaceOrientation, shouldLock:Bool, isMaximized:Bool)
     
     ///Called when player is streaming to airply or chromecast
     func chiefsplayer(isCastingTo castingService:CastingService?)
