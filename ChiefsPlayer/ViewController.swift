@@ -56,7 +56,7 @@ class ViewController: UIViewController {
         let cinemanaSource = CPlayerResolutionSource(title: "Cinemana mp4", url5)
         
         
-        return [resoultion,resoultion,resoultion,resoultion,resoultion,resoultion,resoultion,resoultion]
+        //return [resoultion,resoultion,resoultion,resoultion,resoultion,resoultion,resoultion,resoultion]
         
         return [resoultion, shoof ,cinemanaSource,resoultion_yt2,resoultion4,resoultion1,resoultion2,resoultion3]
     }

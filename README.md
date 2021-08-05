@@ -8,6 +8,7 @@ v1.5
 - Better fullscreen support for iPad
 - Update code to Swift 5
 - Many fixes and improvements
+- New icons for fullscreen and aspect size
 
 v1.4.2
 - Moved from flipping icons for RTL programmatically to the asset attribute option called `Direction` 

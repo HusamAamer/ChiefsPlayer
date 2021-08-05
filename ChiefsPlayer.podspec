@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
   #
 
   spec.name         = "ChiefsPlayer"
-  spec.version      = "1.4.2"
+  spec.version      = "1.5"
   spec.summary      = "Floating player with streaming functionality."
 
   # This description is used to generate tags and improve search results.
@@ -66,7 +66,7 @@ Pod::Spec.new do |spec|
   #  profile URL.
   #
 
-  spec.author             = { "Husam Aamer" => "appchiefdevs@gmail.com" }
+  spec.author             = { "Husam Aamer" => "husam.aamer@appchief.net" }
   # Or just: spec.author    = "Husam Aamer"
   # spec.authors            = { "Husam Aamer" => "husam.a.alhatim@gmail.com" }
   # spec.social_media_url   = "https://twitter.com/Husam Aamer"
