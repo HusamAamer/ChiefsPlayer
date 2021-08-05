@@ -367,7 +367,7 @@ public class ChiefsPlayer {
             
             deviceOrientation = isLandscapeNow
                 ? lastRejectedOrientation == .landscapeRight ? .landscapeLeft : .landscapeRight
-                : .landscapeRight
+                : .landscapeLeft
         } else {
             
             let isPortraitNow = lastRejectedOrientation == .portrait
@@ -1073,10 +1073,7 @@ public class ChiefsPlayer {
         
         
         let movePercent = abs(vY.constant / max_vY)
-        //let newScale = 1 - (movePercent * (1 - configs.onMinimizedMinimumScale))
-        vW.constant = onMinFrame.width + (1 - movePercent) * (onMaxFrame.width - onMinFrame.width)//frameWidth * newScale
-        print(onMinFrame)
-        print(movePercent,vW.constant)
+        vW.constant = onMinFrame.width + (1 - movePercent) * (onMaxFrame.width - onMinFrame.width)
         
         let maxHeight:CGFloat = acvFullscreen.isActive ? frameHeight : onMaxFrame.height
         let minHeight = onMinFrame.height //onMaxFrame.height * configs.onMinimizedMinimumScale

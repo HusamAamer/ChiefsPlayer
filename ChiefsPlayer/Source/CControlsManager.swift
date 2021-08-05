@@ -560,6 +560,7 @@ extension CControlsManager
 extension CControlsManager {
     func fullscreenBtnAction () {
         ChiefsPlayer.shared.toggleFullscreen()
+        //ChiefsPlayer.shared.videoView.showFullscreenTutorial()
     }
     var isPortraitInterface : Bool {
         return screenHeight > screenWidth

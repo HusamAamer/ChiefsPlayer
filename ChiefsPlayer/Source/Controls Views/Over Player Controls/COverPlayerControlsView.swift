@@ -343,5 +343,10 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
     
     func controlsPlayerFullscreenState(changedTo fullscreenState: ACVFullscreen) {
         scaleButton.isHidden = fullscreenState.isNotActive
+        let fullImage = UIImage.make(name:
+                                        fullscreenState.isLocked ? "fullscreen-locked"
+            : "fullscreen-2"
+            )
+        fullscreenBtn.setImage(fullImage, for: .normal)
     }
 }

@@ -266,6 +266,7 @@ extension ViewController:ChiefsPlayerDelegate {
     }
     
     func chiefsplayerStatusBarShouldBe(hidden: Bool) {
+        print("OOOO",hidden)
         statusBarShouldBeHidden = hidden
     }
     

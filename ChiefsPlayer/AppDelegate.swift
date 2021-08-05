@@ -34,8 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var orientationLock = UIInterfaceOrientationMask.all
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-        print("OO AppDelegate")
-        return ChiefsPlayer.shared.allowedOrientations
+        return orientationLock //You can use `ChiefsPlayer.shared.allowedOrientations` also
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
