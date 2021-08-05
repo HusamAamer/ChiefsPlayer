@@ -52,6 +52,8 @@ class COverPlayerControlsView: CBaseControlsView {
     //Init UI
     override func awakeFromNib() {
         subtitlesBtn.isHidden = true
+        // Set icons manualy 
+        subtitlesBtn.setImage(UIImage(named: "subtitles"), for: .normal)
         
         currentTime.text = nil
         duration.text = nil

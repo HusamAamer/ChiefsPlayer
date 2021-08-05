@@ -55,7 +55,7 @@
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xXH-Bc-xRv">
-                    <rect key="frame" x="153.5" y="149.5" width="77" height="41"/>
+                    <rect key="frame" x="153.5" y="148.5" width="77" height="43.5"/>
                     <state key="normal" image="pause">
                         <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </state>
@@ -139,19 +139,8 @@
                 <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="TEK-n7-L7P">
                     <rect key="frame" x="15" y="12" width="83" height="30"/>
                     <subviews>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o8W-wJ-htn">
-                            <rect key="frame" x="0.0" y="0.0" width="30" height="30"/>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="30" id="KN8-s8-qAd"/>
-                                <constraint firstAttribute="width" constant="30" id="Odd-gc-fnE"/>
-                            </constraints>
-                            <state key="normal" image="subtitles"/>
-                            <connections>
-                                <action selector="subtitlesBtn:" destination="iN0-l3-epB" eventType="touchUpInside" id="r0b-L4-sHv"/>
-                            </connections>
-                        </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Aec-R0-arB" customClass="COPResolutionButton" customModule="ChiefsPlayer" customModuleProvider="target">
-                            <rect key="frame" x="38" y="3.5" width="45" height="23"/>
+                            <rect key="frame" x="0.0" y="3.5" width="45" height="23"/>
                             <color key="backgroundColor" red="0.77955136293082061" green="0.77955136293082061" blue="0.77955136293082061" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
                                 <constraint firstAttribute="width" relation="lessThanOrEqual" constant="100" id="r09-Mf-HwD"/>
@@ -168,6 +157,17 @@
                             </userDefinedRuntimeAttributes>
                             <connections>
                                 <action selector="resolutionBtn:" destination="iN0-l3-epB" eventType="touchUpInside" id="Yqv-wp-xsT"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o8W-wJ-htn">
+                            <rect key="frame" x="53" y="0.0" width="30" height="30"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="30" id="KN8-s8-qAd"/>
+                                <constraint firstAttribute="width" constant="30" id="Odd-gc-fnE"/>
+                            </constraints>
+                            <state key="normal" image="subtitles"/>
+                            <connections>
+                                <action selector="subtitlesBtn:" destination="iN0-l3-epB" eventType="touchUpInside" id="r0b-L4-sHv"/>
                             </connections>
                         </button>
                     </subviews>
@@ -243,11 +243,11 @@
     <resources>
         <image name="BackTrack" width="30" height="26"/>
         <image name="BackTrack2" width="29" height="24"/>
-        <image name="NextTrack" width="30" height="26"/>
-        <image name="NextTrack2" width="29" height="24"/>
+        <image name="NextTrack" width="25" height="27.5"/>
+        <image name="NextTrack2" width="30" height="33"/>
         <image name="fullscreen-2" width="24" height="26"/>
-        <image name="pause" width="36" height="41"/>
-        <image name="play" width="33" height="41"/>
+        <image name="pause" width="36.5" height="43.5"/>
+        <image name="play" width="39.5" height="43.5"/>
         <image name="subtitles" width="27" height="21"/>
         <image name="video-aspect" width="30" height="26"/>
     </resources>
