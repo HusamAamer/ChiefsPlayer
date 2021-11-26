@@ -21,7 +21,8 @@ public typealias CustomSeekActionIcon = UIImage
 public enum SeekAction {
     case
     play([CPlayerSource]),
-    seek(Int),
+    seekBy(Int),
+    seekTo(Int),
     custom(CustomSeekActionIcon?)
 }
 public enum CastingService {
@@ -192,7 +193,7 @@ extension CControlsManager {
     }
     
     
-    func seek(seconds:Int) {
+    func seek(by seconds:Int) {
         if ChiefsPlayer.shared.isCastingTo == .chromecast {
             CChromecastRemoteControlFunctions.seek(by: seconds)
             return
@@ -201,6 +202,16 @@ extension CControlsManager {
             player?.seek(to: current + CMTime.init(seconds: Double(seconds), preferredTimescale: 1))
         }
     }
+    
+    func seek(to interval:Int) {
+        if ChiefsPlayer.shared.isCastingTo == .chromecast {
+            CChromecastRemoteControlFunctions.seek(to: TimeInterval(interval))
+            return
+        }
+        
+        player?.seek(to: CMTime.init(seconds: Double(interval), preferredTimescale: 1))
+    }
+    
     func performAction (action:SeekAction) {
         switch action {
         case .custom(_):
@@ -209,10 +220,12 @@ extension CControlsManager {
         case .play(let sourceArray):
             ChiefsPlayer.shared.play(from: sourceArray, with: nil)
             break
-        case .seek(let seconds):
+        case .seekBy(let seconds):
             // Cancel
-            seek(seconds: seconds)
+            seek(by: seconds)
             break
+        case .seekTo(let seconds):
+            seek(to: seconds)
         }
     }
 }
@@ -560,7 +573,6 @@ extension CControlsManager
 extension CControlsManager {
     func fullscreenBtnAction () {
         ChiefsPlayer.shared.toggleFullscreen()
-        //ChiefsPlayer.shared.videoView.showFullscreenTutorial()
     }
     var isPortraitInterface : Bool {
         return screenHeight > screenWidth

@@ -60,12 +60,16 @@ class ViewController: UIViewController {
         
         return [resoultion, shoof ,cinemanaSource,resoultion_yt2,resoultion4,resoultion1,resoultion2,resoultion3]
     }
+    
+    
     var metaData:CPlayerMetadata {
         let metaData = CPlayerMetadata(title: "Chiefs Player",
         image: URL(string: "https://scontent.fbgt1-2.fna.fbcdn.net/v/t1.0-9/28660963_1654832364585296_985124833228488704_n.png?_nc_cat=104&_nc_ohc=_Mzc7IU8FBsAX8F5yFe&_nc_ht=scontent.fbgt1-2.fna&oh=0dfaf144a15eab6997c208b015d0241e&oe=5EBC83EC"),
                    description: "Description here")
         return metaData
     }
+    
+    
     var sources : [CPlayerSource] {
         
         let sources = [CPlayerSource(resolutions: resolutions,
@@ -73,6 +77,8 @@ class ViewController: UIViewController {
                                      metadata: metaData)]
         return sources
     }
+    
+    
     var sourcesWithLocalSubtitle : [CPlayerSource] {
         //Local subtitle
         let subtitleFile = Bundle.main.path(forResource: "sample", ofType: "srt")
@@ -228,7 +234,7 @@ extension ViewController:ChiefsPlayerDelegate {
         //print(subtitle,source)
     }
     func chiefsplayerBackwardAction(_ willTriggerAction: Bool) -> SeekAction? {
-        return .seek(-8)
+        return .seekBy(-8)
     }
     func chiefsplayerReadyToPlay(_ item: CPlayerItem, resolution: CPlayerResolutionSource, from source: CPlayerSource) {
         
@@ -246,7 +252,7 @@ extension ViewController:ChiefsPlayerDelegate {
      
      */
     func chiefsplayerForwardAction(_ willTriggerAction: Bool) -> SeekAction? {
-        return .seek(10)
+        return .seekBy(10)
     }
     func chiefsplayerNextAction(_ willTriggerAction: Bool) -> SeekAction? {
         //return nil

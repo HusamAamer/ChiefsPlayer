@@ -252,9 +252,11 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
             case .play(_):
                 forwardSeekButton.setImage(UIImage.make(name: "NextTrack"), for: .normal)
                 break
-            case .seek(_):
+            case .seekBy(_):
                 forwardSeekButton.setImage(UIImage.make(name: "NextTrack2"), for: .normal)
                 break
+            case .seekTo(_):
+                    break
             }
         } else {
             forwardSeekButton.isHidden = true
@@ -271,8 +273,10 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
             case .play(_):
                 backwardSeekButton.setImage(UIImage.make(name: "BackTrack"), for: .normal)
                 break
-            case .seek(_):
+            case .seekBy(_):
                 backwardSeekButton.setImage(UIImage.make(name: "BackTrack2"), for: .normal)
+            case .seekTo(_):
+                    break
             }
         } else {
             backwardSeekButton.isHidden = true
@@ -288,9 +292,11 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
             case .play(_):
                 nextButton.setImage(UIImage.make(name: "NextTrack"), for: .normal)
                 break
-            case .seek(_):
+            case .seekBy(_):
                 nextButton.setImage(UIImage.make(name: "NextTrack2"), for: .normal)
                 break
+            case .seekTo(_):
+                    break
             }
         } else {
             nextButton.isHidden = true
@@ -306,9 +312,11 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
             case .play(_):
                 prevButton.setImage(UIImage.make(name: "BackTrack"), for: .normal)
                 break
-            case .seek(_):
+            case .seekBy(_):
                 prevButton.setImage(UIImage.make(name: "BackTrack2"), for: .normal)
                 break
+            case .seekTo(_):
+                    break
             }
         } else {
             prevButton.isHidden = true

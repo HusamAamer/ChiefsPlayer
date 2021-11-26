@@ -223,9 +223,11 @@ extension CVideoControlsView : CControlsManagerDelegate {
             case .play(_):
                 forwardSeekButton.setImage(UIImage.make(name: "BarNextTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
-            case .seek(_):
+            case .seekBy(_):
                 forwardSeekButton.setImage(UIImage.make(name: "BarSeekPlus")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
+            case .seekTo(_):
+                    break
             }
         } else {
             forwardSeekButton.isHidden = true
@@ -242,9 +244,11 @@ extension CVideoControlsView : CControlsManagerDelegate {
             case .play(_):
                 backwardSeekButton.setImage(UIImage.make(name: "BarBackTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
-            case .seek(_):
+            case .seekBy(_):
                 backwardSeekButton.setImage(UIImage.make(name: "BarSeekMinus")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
+            case .seekTo(_):
+                    break
             }
         } else {
             backwardSeekButton.isHidden = true
@@ -260,9 +264,11 @@ extension CVideoControlsView : CControlsManagerDelegate {
             case .play(_):
                 nextButton.setImage(UIImage.make(name: "BarNextTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
-            case .seek(_):
+            case .seekBy(_):
                 nextButton.setImage(UIImage.make(name: "BarSeekPlus")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
+            case .seekTo(_):
+                    break
             }
         } else {
             nextButton.isHidden = true
@@ -278,9 +284,11 @@ extension CVideoControlsView : CControlsManagerDelegate {
             case .play(_):
                 prevButton.setImage(UIImage.make(name: "BarBackTrack")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
-            case .seek(_):
+            case .seekBy(_):
                 prevButton.setImage(UIImage.make(name: "BarSeekMinus")?.imageFlippedForRightToLeftLayoutDirection(), for: .normal)
                 break
+            case .seekTo(_):
+                    break
             }
         } else {
             prevButton.isHidden = true

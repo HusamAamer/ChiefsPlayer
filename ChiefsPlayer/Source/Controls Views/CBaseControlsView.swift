@@ -85,5 +85,8 @@ public class CBaseControlsView:UIView {
             ChiefsPlayer.shared.parentVC.present(sheet, animated: true, completion: nil)
         }
     }
-
+    
+    // App >> CControlsManager {show/hide skip view}
+    // Skip view {tapped} >> ChiefPlayerDelegate {Skip Tapped}
+    // or ChiefPlayerDelegate {skipViewAction -> SeekAction}
 }

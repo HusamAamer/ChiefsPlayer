@@ -525,20 +525,3 @@ extension CVideoView: CPlayerItemDelegate {
     public func cplayerItemWillStopObserving() {
     }
 }
-
-extension CVideoView {
-    public func showFullscreenTutorial () {
-        let pointer = HandPointing(frame: bounds, path: .DownToUp)
-        addSubview(pointer)
-        pointer.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            pointer.leadingAnchor.constraint(equalTo: leadingAnchor),
-            pointer.trailingAnchor.constraint(equalTo: trailingAnchor),
-            pointer.centerYAnchor.constraint(equalTo: centerYAnchor),
-            pointer.heightAnchor.constraint(equalToConstant: 100),
-        ])
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {            pointer.removeFromSuperview()
-        }
-    }
-}

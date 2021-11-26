@@ -29,6 +29,7 @@ public class ChiefsPlayer {
     deinit {
         print("ChiefsPlayer deinit")
     }
+    
     lazy var mediaQueue      = [CMediaInfo]()
     public var delegate        :ChiefsPlayerDelegate?
     public lazy var acvStyle        :ACVStyle        = .maximized
