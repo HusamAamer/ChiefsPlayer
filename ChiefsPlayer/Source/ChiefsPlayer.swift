@@ -829,7 +829,9 @@ public class ChiefsPlayer {
         //Set minimum video ratio
         if videoRatio > 2 {videoRatio = 2}
         
-        setViewsScale()
+		updateOnMaxFrame()
+		
+        setViewsScale(animated: true)
     }
     
     
@@ -1102,6 +1104,7 @@ public class ChiefsPlayer {
                            }, completion: nil)
         } else {
             parentVC.view.layoutIfNeeded()
+			videoView.animateVideoLayer(with: 0)
         }
     }
     
