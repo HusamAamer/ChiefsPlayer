@@ -6,7 +6,8 @@ target 'ChiefsPlayer' do
   use_frameworks!
 
   # Pods for ChiefsPlayer
-  pod 'google-cast-sdk', "~> 4.5"
+	# google-cast-sdk version +4.7 drops support for iOS10+iOS11 😭
+  pod 'google-cast-sdk', "~> 4.6"
   
   post_install do |pi|
       pi.pods_project.targets.each do |t|
