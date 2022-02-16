@@ -74,6 +74,10 @@ public class ChiefsPlayer {
     
     var chromecastManager     :ChromecastManager?
     var _currentCasting :CastingService?
+    
+    var timeObserverToken: Any?
+    var currentTimeline: Timeline?
+
     var isCastingTo     :CastingService? {
         get {return _currentCasting}
         set {
@@ -207,6 +211,31 @@ public class ChiefsPlayer {
             }
             
             CControlsManager.shared.updateAllControllers()
+        }
+        
+        // Reset current timeline
+        if let currentTimeline = currentTimeline {
+            self.currentTimeline = nil
+            if let action = delegate?.chiefsPlayer(self, didExitTimeline: currentTimeline) {
+                CControlsManager.shared.performAction(action: action)
+            }
+        }
+        
+        // start observing for active timelines
+        timeObserverToken = self.player.addPeriodicTimeObserver(forInterval: CMTimeMakeWithSeconds(1, preferredTimescale: 1), queue: .main) { [unowned self] time in            
+            if let currentTimeline = currentTimeline {
+                if time.seconds > currentTimeline.endTime {
+                    self.currentTimeline = nil
+                    if let action = delegate?.chiefsPlayer(self, didExitTimeline: currentTimeline) {
+                        CControlsManager.shared.performAction(action: action)
+                    }
+                }
+            } else if let currentTimeline = self.selectedSource.timelines?.first(where: { time.seconds >= $0.startTime && time.seconds < $0.endTime }) {
+                self.currentTimeline = currentTimeline
+                if let action = delegate?.chiefsPlayer(self, didEnterTimeline: currentTimeline) {
+                    CControlsManager.shared.performAction(action: action)
+                }
+            }
         }
         
         // Add subtitles if playing locally only

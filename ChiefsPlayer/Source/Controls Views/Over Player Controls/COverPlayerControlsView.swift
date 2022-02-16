@@ -25,9 +25,11 @@ class COverPlayerControlsView: CBaseControlsView {
     @IBOutlet weak var duration: UILabel!
     @IBOutlet weak var currentTime: UILabel!
     @IBOutlet weak var scaleButton : UIButton!
+    @IBOutlet weak var skipButton: UIButton!
     var pipButton: UIButton?
     var separator:UIView!
     
+    var skipButtonAction: () -> Void = { }
     /// This layer added above this view to hide video view when get panned up for fullscreen toggling
     lazy var topGL:CAGradientLayer = CAGradientLayer()
     
@@ -176,8 +178,9 @@ class COverPlayerControlsView: CBaseControlsView {
         let _ = CControlsManager.shared.prevBtnAction()
     }
     
-    
-    
+    @IBAction func handleSkipButtonTap(_ sender: UIButton) {
+        skipButtonAction()
+    }
     
     @IBAction func scaleVideoTapped(_ sender : UIButton ) {
         CControlsManager.shared.toggleVideoAspect()
@@ -209,6 +212,15 @@ class COverPlayerControlsView: CBaseControlsView {
 }
 
 extension COverPlayerControlsView : CControlsManagerDelegate {
+    func controls(_ controls: CControlsManager, shouldShowButtonWithTitle buttonTitle: String, handler: @escaping () -> Void) {
+        skipButton.setTitle(buttonTitle, for: .normal)
+        skipButton.isHidden = false
+        skipButtonAction = handler
+    }
+    
+    func controlsShouldHideButton(_ controls: CControlsManager) {
+        skipButton.isHidden = true
+    }
     
     func controlsLeftAccessoryViewsDidChange(to newViews: [UIView]?) {
         
@@ -242,7 +254,7 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
         }
     }
     
-    func controlsForwardActionDidChange(to newAction: SeekAction?) {
+    func controlsForwardActionDidChange(to newAction: CControlsManager.Action?) {
         if let action = newAction {
             forwardSeekButton.isHidden = false
             switch action {
@@ -257,13 +269,15 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
                 break
             case .seekTo(_):
                     break
+            case .showButton, .hideButton:
+                break
             }
         } else {
             forwardSeekButton.isHidden = true
         }
 
     }
-    func controlsBackwardActionDidChange(to newAction: SeekAction?) {
+    func controlsBackwardActionDidChange(to newAction: CControlsManager.Action?) {
         if let action = newAction {
             backwardSeekButton.isHidden = false
             switch action {
@@ -277,12 +291,14 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
                 backwardSeekButton.setImage(UIImage.make(name: "BackTrack2"), for: .normal)
             case .seekTo(_):
                     break
+            case .showButton, .hideButton:
+                break
             }
         } else {
             backwardSeekButton.isHidden = true
         }
     }
-    func controlsNextActionDidChange(to newAction: SeekAction?) {
+    func controlsNextActionDidChange(to newAction: CControlsManager.Action?) {
         if let action = newAction {
             nextButton.isHidden = false
             switch action {
@@ -297,12 +313,14 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
                 break
             case .seekTo(_):
                     break
+            case .showButton, .hideButton:
+                break
             }
         } else {
             nextButton.isHidden = true
         }
     }
-    func controlsPrevActionDidChange(to newAction: SeekAction?) {
+    func controlsPrevActionDidChange(to newAction: CControlsManager.Action?) {
         if let action = newAction {
             prevButton.isHidden = false
             switch action {
@@ -317,6 +335,8 @@ extension COverPlayerControlsView : CControlsManagerDelegate {
                 break
             case .seekTo(_):
                     break
+            case .showButton, .hideButton:
+                break
             }
         } else {
             prevButton.isHidden = true

@@ -9,6 +9,19 @@
 import UIKit
 
 ////////////////////////////////////////////////////////////
+///
+public struct Timeline : Equatable {
+    public let id: String
+    public let startTime: TimeInterval
+    public let endTime: TimeInterval
+    
+    public init(id: String, startTime: TimeInterval, endTime: TimeInterval) {
+        self.id = id
+        self.startTime = startTime
+        self.endTime = endTime
+    }
+}
+
 public struct CPlayerSource {
     
     public var defaultSource:CPlayerResolutionSource {
@@ -19,13 +32,15 @@ public struct CPlayerSource {
     public var resolutions:[CPlayerResolutionSource]
     public var subtitles:[CPlayerSubtitleSource]? = nil
     public var metadata:CPlayerMetadata? = nil
+    public var timelines: [Timeline]? = nil
     
     public init(resolutions: [CPlayerResolutionSource],
                 subtitles:[CPlayerSubtitleSource]? = nil,
-                metadata:CPlayerMetadata? = nil) {
+                metadata:CPlayerMetadata? = nil, timelines: [Timeline]? = nil) {
         self.resolutions = resolutions
         self.subtitles = subtitles
         self.metadata = metadata
+        self.timelines = timelines
     }
 }
 public struct CPlayerResolutionSource : Codable {
@@ -64,10 +79,10 @@ public struct CPlayerMetadata : Codable {
 public protocol CControlsManagerDelegate : NSObjectProtocol {
     func controlsLeftAccessoryViewsDidChange (to newViews:[UIView]?)
     func controlsRightAccessoryViewsDidChange (to newViews:[UIView]?)
-    func controlsForwardActionDidChange (to newAction:SeekAction?)
-    func controlsBackwardActionDidChange (to newAction:SeekAction?)
-    func controlsNextActionDidChange (to newAction:SeekAction?)
-    func controlsPrevActionDidChange (to newAction:SeekAction?)
+    func controlsForwardActionDidChange (to newAction:CControlsManager.Action?)
+    func controlsBackwardActionDidChange (to newAction:CControlsManager.Action?)
+    func controlsNextActionDidChange (to newAction:CControlsManager.Action?)
+    func controlsPrevActionDidChange (to newAction:CControlsManager.Action?)
     func controlsSubtitles(are available:Bool)
     func controlsTimeUpdated (to currentTime:String, remaining:String,andPlayer isPlaying:Bool)
     func controlsShouldAppearAboveVideo (in fullscreenMode:ACVFullscreen) -> Bool
@@ -78,4 +93,7 @@ public protocol CControlsManagerDelegate : NSObjectProtocol {
     
     func controlsPictureInPictureState (is possible:Bool)
     func controlsPlayerFullscreenState (changedTo fullscreenState:ACVFullscreen)
+
+    func controls(_ controls: CControlsManager, shouldShowButtonWithTitle buttonTitle: String, handler: @escaping () -> Void)
+    func controlsShouldHideButton(_ controls: CControlsManager)
 }

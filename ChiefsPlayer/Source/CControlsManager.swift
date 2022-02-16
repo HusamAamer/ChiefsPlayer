@@ -12,19 +12,15 @@ import AVFoundation
 import MediaPlayer
 import GoogleCast
 
-public typealias SeekActionBlock = (_ player:CAVQueuePlayer)->(SeekAction)
+public typealias SeekAction = CControlsManager.Action
+public typealias SeekActionBlock = (_ player:CAVQueuePlayer)->(CControlsManager.Action)
 public typealias AccessoryViewsBlock = ()->([UIView])
 
 public typealias CustomSeekActionIcon = UIImage
 
 /// Seek Action determinse icon and action of the button, use `customPlay` for custom icon and then you can trigger custom code on `willTriggerAction = true`
-public enum SeekAction {
-    case
-    play([CPlayerSource]),
-    seekBy(Int),
-    seekTo(Int),
-    custom(CustomSeekActionIcon?)
-}
+///
+
 public enum CastingService {
     case chromecast, airplay
 }
@@ -50,6 +46,19 @@ public class CControlsManager:NSObject {
         return Static.instance!
     }
     
+    public enum Action {
+        case play([CPlayerSource])
+        case seekBy(Int)
+        case seekTo(Int)
+        case custom(CustomSeekActionIcon?)
+        case showButton(withTitle: String, handler: (@escaping (CControlsManager.Action) -> Void) -> Void)
+        case hideButton
+        
+        /// Convenient synchronous skip button seek action
+        public static func showButton(withTitle title: String, action: CControlsManager.Action) -> CControlsManager.Action {
+            .showButton(withTitle: title) { $0(action) }
+        }
+    }
     
     private var player : CAVQueuePlayer? {return ChiefsPlayer.shared.player}
     var delegates : [CControlsManagerDelegate?] = []
@@ -211,21 +220,24 @@ extension CControlsManager {
         
         player?.seek(to: CMTime.init(seconds: Double(interval), preferredTimescale: 1))
     }
-    
-    func performAction (action:SeekAction) {
+        
+    func performAction (action:CControlsManager.Action) {
         switch action {
-        case .custom(_):
-            // Custom type is intended to be used to apply custom developer action outside of the ChiefsPlayer
-            break
         case .play(let sourceArray):
             ChiefsPlayer.shared.play(from: sourceArray, with: nil)
-            break
         case .seekBy(let seconds):
-            // Cancel
             seek(by: seconds)
-            break
         case .seekTo(let seconds):
             seek(to: seconds)
+        case .showButton(withTitle: let buttonTitle, handler: let handler):
+            delegates.forEach { delegate in
+                delegate?.controls(self, shouldShowButtonWithTitle: buttonTitle) {
+                    handler(self.performAction)
+                }
+            }
+        case .hideButton:
+            delegates.forEach { $0?.controlsShouldHideButton(self) }
+        default: break
         }
     }
 }

@@ -49,21 +49,28 @@ public protocol ChiefsPlayerDelegate:AnyObject {
     
     /// Backward action, Return nil to hide backward button
     /// - Parameter willTriggerAction: a boolean value indicating thet action will be triggered now
-    func chiefsplayerBackwardAction(_ willTriggerAction:Bool) -> SeekAction?
+    func chiefsplayerBackwardAction(_ willTriggerAction:Bool) -> CControlsManager.Action?
     
     /// Forward action, Return nil to hide forward button
     /// - Parameter willTriggerAction: a boolean value indicating thet action will be triggered now
-    func chiefsplayerForwardAction(_ willTriggerAction:Bool) -> SeekAction?
+    func chiefsplayerForwardAction(_ willTriggerAction:Bool) -> CControlsManager.Action?
     
     /// Previous action, Return nil to hide previous button
     /// - Parameter willTriggerAction: a boolean value indicating thet action will be triggered now
-    func chiefsplayerPrevAction(_ willTriggerAction:Bool) -> SeekAction?
+    func chiefsplayerPrevAction(_ willTriggerAction:Bool) -> CControlsManager.Action?
     
     /// Next action, Return nil to hide next button
     /// - Parameter willTriggerAction: a boolean value indicating thet action will be triggered now
-    func chiefsplayerNextAction(_ willTriggerAction:Bool) -> SeekAction?
+    func chiefsplayerNextAction(_ willTriggerAction:Bool) -> CControlsManager.Action?
     
-    /// Return `true` to enable Picture in Picture if supported by this device, Note that `Audio Background Mode` should be checked in the target capabilities, Default is `false`
+    /// Called when player has just entered one of the specified timelines passed, return an action
+    /// if you need to perfrom a specific action.
+    func chiefsPlayer(_ player: ChiefsPlayer, didEnterTimeline timeline: Timeline) -> CControlsManager.Action?
+    
+    /// Called when player has just exitted one of the specified timelines passed, return an action
+    /// if you need to perfrom a specific action.
+    func chiefsPlayer(_ player: ChiefsPlayer, didExitTimeline timeline: Timeline) -> CControlsManager.Action?
+    
     func chiefsplayerPictureInPictureEnabled() -> Bool
 }
 
@@ -84,10 +91,10 @@ public extension ChiefsPlayerDelegate {
     func chiefsplayer(isCastingTo castingService:CastingService?){}
     func chiefsplayerWillStartCasting(from source:CPlayerSource) -> CPlayerSource? { return nil}
     func chiefsplayerDebugLog(_ string:String) {}
-    func chiefsplayerBackwardAction(_ willTriggerAction:Bool) -> SeekAction? {return nil}
-    func chiefsplayerForwardAction(_ willTriggerAction:Bool) -> SeekAction?  {return nil}
-    func chiefsplayerPrevAction(_ willTriggerAction:Bool) -> SeekAction? {return nil}
-    func chiefsplayerNextAction(_ willTriggerAction:Bool) -> SeekAction? {return nil}
+    func chiefsplayerBackwardAction(_ willTriggerAction:Bool) -> CControlsManager.Action? {return nil}
+    func chiefsplayerForwardAction(_ willTriggerAction:Bool) -> CControlsManager.Action?  {return nil}
+    func chiefsplayerPrevAction(_ willTriggerAction:Bool) -> CControlsManager.Action? {return nil}
+    func chiefsplayerNextAction(_ willTriggerAction:Bool) -> CControlsManager.Action? {return nil}
     
     func chiefsplayerPictureInPictureEnabled() -> Bool {return false}
 }

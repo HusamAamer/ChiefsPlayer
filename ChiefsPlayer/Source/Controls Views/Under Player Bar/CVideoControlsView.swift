@@ -180,6 +180,14 @@ class CVideoControlsView: CBaseControlsView {
 }
 
 extension CVideoControlsView : CControlsManagerDelegate {
+    func controls(_ controls: CControlsManager, shouldShowButtonWithTitle buttonTitle: String, handler: @escaping () -> Void) {
+        //
+    }
+
+    
+    func controlsShouldHideButton(_ controls: CControlsManager) {
+        //
+    }
     
     func controlsLeftAccessoryViewsDidChange(to newViews: [UIView]?) {
         
@@ -213,7 +221,7 @@ extension CVideoControlsView : CControlsManagerDelegate {
         }
     }
     
-    func controlsForwardActionDidChange(to newAction: SeekAction?) {
+    func controlsForwardActionDidChange(to newAction: CControlsManager.Action?) {
         if let action = newAction {
             forwardSeekButton.isHidden = false
             switch action {
@@ -228,13 +236,15 @@ extension CVideoControlsView : CControlsManagerDelegate {
                 break
             case .seekTo(_):
                     break
+            case .showButton, .hideButton:
+                break
             }
         } else {
             forwardSeekButton.isHidden = true
         }
 
     }
-    func controlsBackwardActionDidChange(to newAction: SeekAction?) {
+    func controlsBackwardActionDidChange(to newAction: CControlsManager.Action?) {
         if let action = newAction {
             backwardSeekButton.isHidden = false
             switch action {
@@ -249,12 +259,14 @@ extension CVideoControlsView : CControlsManagerDelegate {
                 break
             case .seekTo(_):
                     break
+            case .showButton, .hideButton:
+                break
             }
         } else {
             backwardSeekButton.isHidden = true
         }
     }
-    func controlsNextActionDidChange(to newAction: SeekAction?) {
+    func controlsNextActionDidChange(to newAction: CControlsManager.Action?) {
         if let action = newAction {
             nextButton.isHidden = false
             switch action {
@@ -269,12 +281,14 @@ extension CVideoControlsView : CControlsManagerDelegate {
                 break
             case .seekTo(_):
                     break
+            case .showButton, .hideButton:
+                break
             }
         } else {
             nextButton.isHidden = true
         }
     }
-    func controlsPrevActionDidChange(to newAction: SeekAction?) {
+    func controlsPrevActionDidChange(to newAction: CControlsManager.Action?) {
         if let action = newAction {
             prevButton.isHidden = false
             switch action {
@@ -289,6 +303,8 @@ extension CVideoControlsView : CControlsManagerDelegate {
                 break
             case .seekTo(_):
                     break
+            case .showButton, .hideButton:
+                break
             }
         } else {
             prevButton.isHidden = true

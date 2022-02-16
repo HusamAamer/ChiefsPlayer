@@ -375,7 +375,6 @@ extension ChromecastManager : GCKRequestDelegate {
         let duration = AVCGlobalFuncs.timeFrom(seconds: streamPosition)
         let remaining = "-" + AVCGlobalFuncs.timeFrom(seconds: fullTime - streamPosition)
         CControlsManager.shared.delegates.forEach({$0?.controlsTimeUpdated(to: duration, remaining: remaining, andPlayer: playerIsPlaying)})
-        
     }
 }
 

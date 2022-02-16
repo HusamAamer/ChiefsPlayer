@@ -74,7 +74,10 @@ class ViewController: UIViewController {
         
         let sources = [CPlayerSource(resolutions: resolutions,
                                      subtitles: nil,
-                                     metadata: metaData)]
+                                     metadata: metaData, timelines: [
+                                        Timeline(id: "ID1", startTime: 5, endTime: 10),
+                                        Timeline(id: "ID2", startTime: 10, endTime: 20)
+                                     ])]
         return sources
     }
     
@@ -201,6 +204,26 @@ class ViewController: UIViewController {
 }
 
 extension ViewController:ChiefsPlayerDelegate {
+    func chiefsPlayer(_ player: ChiefsPlayer, didEnterTimeline timeline: Timeline) -> CControlsManager.Action? {
+        // Asynchronous skip button action
+//        .skip(title: timeline.id, timeline: timeline) { completion in
+//            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
+//                completion(.seekBy(5))
+//            }
+//        }
+        
+        // Synchronous skip button action
+//        if timeline.id == "ID2" {
+//            return .seekBy(30)
+//        }
+//        
+        return .showButton(withTitle: "Skip \(timeline.id)", action: .seekBy(5))
+    }
+    
+    func chiefsPlayer(_ player: ChiefsPlayer, didExitTimeline timeline: Timeline) -> CControlsManager.Action? {
+        return .hideButton
+    }
+    
     func chiefsplayerAppeared() {
         AppUtility.lockOrientation(.all)
     }
@@ -233,7 +256,7 @@ extension ViewController:ChiefsPlayerDelegate {
     func chiefsplayerAttachedSubtitleChanged(to subtitle: CPlayerSubtitleSource?, from source: CPlayerSource) {
         //print(subtitle,source)
     }
-    func chiefsplayerBackwardAction(_ willTriggerAction: Bool) -> SeekAction? {
+    func chiefsplayerBackwardAction(_ willTriggerAction: Bool) -> CControlsManager.Action? {
         return .seekBy(-8)
     }
     func chiefsplayerReadyToPlay(_ item: CPlayerItem, resolution: CPlayerResolutionSource, from source: CPlayerSource) {
@@ -251,14 +274,17 @@ extension ViewController:ChiefsPlayerDelegate {
      }
      
      */
-    func chiefsplayerForwardAction(_ willTriggerAction: Bool) -> SeekAction? {
+    func chiefsplayerForwardAction(_ willTriggerAction: Bool) -> CControlsManager.Action? {
         return .seekBy(10)
     }
-    func chiefsplayerNextAction(_ willTriggerAction: Bool) -> SeekAction? {
+    func chiefsplayerNextAction(_ willTriggerAction: Bool) -> CControlsManager.Action? {
         //return nil
-        return .play([CPlayerSource(resolutions: [resolutions.last!])])
+        return .play([CPlayerSource(resolutions: [resolutions.last!], timelines: [
+            Timeline(id: "ID1", startTime: 5, endTime: 10),
+            Timeline(id: "ID2", startTime: 10, endTime: 20)
+        ])])
     }
-    func chiefsplayerPrevAction(_ willTriggerAction: Bool) -> SeekAction? {
+    func chiefsplayerPrevAction(_ willTriggerAction: Bool) -> CControlsManager.Action? {
         //return nil
         return .play([CPlayerSource(resolutions: [resolutions.last!])])
     }
