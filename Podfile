@@ -15,6 +15,10 @@ target 'ChiefsPlayer' do
           config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '9.0'
         end
       end
+
+      pi.pods_project.build_configurations.each do |config|
+        config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+      end
   end
   
 end
