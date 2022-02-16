@@ -32,12 +32,9 @@ class ViewController: UIViewController {
         
         
         
-//        let urlyt1 = URL(string: "https://cinema.shoofnetwork.net:8099/ad4962a3-0bd6-4a8b-a3cb-e29e66ab6e5b/PWIZCBbQttBP8Mu/PWIZCBbQttBP8Mu_1080.mp4")!
-//        let shoof = CPlayerResolutionSource(title: "Shoof Movie", urlyt1)
-		
-		let urlyt1 = URL(string: "http://stream.giganet.iq:6066/enter/ch2/adaptive.m3u8")!
-		let shoof = CPlayerResolutionSource(title: "4:3 Giganet channel", urlyt1)
-	
+        let urlyt1 = URL(string: "https://cinema.shoofnetwork.net:8099/ad4962a3-0bd6-4a8b-a3cb-e29e66ab6e5b/PWIZCBbQttBP8Mu/PWIZCBbQttBP8Mu_1080.mp4")!
+        let shoof = CPlayerResolutionSource(title: "Shoof Movie", urlyt1)
+        
         let urlyt2 = URL(string: "https://r1---sn-x5guiapo3uxax-cbfe7.googlevideo.com/videoplayback?expire=1582147998&ei=PlVNXr21C9Ok8gPIm7voBg&ip=37.237.70.32&id=o-ADMfJS7GP1d1zHkYdCYecspWqCxFOK04uudo6qrI5TWW&itag=18&source=youtube&requiressl=yes&mm=31,29&mn=sn-x5guiapo3uxax-cbfe7,sn-4g5ednsz&ms=au,rdu&mv=m&mvi=0&pl=24&initcwndbps=316250&vprv=1&mime=video/mp4&gir=yes&clen=234454050&ratebypass=yes&dur=4319.143&lmt=1540295945090483&mt=1582126270&fvip=1&fexp=23842630&c=WEB&txp=5531432&sparams=expire,ei,ip,id,itag,source,requiressl,vprv,mime,gir,clen,ratebypass,dur,lmt&lsparams=mm,mn,ms,mv,mvi,pl,initcwndbps&lsig=AHylml4wRQIgfQDWGgdm2pdLQxdKvbH2pWudGIDErttetvW42CFRwqQCIQDXm94QMH2UPezBrypOjuDODmASg4FaQ-ozJvHrezvXfg==&sig=ALgxI2wwRQIhAOBYp0w2hmUWmQBDtAQtoSPOR6sSns7t1tPXAcmlGXd0AiAC4Z4TQgeowt81p61zTdqlFYh2SXzfrGHA0e8b_hkGxg==")!
         let resoultion_yt2 = CPlayerResolutionSource(title: "720", urlyt2)
         
@@ -61,7 +58,7 @@ class ViewController: UIViewController {
         
         //return [resoultion,resoultion,resoultion,resoultion,resoultion,resoultion,resoultion,resoultion]
         
-        return [shoof, resoultion ,cinemanaSource,resoultion_yt2,resoultion4,resoultion1,resoultion2,resoultion3]
+        return [resoultion, shoof ,cinemanaSource,resoultion_yt2,resoultion4,resoultion1,resoultion2,resoultion3]
     }
     
     
