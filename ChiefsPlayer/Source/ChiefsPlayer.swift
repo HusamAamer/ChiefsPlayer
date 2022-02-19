@@ -222,17 +222,20 @@ public class ChiefsPlayer {
         }
         
         // start observing for active timelines
-        timeObserverToken = self.player.addPeriodicTimeObserver(forInterval: CMTimeMakeWithSeconds(1, preferredTimescale: 1), queue: .main) { [unowned self] time in            
-            if let currentTimeline = currentTimeline {
+        timeObserverToken = self.player.addPeriodicTimeObserver(forInterval: CMTimeMakeWithSeconds(1, preferredTimescale: 1), queue: .main) { [weak self] time in
+			
+			guard let `self` = self else { return }
+			
+			if let currentTimeline = self.currentTimeline {
                 if time.seconds > currentTimeline.endTime {
                     self.currentTimeline = nil
-                    if let action = delegate?.chiefsPlayer(self, didExitTimeline: currentTimeline) {
+					if let action = self.delegate?.chiefsPlayer(self, didExitTimeline: currentTimeline) {
                         CControlsManager.shared.performAction(action: action)
                     }
                 }
             } else if let currentTimeline = self.selectedSource.timelines?.first(where: { time.seconds >= $0.startTime && time.seconds < $0.endTime }) {
                 self.currentTimeline = currentTimeline
-                if let action = delegate?.chiefsPlayer(self, didEnterTimeline: currentTimeline) {
+				if let action = self.delegate?.chiefsPlayer(self, didEnterTimeline: currentTimeline) {
                     CControlsManager.shared.performAction(action: action)
                 }
             }

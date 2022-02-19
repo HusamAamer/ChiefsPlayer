@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
   #
 
   spec.name         = "ChiefsPlayer"
-  spec.version      = "1.5"
+  spec.version      = "1.5.1"
   spec.summary      = "Floating player with streaming functionality."
 
   # This description is used to generate tags and improve search results.
@@ -156,7 +156,7 @@ Pod::Spec.new do |spec|
      #"HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2"
      'OTHER_LDFLAGS' => '$(inherited) -ObjC -l"c++" -framework "AVFoundation" -framework "Accelerate" -framework "AudioToolbox" -framework "CFNetwork" -framework "CoreBluetooth" -framework "CoreData" -framework "CoreGraphics" -framework "CoreMedia" -framework "CoreText" -framework "Foundation" -framework "GoogleCast" -framework "MediaAccessibility" -framework "MediaPlayer" -framework "Protobuf" -framework "QuartzCore" -framework "Security" -framework "SystemConfiguration" -framework "UIKit"'
    }
-  spec.dependency "google-cast-sdk", "~> 4.5"
+  spec.dependency "google-cast-sdk", "~> 4.6"
   
   spec.pod_target_xcconfig = {
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64'
