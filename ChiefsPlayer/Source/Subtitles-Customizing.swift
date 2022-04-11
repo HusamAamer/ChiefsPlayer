@@ -16,7 +16,7 @@ extension Subtitles {
     }
     public static func getFont () -> UIFont {
         
-        let size = fontSize ?? (UI_USER_INTERFACE_IDIOM() == .pad ? 25.0 : 20.0)
+		let size = fontSize ?? (UIDevice.current.userInterfaceIdiom == .pad ? 25.0 : 20.0)
         
         return UIFont.boldSystemFont(ofSize: size)
     }
