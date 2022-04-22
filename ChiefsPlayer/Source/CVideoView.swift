@@ -17,11 +17,24 @@ public class CVideoView: UIView {
     var progressView : CVideoProgressView!
     var loadingView  : CLoadingView!
     var streamingView:CStreamingView?
+    lazy var skipButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Skip", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 13)
+        button.setTitleColor(.darkGray, for: .normal)
+        button.backgroundColor = .lightGray.withAlphaComponent(0.8)
+        button.layer.cornerRadius = 4
+        button.addTarget(self, action: #selector(handleSkipTap), for: .touchUpInside)
+        button.isHidden = true
+        return button
+    }()
     
     var vLayer : AVPlayerLayer?
     @objc var player : CAVQueuePlayer {return ChiefsPlayer.shared.player}
     private var timeObserver: Any?
     
+    private var skipButtonAction: () -> Void = {}
     
     init() {
         super.init(frame: .zero)
@@ -69,6 +82,15 @@ public class CVideoView: UIView {
         startObservation()
         
         addResizeGesture()
+        
+        // MARK: Add skip view
+        addSubview(skipButton)
+        NSLayoutConstraint.activate([
+            skipButton.bottomAnchor.constraint(equalTo: progressView.topAnchor, constant: -4),
+            skipButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
+            skipButton.heightAnchor.constraint(equalToConstant: 40),
+            skipButton.widthAnchor.constraint(equalToConstant: 90)
+        ])
     }
     
     var bar_left : NSLayoutConstraint!
@@ -119,6 +141,10 @@ public class CVideoView: UIView {
         default:
             break
         }
+    }
+    
+    @objc private func handleSkipTap(sender: UIButton) {
+        skipButtonAction()
     }
     
     public func animateVideoLayer (with duration:TimeInterval) {
@@ -523,5 +549,40 @@ extension CVideoView: CPlayerItemDelegate {
     }
     
     public func cplayerItemWillStopObserving() {
+    }
+}
+
+extension CVideoView : CControlsManagerDelegate {
+    public func controlsLeftAccessoryViewsDidChange(to newViews: [UIView]?) {}
+    public func controlsRightAccessoryViewsDidChange(to newViews: [UIView]?) {}
+    public func controlsForwardActionDidChange(to newAction: CControlsManager.Action?) {}
+    public func controlsBackwardActionDidChange(to newAction: CControlsManager.Action?) {}
+    public func controlsNextActionDidChange(to newAction: CControlsManager.Action?) {}
+    public func controlsPrevActionDidChange(to newAction: CControlsManager.Action?) {}
+    public func controlsSubtitles(are available: Bool) {}
+    public func controlsTimeUpdated(to currentTime: String, remaining: String, andPlayer isPlaying: Bool) {}
+    public func controlsPlayPauseChanged(to isPlaying: Bool) {}
+    public func controlsPlayer(has resolutions: [CPlayerResolutionSource]) {}
+    public func controlsPlayerDidChangeResolution(to resolution: CPlayerResolutionSource) {}
+    public func controlsPictureInPictureState(is possible: Bool) {}
+    public func controlsPlayerFullscreenState(changedTo fullscreenState: ACVFullscreen) {}
+    
+    public func controlsShouldAppearAboveVideo(in fullscreenMode: ACVFullscreen) -> Bool {
+        return true
+    }
+    public func controlsProgressBarBottomPositionValueForLandscape() -> CGFloat {
+        return 0
+    }
+    
+    public func controls(_ controls: CControlsManager, shouldShowButtonWithTitle buttonTitle: String, handler: @escaping () -> Void) {
+        //
+        skipButton.isHidden = false
+        skipButton.setTitle(buttonTitle, for: .normal)
+        skipButtonAction = handler
+    }
+    
+    public func controlsShouldHideButton(_ controls: CControlsManager) {
+        //
+        skipButton.isHidden = true
     }
 }

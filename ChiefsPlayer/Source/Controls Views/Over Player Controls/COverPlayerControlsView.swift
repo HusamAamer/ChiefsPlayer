@@ -212,14 +212,16 @@ class COverPlayerControlsView: CBaseControlsView {
 }
 
 extension COverPlayerControlsView : CControlsManagerDelegate {
+    // MARK: Skip action no longer handled from COverPlayerControlsView
+    // Instead, it is handled in the parent CVideoView
     func controls(_ controls: CControlsManager, shouldShowButtonWithTitle buttonTitle: String, handler: @escaping () -> Void) {
-        skipButton.setTitle(buttonTitle, for: .normal)
-        skipButton.isHidden = false
-        skipButtonAction = handler
+//        skipButton.setTitle(buttonTitle, for: .normal)
+//        skipButton.isHidden = false
+//        skipButtonAction = handler
     }
     
     func controlsShouldHideButton(_ controls: CControlsManager) {
-        skipButton.isHidden = true
+//        skipButton.isHidden = true
     }
     
     func controlsLeftAccessoryViewsDidChange(to newViews: [UIView]?) {

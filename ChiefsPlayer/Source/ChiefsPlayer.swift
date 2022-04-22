@@ -189,6 +189,7 @@ public class ChiefsPlayer {
             
             //Init video player
             videoView = CVideoView()
+            CControlsManager.shared.addDelegate(videoView)
             userView  = detailsView
             
             setupOrientationStaff()
