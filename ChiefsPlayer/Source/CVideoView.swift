@@ -454,6 +454,7 @@ public class CVideoView: UIView {
         }
         if (isFullscreen && !controlsAreHidden) || !isFullscreen {
             progressView.alpha = newAlpha
+			skipButton.alpha = newAlpha
         }
     }
 }
