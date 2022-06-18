@@ -145,6 +145,12 @@ public class CVideoView: UIView {
     
     @objc private func handleSkipTap(sender: UIButton) {
         skipButtonAction()
+		
+		// Force show loading view
+		loadingView.state = .isLoading
+		
+		// Force hide button
+		skipButton.isHidden = true
     }
     
     public func animateVideoLayer (with duration:TimeInterval) {
