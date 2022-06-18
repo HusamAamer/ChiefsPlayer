@@ -220,7 +220,7 @@ extension CControlsManager {
         
         player?.seek(to: CMTime.init(seconds: Double(interval), preferredTimescale: 1))
     }
-        
+	
     func performAction (action:CControlsManager.Action) {
         switch action {
         case .play(let sourceArray):
