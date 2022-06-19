@@ -110,7 +110,16 @@ public class CControlsManager:NSObject {
     // MARK:- Should show above video
     ////////////////////////////////////////////////////////////////
     func shouldShowControlsAboveVideo(in fullscreenMode:ACVFullscreen) -> Bool {
-        return delegates.first??.controlsShouldAppearAboveVideo(in: fullscreenMode) ?? true
+		
+		// get first controls in the array of delegates
+		// first controls is the first controls view added to delegates array
+		if let controls = delegates.first(where: {
+			$0 is CBaseControlsView
+		}) {
+			return controls?.controlsShouldAppearAboveVideo(in: fullscreenMode) ?? true
+		}
+		
+		return true
     }
 
     ////////////////////////////////////////////////////////////////
