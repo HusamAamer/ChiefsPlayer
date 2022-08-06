@@ -4,6 +4,12 @@ Advanced floating player with streaming services.
 
 ### Changelog
 
+v1.5.1
+- Skip button
+- Family mode
+- Google cast update
+- Code cleaning
+
 v1.5
 - Better fullscreen support for iPad
 - Update code to Swift 5
