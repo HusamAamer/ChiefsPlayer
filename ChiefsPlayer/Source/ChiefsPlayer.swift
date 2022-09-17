@@ -257,6 +257,10 @@ public class ChiefsPlayer {
             object: nil,queue: .main,using: { [weak self] notification in
                 guard let `self` = self else {return}
                 
+				if #available(iOS 16.0, *) {
+					self.rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
+				}
+				
                 let newOrientation = UIDevice.current.orientation
                 guard let interfaceOrientaion = self.interfaceOrientationMask(for: newOrientation) else {
                     return
@@ -1199,4 +1203,22 @@ public class ChiefsPlayer {
             vLayer?.videoGravity = .resizeAspectFill
         }
     }
+}
+
+extension ChiefsPlayer {
+	/// Get `RootViewController`
+	public var rootViewController: UIViewController? {
+		if #available(iOS 13.0, *) {
+			let scene = UIApplication.shared.connectedScenes
+				.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene
+			if let rootViewController = scene?
+				.windows.first(where: { $0.isKeyWindow })?
+				.rootViewController {
+				return rootViewController
+			}
+		} else if let rootViewController = UIApplication.shared.keyWindow?.rootViewController {
+			return rootViewController
+		}
+		return nil
+	}
 }
