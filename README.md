@@ -4,6 +4,9 @@ Advanced floating player with streaming services.
 
 ### Changelog
 
+v1.5.2
+- Fix iOS16 device orientation not working issue
+
 v1.5.1
 - Skip button
 - Family mode
