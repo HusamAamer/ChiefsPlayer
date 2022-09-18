@@ -4,6 +4,9 @@ Advanced floating player with streaming services.
 
 ### Changelog
 
+v1.5.3
+- Fix iOS16 fullscreen button not working properly
+
 v1.5.2
 - Fix iOS16 device orientation not working issue
 

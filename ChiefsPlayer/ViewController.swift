@@ -215,8 +215,7 @@ extension ViewController:ChiefsPlayerDelegate {
 	func chiefsplayerOrientationChanged(to newOrientation: UIInterfaceOrientation, shouldLock: Bool, isMaximized:Bool) {
 		
 		if shouldLock {
-			let mask = UIInterfaceOrientationMask.landscape
-			AppUtility.lockOrientation(mask)
+			AppUtility.lockOrientation(.landscape)
 			print("OO","landscape")
 		} else if isMaximized {
 			print("OO","all")

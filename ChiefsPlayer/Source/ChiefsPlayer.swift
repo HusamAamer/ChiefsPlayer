@@ -261,35 +261,32 @@ public class ChiefsPlayer {
 					self.rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
 				}
 				
-                let newOrientation = UIDevice.current.orientation
-                guard let interfaceOrientaion = self.interfaceOrientationMask(for: newOrientation) else {
-                    return
-                }
-                
-                let canRotate = self.allowedOrientations.contains(interfaceOrientaion)
+				
+				var interfaceOrientaion = UIDevice.current.orientation
+				
+				if #available(iOS 16.0, *), self.acvFullscreen == .activatedLock {
+					interfaceOrientaion = .landscapeLeft
+				}
+				
+				let mask = self.interfaceOrientationMask(for: interfaceOrientaion) ?? .all
+				let canRotate = self.allowedOrientations.contains(mask)
                 
                 //!(Device.IS_IPHONE && self.acvFullscreen.isLocked && newOrientation.isPortrait)
                 
                 if !canRotate {
-                    self.lastRejectedOrientation = interfaceOrientaion
+                    self.lastRejectedOrientation = mask
                     return
                 }
                 
-                if let interfaceOrientaion = self.interfaceOrientation(for: newOrientation) {
+                if let interfaceOrientaion = self.interfaceOrientation(for: interfaceOrientaion) {
                     
                     self.delegate?.chiefsplayerOrientationChanged(
                         to: interfaceOrientaion,
                         shouldLock: self.acvFullscreen.isLocked,
                         isMaximized: self.acvStyle == .maximized)
                 }
-                //                }
-                //
-                //                if Device.IS_IPHONE, isMinimized {
-                //                    return
-                //                }
-                //
-                //                if canRotate {
-                switch newOrientation {
+                
+                switch interfaceOrientaion {
                 case .landscapeLeft, .landscapeRight:
                     self.frameWidth = self.dimensions.max()!
                     self.frameHeight = self.dimensions.min()!
@@ -309,7 +306,7 @@ public class ChiefsPlayer {
                     return
                 }
                 
-                switch newOrientation {
+                switch interfaceOrientaion {
                 case .landscapeLeft, .landscapeRight:
                     print("landscape")
                     
@@ -418,17 +415,41 @@ public class ChiefsPlayer {
             
         }
         
-        // Tell parent app to change lock settings before changing orientation manually
-        // Only because We're changing it manually we have to tell the parent app first
-        if let interfaceOrientaion = interfaceOrientation(for: deviceOrientation) {
-            fireOrientationChangedDelegate(for: interfaceOrientaion)
-        }
         
-        // Forece orientation change
-        UIDevice.current.setValue(deviceOrientation.rawValue, forKey: "orientation")
-        
-        // Fire notification to update UI
-        NotificationCenter.default.post(name: UIDevice.orientationDidChangeNotification, object: nil)
+		if #available(iOS 16.0, *) {
+			// Tell parent app to remove rotation lock
+			// otherwise `requestGeometryUpdate` will fail with "none of the requested orientation is supported"
+			self.delegate?.chiefsplayerOrientationChanged(
+				to: .portrait,
+				shouldLock: false,
+				isMaximized: true)
+			
+			//self.rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
+			self.parentVC.setNeedsUpdateOfSupportedInterfaceOrientations()
+			
+			if let mask = interfaceOrientationMask(for: deviceOrientation) {
+				let scene = (UIApplication.shared.connectedScenes.first as? UIWindowScene)
+				scene?.requestGeometryUpdate(.iOS(interfaceOrientations: mask), errorHandler: { error in
+					print(error)
+				})
+			}
+			
+			// Fire notification to update UI
+			NotificationCenter.default.post(name: UIDevice.orientationDidChangeNotification, object: nil)
+			
+		} else {
+			// Tell parent app to change lock settings before changing orientation manually
+			// Only because We're changing it manually we have to tell the parent app first
+			if let interfaceOrientaion = interfaceOrientation(for: deviceOrientation) {
+				fireOrientationChangedDelegate(for: interfaceOrientaion)
+			}
+			
+			// Forece orientation change
+			UIDevice.current.setValue(deviceOrientation.rawValue, forKey: "orientation")
+			
+			// Fire notification to update UI
+			NotificationCenter.default.post(name: UIDevice.orientationDidChangeNotification, object: nil)
+		}
     }
     
     /// Fires delegate methid to tell the parent app about the preferred orientation settings

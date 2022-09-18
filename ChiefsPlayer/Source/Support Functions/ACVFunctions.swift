@@ -181,6 +181,21 @@ extension CAVQueuePlayer {
 }
 
 extension ChiefsPlayer {
+	func interfaceOrientationMask (for deviceOrientation:UIInterfaceOrientation) -> UIInterfaceOrientationMask {
+		
+		switch deviceOrientation {
+		case .landscapeLeft:
+			return .landscapeRight
+		case .landscapeRight:
+			return .landscapeLeft
+		case .portraitUpsideDown:
+			return .portraitUpsideDown
+		case .portrait:
+			return .portrait
+		default:
+			return .all
+		}
+	}
     func interfaceOrientation (for deviceOrientation:UIDeviceOrientation) -> UIInterfaceOrientation? {
         
         switch deviceOrientation {
