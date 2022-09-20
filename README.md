@@ -4,6 +4,10 @@ Advanced floating player with streaming services.
 
 ### Changelog
 
+v1.5.4
+- Fix iOS16 device orientation animation with prior support to old versions
+- Changes happened to delegates and orientation lock behavior, please check the example project
+
 v1.5.3
 - Fix iOS16 fullscreen button not working properly
 

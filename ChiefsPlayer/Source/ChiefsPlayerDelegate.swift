@@ -35,8 +35,8 @@ public protocol ChiefsPlayerDelegate:AnyObject {
     func chiefsplayerMaximized()
     func chiefsplayerMinimized()
     
-    ///Called when video needs to be oriented
-    func chiefsplayerOrientationChanged (to newOrientation:UIInterfaceOrientation, shouldLock:Bool, isMaximized:Bool)
+    ///Called whenever player supported orientation changed
+	func chiefsplayerNeedsUpdateOfSupportedInterfaceOrientations (to supportedInterfaceOrientation:UIInterfaceOrientationMask)
     
     ///Called when player is streaming to airply or chromecast
     func chiefsplayer(isCastingTo castingService:CastingService?)
@@ -87,7 +87,7 @@ public extension ChiefsPlayerDelegate {
     func chiefsplayerDismissed() {}
     func chiefsplayerMaximized() {}
     func chiefsplayerMinimized() {}
-    func chiefsplayerOrientationChanged (to newOrientation:UIInterfaceOrientation) {}
+	func chiefsplayerNeedsUpdateOfSupportedInterfaceOrientations (to supportedInterfaceOrientation:UIInterfaceOrientationMask) {}
     func chiefsplayer(isCastingTo castingService:CastingService?){}
     func chiefsplayerWillStartCasting(from source:CPlayerSource) -> CPlayerSource? { return nil}
     func chiefsplayerDebugLog(_ string:String) {}

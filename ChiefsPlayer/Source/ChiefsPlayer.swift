@@ -26,6 +26,11 @@ public class ChiefsPlayer {
         return Static.instance!
     }
     
+	// Check if player initiated without the need to call shared instance
+	class public var isInitiated: Bool {
+		Static.instance != nil
+	}
+	
     deinit {
         print("ChiefsPlayer deinit")
     }
@@ -66,6 +71,7 @@ public class ChiefsPlayer {
     
     var isPlayerError   :Bool {return videoView.loadingView.state.isError}
     var orientationToken:Any?
+	public var supportedInterfaceOrientation: UIInterfaceOrientationMask = .all
     var airplayToken    :Any?
     
     private lazy var dimensions = [screenWidth,screenHeight]
@@ -192,8 +198,6 @@ public class ChiefsPlayer {
             CControlsManager.shared.addDelegate(videoView)
             userView  = detailsView
             
-            setupOrientationStaff()
-            
             //Check if device already connected and streaming to AirPlay service
             airplayChanged(calledProgrammatically: true)
             //Start observing airplay state change
@@ -251,103 +255,39 @@ public class ChiefsPlayer {
     }
     //**//**//**//**//**//**//**//**//**//**//**//**//**//**
     
-    private func setupOrientationStaff () {
-        orientationToken = NotificationCenter.default.addObserver(
-            forName: UIDevice.orientationDidChangeNotification,
-            object: nil,queue: .main,using: { [weak self] notification in
-                guard let `self` = self else {return}
-                
-				if #available(iOS 16.0, *) {
-					self.rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
+	public func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+		coordinator.animate { coordinator in
+			
+			self.frameWidth = size.width
+			self.frameHeight = size.height
+			
+			self.updateOnMaxFrame()
+			
+			// if minimized and iPad rotated then recalculate UI
+			if self.acvStyle == .minimized {
+				self.minimize()
+				return
+			}
+			
+			if size.width > size.height {  // Landscape
+				// iPad full screen activated only by gestures or btn
+				if Device.IS_IPAD {
+					self.setViewsScale(animated: true)
+				} else {
+					self.startFullscreen()
 				}
 				
+			} else { // Portrait
 				
-				var interfaceOrientaion = UIDevice.current.orientation
-				
-				if #available(iOS 16.0, *), self.acvFullscreen == .activatedLock {
-					interfaceOrientaion = .landscapeLeft
+				if self.acvFullscreen.isNotLocked {
+					self.endFullscreen()
+				} else {
+					self.startFullscreen()
 				}
-				
-				let mask = self.interfaceOrientationMask(for: interfaceOrientaion) ?? .all
-				let canRotate = self.allowedOrientations.contains(mask)
-                
-                //!(Device.IS_IPHONE && self.acvFullscreen.isLocked && newOrientation.isPortrait)
-                
-                if !canRotate {
-                    self.lastRejectedOrientation = mask
-                    return
-                }
-                
-                if let interfaceOrientaion = self.interfaceOrientation(for: interfaceOrientaion) {
-                    
-                    self.delegate?.chiefsplayerOrientationChanged(
-                        to: interfaceOrientaion,
-                        shouldLock: self.acvFullscreen.isLocked,
-                        isMaximized: self.acvStyle == .maximized)
-                }
-                
-                switch interfaceOrientaion {
-                case .landscapeLeft, .landscapeRight:
-                    self.frameWidth = self.dimensions.max()!
-                    self.frameHeight = self.dimensions.min()!
-                    break
-                case .portrait,.portraitUpsideDown:
-                    self.frameWidth = self.dimensions.min()!
-                    self.frameHeight = self.dimensions.max()!
-                    break
-                default:
-                    break
-                }
-                self.updateOnMaxFrame()
-                
-                // if minimized and iPad rotated then recalculate UI
-                if self.acvStyle == .minimized {
-                    self.minimize()
-                    return
-                }
-                
-                switch interfaceOrientaion {
-                case .landscapeLeft, .landscapeRight:
-                    print("landscape")
-                    
-                    // iPad full screen activated only by gestures or btn
-                    if Device.IS_IPAD {
-                        self.setViewsScale(animated: true)
-                    } else {
-                        self.startFullscreen()
-                    }
-                    
-                    break
-                case .portrait, .portraitUpsideDown:
-                    
-                    // iPhone: Don't change UI in upside down
-                    //                        if newOrientation == .portraitUpsideDown && Device.IS_IPHONE {
-                    //                            return
-                    //                        }
-                    //else
-                    if !canRotate {
-                        return
-                    }
-                    
-                    print("Portrait")
-                    
-                    if self.acvFullscreen.isNotLocked {
-                        self.endFullscreen()
-                    } else {
-                        self.startFullscreen()
-                    }
-                    break
-                default:
-                    print("other")
-                    break
-                }
-                
-        })
-    }
-    
-    // Last Natural Device Orientation, Not Manual
-    public lazy var lastRejectedOrientation: UIInterfaceOrientationMask = .portrait
-    
+			}
+		}
+	}
+	    
     /// The currently allowed orientations by the player
     public var allowedOrientations: UIInterfaceOrientationMask {
         get {
@@ -395,37 +335,29 @@ public class ChiefsPlayer {
         acvFullscreen = on ? .activatedLock : .none
         
         // Toggle to portrait value
-        var deviceOrientation:UIDeviceOrientation = .portrait
+		var deviceOrientation:UIDeviceOrientation = UIDevice.current.orientation
         
         // Toggle full screen value and decide direction according to the current device orientation
-        if on {
-            
-            let isLandscapeNow = lastRejectedOrientation == .landscape
-            
-            deviceOrientation = isLandscapeNow
-                ? lastRejectedOrientation == .landscapeRight ? .landscapeLeft : .landscapeRight
-                : .landscapeLeft
-        } else {
-            
-            let isPortraitNow = lastRejectedOrientation == .portrait
-            
-            deviceOrientation = isPortraitNow
-                ? lastRejectedOrientation == .portrait ? .portrait : .portraitUpsideDown
-                : .portrait
-            
-        }
-        
-        
-		if #available(iOS 16.0, *) {
-			// Tell parent app to remove rotation lock
-			// otherwise `requestGeometryUpdate` will fail with "none of the requested orientation is supported"
-			self.delegate?.chiefsplayerOrientationChanged(
-				to: .portrait,
-				shouldLock: false,
-				isMaximized: true)
+		// so if user oriented dev
+		if on {
+			let isLandscapeNow = deviceOrientation == .landscapeLeft || deviceOrientation == .landscapeRight
+			if !isLandscapeNow {
+				deviceOrientation = .landscapeLeft
+			}
 			
-			//self.rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
-			self.parentVC.setNeedsUpdateOfSupportedInterfaceOrientations()
+		} else {
+			let isPortraitNow = deviceOrientation == .portrait || deviceOrientation == .portraitUpsideDown
+			if !isPortraitNow {
+				deviceOrientation = .portrait
+			}
+			
+		}
+        
+		// Tell parent app to remove rotation lock
+		// otherwise `requestGeometryUpdate` or `UIDevice.current.setValue` will fail with "none of the requested orientation is supported"
+		self.delegate?.chiefsplayerNeedsUpdateOfSupportedInterfaceOrientations(to: .all)
+
+		if #available(iOS 16.0, *) {
 			
 			if let mask = interfaceOrientationMask(for: deviceOrientation) {
 				let scene = (UIApplication.shared.connectedScenes.first as? UIWindowScene)
@@ -434,31 +366,19 @@ public class ChiefsPlayer {
 				})
 			}
 			
-			// Fire notification to update UI
-			NotificationCenter.default.post(name: UIDevice.orientationDidChangeNotification, object: nil)
-			
 		} else {
-			// Tell parent app to change lock settings before changing orientation manually
-			// Only because We're changing it manually we have to tell the parent app first
-			if let interfaceOrientaion = interfaceOrientation(for: deviceOrientation) {
-				fireOrientationChangedDelegate(for: interfaceOrientaion)
-			}
 			
 			// Forece orientation change
 			UIDevice.current.setValue(deviceOrientation.rawValue, forKey: "orientation")
-			
-			// Fire notification to update UI
-			NotificationCenter.default.post(name: UIDevice.orientationDidChangeNotification, object: nil)
 		}
+		
+		delegate?.chiefsplayerNeedsUpdateOfSupportedInterfaceOrientations(to: allowedOrientations)
     }
     
-    /// Fires delegate methid to tell the parent app about the preferred orientation settings
+    /// Fires delegate method to tell the parent app about the preferred orientation settings
     /// - Parameter interfaceOrientaion: New orientation
-    func fireOrientationChangedDelegate (for interfaceOrientaion:UIInterfaceOrientation) {
-        self.delegate?.chiefsplayerOrientationChanged(
-            to: interfaceOrientaion,
-            shouldLock: self.acvFullscreen.isLocked,
-            isMaximized: self.acvStyle == .maximized)
+    func fireOrientationChangedDelegate (for interfaceOrientaion:UIInterfaceOrientationMask) {
+		self.delegate?.chiefsplayerNeedsUpdateOfSupportedInterfaceOrientations(to: interfaceOrientaion)
     }
     
     //*//*//*//*//*//*//*//*//*//*//*//*//*//*//*//*
@@ -796,6 +716,7 @@ public class ChiefsPlayer {
         }
         
         delegate?.chiefsplayerAppeared()
+		delegate?.chiefsplayerNeedsUpdateOfSupportedInterfaceOrientations(to: allowedOrientations)
     }
     func replaceUserView (with view:UIView)
     {
@@ -863,7 +784,8 @@ public class ChiefsPlayer {
         detailsContainer = nil
         
         delegate?.chiefsplayerDismissed()
-
+		delegate?.chiefsplayerNeedsUpdateOfSupportedInterfaceOrientations(to: allowedOrientations)
+		
         //Remove player after removing all observers and views
         self.player.stopObserving()
         self.player = nil
@@ -1187,6 +1109,7 @@ public class ChiefsPlayer {
         }
         
         delegate?.chiefsplayerMaximized()
+		delegate?.chiefsplayerNeedsUpdateOfSupportedInterfaceOrientations(to: allowedOrientations)
     }
     public func minimize () {
         acvStyle = .minimized
@@ -1213,6 +1136,7 @@ public class ChiefsPlayer {
         }
         
         delegate?.chiefsplayerMinimized()
+		delegate?.chiefsplayerNeedsUpdateOfSupportedInterfaceOrientations(to: allowedOrientations)
     }
     
     func toggleVideoAspect () {

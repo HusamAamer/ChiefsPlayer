@@ -18,6 +18,7 @@ target 'ChiefsPlayer' do
 
       pi.pods_project.build_configurations.each do |config|
         config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+				config.build_settings["ENABLE_BITCODE"] = "YES"
       end
   end
   

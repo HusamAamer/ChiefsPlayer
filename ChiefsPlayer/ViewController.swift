@@ -16,6 +16,17 @@ class ViewController: UIViewController {
 		ChiefsPlayer.initializeChromecastDiscovery()
 	}
 	
+	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+		if ChiefsPlayer.isInitiated {
+			ChiefsPlayer.shared.viewWillTransition(to: size, with: coordinator)
+		}
+	}
+	
+	var lockOrientation: UIInterfaceOrientationMask = [.portrait, .portraitUpsideDown]
+	
+	override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+		lockOrientation
+	}
 	
 	var resolutions : [CPlayerResolutionSource] {
 		let localVideo = Bundle.main.path(forResource: "sample", ofType: "mp4")
@@ -153,9 +164,7 @@ class ViewController: UIViewController {
 			
 			player.play(from: sources, with: detailsView, startWithResoultionAt: 100)
 			
-			//            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-			ChiefsPlayer.shared.present(on: self.navigationController!)
-			//            }
+			ChiefsPlayer.shared.present(on: self)
 			
 		}
 		
@@ -201,28 +210,27 @@ extension ViewController:ChiefsPlayerDelegate {
 	}
 	
 	func chiefsplayerAppeared() {
-		AppUtility.lockOrientation(.all)
-	}
-	func chiefsplayerDismissed() {
-		AppUtility.lockOrientation([.portraitUpsideDown,.portrait])
-	}
-	func chiefsplayerMinimized() {
-		AppUtility.lockOrientation([.portraitUpsideDown,.portrait])
-	}
-	func chiefsplayerMaximized() {
-		AppUtility.lockOrientation(.all)
-	}
-	func chiefsplayerOrientationChanged(to newOrientation: UIInterfaceOrientation, shouldLock: Bool, isMaximized:Bool) {
 		
-		if shouldLock {
-			AppUtility.lockOrientation(.landscape)
-			print("OO","landscape")
-		} else if isMaximized {
-			print("OO","all")
-			AppUtility.lockOrientation(.all)
-		} else {
-			print("OO","portrait")
-			AppUtility.lockOrientation(.portrait)
+	}
+	
+	func chiefsplayerDismissed() {
+		
+	}
+	
+	func chiefsplayerMinimized() {
+		
+	}
+	
+	func chiefsplayerMaximized() {
+		
+	}
+	
+	func chiefsplayerNeedsUpdateOfSupportedInterfaceOrientations(to supportedInterfaceOrientation: UIInterfaceOrientationMask) {
+		
+		lockOrientation = supportedInterfaceOrientation
+		
+		if #available(iOS 16.0, *) {
+			setNeedsUpdateOfSupportedInterfaceOrientations()
 		}
 	}
 	func chiefsplayerResolutionChanged(to resolution: CPlayerResolutionSource, from source: CPlayerSource) {
