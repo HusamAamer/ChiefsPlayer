@@ -31,6 +31,11 @@ public class ChiefsPlayer {
 		Static.instance != nil
 	}
 	
+	//Check if is presented by checking one of the sub views if initiated
+	var isPresented: Bool {
+		videoView != nil
+	}
+	
     deinit {
         print("ChiefsPlayer deinit")
     }
@@ -256,6 +261,9 @@ public class ChiefsPlayer {
     //**//**//**//**//**//**//**//**//**//**//**//**//**//**
     
 	public func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+		
+		if !isPresented { return }
+		
 		coordinator.animate { coordinator in
 			
 			self.frameWidth = size.width
@@ -393,6 +401,8 @@ public class ChiefsPlayer {
     }
     private func fullscreenStateShouldChange (to isFullscreen:Bool, locked:Bool = false) {
         
+		if !isPresented { return }
+		
         let toMode:ACVFullscreen = isFullscreen
             ? (locked ? .activatedLock : .activated)
             : .none
@@ -734,9 +744,9 @@ public class ChiefsPlayer {
     }
     /// Removes ChiefsPlayer from the view
     func dismiss() {
-        //Check if is presented by checking one of the sub views if initiated
+		
         //If is not presented then dealloc shared instance
-        if videoView == nil {
+        if !isPresented {
             Static.instance = nil
             return
         }
